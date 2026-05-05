@@ -229,7 +229,7 @@
   // ----- Yuklanish -----
   async function loadUstalar() {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('ustalar')
         .select('*')
         .eq('tasdiqlangan', true)
@@ -347,7 +347,7 @@
     };
 
     try {
-      const { error } = await supabase.from('murojaatlar').insert([payload]);
+      const { error } = await supabaseClient.from('murojaatlar').insert([payload]);
       if (error) throw error;
       closeModal();
       showToast('✅ Murojaat muvaffaqiyatli yuborildi!', 'success');

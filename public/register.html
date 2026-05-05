@@ -244,7 +244,7 @@
     btn.textContent = 'Yuborilmoqda...';
 
     try {
-      const { error } = await supabase.from('ustalar').insert([{
+      const { error } = await supabaseClient.from('ustalar').insert([{
         ism, kasb, shahar, telefon, rasm_url, bio,
         tasdiqlangan: false
       }]);
