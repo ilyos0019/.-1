@@ -11,5 +11,6 @@ window.SUPABASE_SERVICE_KEY = 'sb_secret_1RNnhV0or5L3aK02oek1YA_ORq2kgFE';
 // Asosiy (ommaviy) client — bosh sahifa uchun
 window.supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
 
-// Admin client — service_role key bilan (admin.html ichida ishlatiladi)
-window.supabaseAdmin = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_SERVICE_KEY);
+// Admin client — brauzerda service_role ishlatib bo'lmagani uchun anon key ishlatamiz
+// Bazada RLS siyosatlarini (SQL) anon uchun ochib qo'yishingiz kerak
+window.supabaseAdmin = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
