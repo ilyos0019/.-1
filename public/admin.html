@@ -1,305 +1,415 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usta Top v2 - Admin Panel</title>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link rel="stylesheet" href="/css/style.css">
-    <style>
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — Usta Top</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #2563EB; --primary-dark: #1d4ed8; --primary-light: #eff6ff;
+      --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
+      --gray-500: #6b7280; --gray-700: #374151; --gray-900: #111827;
+      --green: #10b981; --red: #ef4444; --yellow: #f59e0b;
+      --sidebar: #1e293b; --sidebar-active: #2563EB;
+    }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--gray-50); color: var(--gray-900); }
 
-        .stat-card {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-            color: white;
-            padding: 1.5rem;
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            box-shadow: var(--shadow-md);
-        }
+    /* LOGIN SCREEN */
+    #loginScreen { position: fixed; inset: 0; background: linear-gradient(135deg, #1e293b, #0f172a); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+    .login-box { background: #fff; border-radius: 20px; padding: 48px 40px; width: 100%; max-width: 380px; text-align: center; }
+    .login-logo { font-size: 2rem; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
+    .login-sub { color: var(--gray-500); margin-bottom: 32px; font-size: .9rem; }
+    .login-input { width: 100%; border: 1.5px solid var(--gray-200); border-radius: 10px; padding: 14px; font-size: 1rem; outline: none; margin-bottom: 12px; transition: border .2s; }
+    .login-input:focus { border-color: var(--primary); }
+    .login-btn { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+    .login-btn:hover { background: var(--primary-dark); }
+    .login-err { color: var(--red); font-size: .88rem; margin-bottom: 10px; min-height: 20px; }
 
-        .stat-card i {
-            font-size: 2.5rem;
-            opacity: 0.8;
-        }
+    /* LAYOUT */
+    #adminApp { display: none; min-height: 100vh; }
+    #adminApp.visible { display: flex; }
+    aside { width: 240px; background: var(--sidebar); color: #94a3b8; flex-shrink: 0; display: flex; flex-direction: column; min-height: 100vh; }
+    .aside-logo { padding: 24px 20px; font-size: 1.3rem; font-weight: 800; color: #fff; border-bottom: 1px solid #334155; }
+    .aside-logo span { font-size: .75rem; display: block; color: #64748b; font-weight: 400; margin-top: 2px; }
+    nav a { display: flex; align-items: center; gap: 10px; padding: 14px 20px; color: #94a3b8; text-decoration: none; font-size: .92rem; transition: background .2s, color .2s; }
+    nav a:hover, nav a.active { background: #334155; color: #fff; }
+    nav a.active { border-left: 3px solid var(--primary-light); color: #60a5fa; }
+    .aside-footer { margin-top: auto; padding: 20px; border-top: 1px solid #334155; }
+    .logout-btn { width: 100%; background: #334155; color: #94a3b8; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-size: .88rem; }
+    .logout-btn:hover { background: var(--red); color: #fff; }
 
-        .stat-card h3 {
-            color: white;
-            font-size: 1.8rem;
-            margin-bottom: 0.2rem;
-        }
+    main { flex: 1; padding: 32px; overflow-y: auto; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .page-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 24px; }
 
-        .stat-card p {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
+    /* STATS */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-bottom: 36px; }
+    .stat-card { background: #fff; border-radius: 14px; padding: 24px; border: 1px solid var(--gray-200); }
+    .stat-card .s-num { font-size: 2.2rem; font-weight: 800; color: var(--primary); }
+    .stat-card .s-lbl { font-size: .85rem; color: var(--gray-500); margin-top: 4px; }
+    .stat-card.green .s-num { color: var(--green); }
+    .stat-card.yellow .s-num { color: var(--yellow); }
+    .stat-card.red .s-num { color: var(--red); }
 
-        /* Modal styling */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-        }
+    /* TABLE */
+    .table-wrap { background: #fff; border-radius: 14px; border: 1px solid var(--gray-200); overflow: hidden; margin-bottom: 32px; }
+    .table-head { padding: 18px 20px; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; }
+    .table-head h3 { font-size: 1rem; font-weight: 700; }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: var(--gray-50); padding: 12px 16px; text-align: left; font-size: .8rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--gray-200); }
+    td { padding: 14px 16px; font-size: .9rem; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--gray-50); }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 50px; font-size: .78rem; font-weight: 700; }
+    .badge-green { background: #d1fae5; color: #065f46; }
+    .badge-gray { background: var(--gray-100); color: var(--gray-700); }
+    .badge-yellow { background: #fef3c7; color: #92400e; }
+    .del-btn { background: #fee2e2; color: var(--red); border: none; padding: 6px 12px; border-radius: 7px; cursor: pointer; font-size: .82rem; font-weight: 600; }
+    .del-btn:hover { background: var(--red); color: #fff; }
+    .approve-btn { background: #d1fae5; color: #065f46; border: none; padding: 6px 12px; border-radius: 7px; cursor: pointer; font-size: .82rem; font-weight: 600; margin-right: 6px; }
+    .approve-btn:hover { background: var(--green); color: #fff; }
+    .empty-row td { text-align: center; color: var(--gray-500); padding: 40px; }
 
-        .modal.active {
-            display: flex;
-        }
+    /* FORM */
+    .form-card { background: #fff; border-radius: 14px; border: 1px solid var(--gray-200); padding: 28px; margin-bottom: 32px; }
+    .form-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { font-size: .82rem; font-weight: 600; color: var(--gray-700); }
+    .form-group input, .form-group select, .form-group textarea { border: 1.5px solid var(--gray-200); border-radius: 8px; padding: 10px 12px; font-size: .92rem; outline: none; transition: border .2s; background: var(--gray-50); }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); background: var(--primary-light); }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .checkbox-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+    .checkbox-row input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--primary); }
+    .form-actions { display: flex; gap: 12px; margin-top: 20px; }
+    .save-btn { background: var(--primary); color: #fff; border: none; padding: 11px 28px; border-radius: 9px; font-size: .95rem; font-weight: 700; cursor: pointer; }
+    .save-btn:hover { background: var(--primary-dark); }
+    .cancel-btn { background: var(--gray-100); color: var(--gray-700); border: none; padding: 11px 22px; border-radius: 9px; font-size: .95rem; cursor: pointer; }
 
-        .modal-content {
-            background: var(--bg-card);
-            padding: 2rem;
-            border-radius: var(--radius-lg);
-            width: 100%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
+    /* TOAST */
+    .toast { position: fixed; bottom: 24px; right: 24px; padding: 14px 22px; border-radius: 12px; font-weight: 600; z-index: 9999; display: none; animation: toastIn .3s ease; }
+    .toast.show { display: block; }
+    .toast.success { background: var(--green); color: #fff; }
+    .toast.error { background: var(--red); color: #fff; }
+    @keyframes toastIn { from { transform: translateY(20px); opacity: 0; } }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-
-        th {
-            background: var(--bg-main);
-            font-weight: 600;
-        }
-    </style>
+    @media (max-width: 768px) {
+      aside { width: 200px; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      #adminApp.visible { flex-direction: column; }
+      aside { width: 100%; min-height: auto; }
+      nav { display: flex; overflow-x: auto; }
+      nav a { white-space: nowrap; }
+      main { padding: 20px; }
+    }
+  </style>
 </head>
 <body>
-    <nav class="navbar glass">
-        <div class="container">
-            <a href="/index.html" class="navbar-brand">
-                <i class="ph-fill ph-wrench"></i> Usta Top <span class="badge badge-warning" style="margin-left: 0.5rem">Admin</span>
-            </a>
-            <div class="navbar-nav" id="navbar-links"></div>
-        </div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">🔐 Usta Top</div>
+    <p class="login-sub">Admin paneliga kirish</p>
+    <p class="login-err" id="loginErr"></p>
+    <input type="password" id="loginPass" class="login-input" placeholder="Parolni kiriting" onkeydown="if(event.key==='Enter') doLogin()" />
+    <button class="login-btn" onclick="doLogin()">Kirish</button>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="adminApp">
+  <aside>
+    <div class="aside-logo">Usta Top <span>Admin Panel</span></div>
+    <nav>
+      <a href="#" class="active" onclick="showPage('dashboard',this)">📊 Dashboard</a>
+      <a href="#" onclick="showPage('ustalar',this)">👷 Ustalar</a>
+      <a href="#" onclick="showPage('qoshish',this)">➕ Usta qo'shish</a>
+      <a href="#" onclick="showPage('murojaatlar',this)">📩 Murojaatlar</a>
     </nav>
+    <div class="aside-footer">
+      <button class="logout-btn" onclick="logout()">🚪 Chiqish</button>
+    </div>
+  </aside>
 
-    <div class="container" style="padding-top: 2rem;">
-        <h2 style="margin-bottom: 1.5rem;">Boshqaruv Paneli</h2>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <i class="ph-fill ph-users"></i>
-                <div>
-                    <h3 id="s-users">0</h3>
-                    <p>Foydalanuvchilar</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <i class="ph-fill ph-wrench"></i>
-                <div>
-                    <h3 id="s-workers">0</h3>
-                    <p>Ustalar</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <i class="ph-fill ph-chat-centered-text"></i>
-                <div>
-                    <h3 id="s-reviews">0</h3>
-                    <p>Izohlar</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h3>Ustalar ro'yxati</h3>
-                <button class="btn btn-primary" onclick="openModal()"><i class="ph ph-plus"></i> Usta qo'shish</button>
-            </div>
-
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Rasm</th>
-                            <th>Ism</th>
-                            <th>Kasb</th>
-                            <th>Amallar</th>
-                        </tr>
-                    </thead>
-                    <tbody id="workersTableBody">
-                        <!-- Workers injected here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
+  <main>
+    <!-- DASHBOARD -->
+    <div class="page active" id="p-dashboard">
+      <h1 class="page-title">Dashboard</h1>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="s-num" id="stJami">—</div><div class="s-lbl">Jami ustalar</div></div>
+        <div class="stat-card green"><div class="s-num" id="stTasdiqlangan">—</div><div class="s-lbl">Tasdiqlangan</div></div>
+        <div class="stat-card yellow"><div class="s-num" id="stKutilmoqda">—</div><div class="s-lbl">Kutilmoqda</div></div>
+        <div class="stat-card red"><div class="s-num" id="stMurojaatlar">—</div><div class="s-lbl">Murojaatlar</div></div>
+      </div>
     </div>
 
-    <!-- Add/Edit Worker Modal -->
-    <div class="modal" id="workerModal">
-        <div class="modal-content">
-            <h3 id="modalTitle" style="margin-bottom: 1.5rem;">Usta qo'shish</h3>
-            <form id="workerForm" onsubmit="saveWorker(event)">
-                <input type="hidden" id="wId">
-                <div class="form-group">
-                    <label class="form-label">Ism *</label>
-                    <input type="text" id="wName" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Kasb *</label>
-                    <input type="text" id="wProfession" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Manzil</label>
-                    <input type="text" id="wAddress" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Telefon</label>
-                    <input type="text" id="wPhone" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Ma'lumot</label>
-                    <textarea id="wBio" class="form-control" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Rasm (ixtiyoriy)</label>
-                    <input type="file" id="wImage" class="form-control" accept="image/*">
-                </div>
-                <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
-                    <button type="button" class="btn btn-outline" onclick="closeModal()">Bekor qilish</button>
-                    <button type="submit" class="btn btn-primary">Saqlash</button>
-                </div>
-            </form>
+    <!-- USTALAR -->
+    <div class="page" id="p-ustalar">
+      <h1 class="page-title">Ustalar</h1>
+      <div class="table-wrap">
+        <div class="table-head"><h3>Barcha ustalar</h3></div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Ism</th><th>Kasb</th><th>Telefon</th><th>Shahar</th><th>Holat</th><th>Sana</th><th>Amal</th></tr></thead>
+            <tbody id="ustalarTbody"><tr class="empty-row"><td colspan="7">Yuklanmoqda...</td></tr></tbody>
+          </table>
         </div>
+      </div>
     </div>
 
-    <script src="/js/main.js"></script>
-    <script>
-        if (getRole() !== 'admin') {
-            window.location.href = '/index.html';
-        }
+    <!-- QO'SHISH -->
+    <div class="page" id="p-qoshish">
+      <h1 class="page-title">Yangi usta qo'shish</h1>
+      <div class="form-card">
+        <h3>Usta ma'lumotlari</h3>
+        <form id="ustaForm" onsubmit="saveUsta(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Ism familiya *</label>
+              <input type="text" id="fIsm" required placeholder="Alisher Usmonov" />
+            </div>
+            <div class="form-group">
+              <label>Kasb *</label>
+              <select id="fKasb" required>
+                <option value="">Tanlang...</option>
+                <option>Santexnik</option><option>Elektrik</option>
+                <option>Duradgor</option><option>Bo'yoqchi</option>
+                <option>Rassomchi</option><option>Boshqa</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Telefon *</label>
+              <input type="text" id="fTelfon" required placeholder="+998901234567" />
+            </div>
+            <div class="form-group">
+              <label>Shahar</label>
+              <select id="fShahar">
+                <option value="">Tanlang...</option>
+                <option>Toshkent</option><option>Samarqand</option>
+                <option>Buxoro</option><option>Xorazm</option>
+                <option>Andijon</option><option>Boshqa viloyatlar</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Rasm URL (ixtiyoriy)</label>
+              <input type="url" id="fRasm" placeholder="https://..." />
+            </div>
+            <div class="form-group full">
+              <label>Bio (o'zi haqida)</label>
+              <textarea id="fBio" placeholder="Ustaning qisqacha tavsifi..."></textarea>
+            </div>
+            <div class="form-group full">
+              <div class="checkbox-row">
+                <input type="checkbox" id="fTasdiqlangan" />
+                <label for="fTasdiqlangan">Darhol tasdiqlash (bosh sahifada ko'rinadi)</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="save-btn">💾 Saqlash</button>
+            <button type="button" class="cancel-btn" onclick="document.getElementById('ustaForm').reset()">Tozalash</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
-        const loadStats = async () => {
-            try {
-                const stats = await fetchAPI('/stats');
-                document.getElementById('s-users').innerText = stats.totalUsers;
-                document.getElementById('s-workers').innerText = stats.totalWorkers;
-                document.getElementById('s-reviews').innerText = stats.totalReviews;
-            } catch (err) {}
-        };
+    <!-- MUROJAATLAR -->
+    <div class="page" id="p-murojaatlar">
+      <h1 class="page-title">Murojaatlar</h1>
+      <div class="table-wrap">
+        <div class="table-head"><h3>Barcha murojaatlar</h3></div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Mijoz</th><th>Telefon</th><th>Qaysi ustaga</th><th>Xabar</th><th>Status</th><th>Sana</th></tr></thead>
+            <tbody id="murojaatlarTbody"><tr class="empty-row"><td colspan="6">Yuklanmoqda...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
 
-        const loadWorkers = async () => {
-            const tbody = document.getElementById('workersTableBody');
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Yuklanmoqda...</td></tr>';
-            try {
-                const workers = await fetchAPI('/workers');
-                tbody.innerHTML = '';
-                if(workers.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Ustalar topilmadi.</td></tr>';
-                    return;
-                }
-                
-                workers.forEach(w => {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>#${w.id}</td>
-                            <td><img src="${w.imageUrl}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(w.name)}&background=random'"></td>
-                            <td>${w.name}</td>
-                            <td><span class="badge badge-primary">${w.profession}</span></td>
-                            <td>
-                                <button class="btn btn-outline" style="padding: 0.3rem 0.6rem; font-size: 0.8rem" onclick="editWorker(${w.id})"><i class="ph ph-pencil"></i></button>
-                                <button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.8rem" onclick="deleteWorker(${w.id})"><i class="ph ph-trash"></i></button>
-                            </td>
-                        </tr>
-                    `;
-                });
-            } catch (err) {}
-        };
+<div class="toast" id="toast"></div>
 
-        const modal = document.getElementById('workerModal');
-        let editMode = false;
+<script>
+  const ADMIN_PASS = 'usta2024admin';
 
-        const openModal = () => {
-            editMode = false;
-            document.getElementById('modalTitle').innerText = "Usta qo'shish";
-            document.getElementById('workerForm').reset();
-            document.getElementById('wId').value = '';
-            modal.classList.add('active');
-        };
+  // ----- LOGIN -----
+  function doLogin() {
+    const pass = document.getElementById('loginPass').value;
+    if (pass === ADMIN_PASS) {
+      sessionStorage.setItem('adminAuth', '1');
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('adminApp').classList.add('visible');
+      loadAll();
+    } else {
+      document.getElementById('loginErr').textContent = '❌ Parol noto\'g\'ri!';
+      document.getElementById('loginPass').value = '';
+    }
+  }
 
-        const closeModal = () => {
-            modal.classList.remove('active');
-        };
+  function logout() {
+    sessionStorage.removeItem('adminAuth');
+    location.reload();
+  }
 
-        const editWorker = async (id) => {
-            try {
-                const worker = await fetchAPI(`/workers/${id}`);
-                document.getElementById('wId').value = worker.id;
-                document.getElementById('wName').value = worker.name;
-                document.getElementById('wProfession').value = worker.profession;
-                document.getElementById('wAddress').value = worker.address;
-                document.getElementById('wPhone').value = worker.phone;
-                document.getElementById('wBio').value = worker.bio;
-                
-                editMode = true;
-                document.getElementById('modalTitle').innerText = "Ustani tahrirlash";
-                modal.classList.add('active');
-            } catch(e) {}
-        };
+  // Auto-login if session exists
+  if (sessionStorage.getItem('adminAuth') === '1') {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminApp').classList.add('visible');
+    loadAll();
+  }
 
-        const saveWorker = async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData();
-            formData.append('name', document.getElementById('wName').value);
-            formData.append('profession', document.getElementById('wProfession').value);
-            formData.append('address', document.getElementById('wAddress').value);
-            formData.append('phone', document.getElementById('wPhone').value);
-            formData.append('bio', document.getElementById('wBio').value);
-            
-            const imageFile = document.getElementById('wImage').files[0];
-            if (imageFile) formData.append('image', imageFile);
+  // ----- NAVIGATION -----
+  function showPage(name, el) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+    document.getElementById('p-' + name).classList.add('active');
+    if (el) el.classList.add('active');
+    if (name === 'ustalar') loadUstalarTable();
+    if (name === 'murojaatlar') loadMurojaatlarTable();
+    if (name === 'dashboard') loadStats();
+  }
 
-            const id = document.getElementById('wId').value;
-            const url = editMode ? `/workers/${id}` : '/workers';
-            const method = editMode ? 'PUT' : 'POST';
+  // ----- LOAD ALL -----
+  function loadAll() {
+    loadStats();
+    loadUstalarTable();
+    loadMurojaatlarTable();
+  }
 
-            try {
-                const res = await fetchAPI(url, {
-                    method: method,
-                    body: formData
-                });
-                showToast(res.message);
-                closeModal();
-                loadStats();
-                loadWorkers();
-            } catch (err) {}
-        };
+  // ----- STATS -----
+  async function loadStats() {
+    try {
+      const { data: ustalar } = await supabaseAdmin.from('ustalar').select('tasdiqlangan');
+      const { count: mCount } = await supabaseAdmin.from('murojaatlar').select('id', { count: 'exact', head: true });
+      const jami = ustalar?.length || 0;
+      const tasdiqlangan = ustalar?.filter(u => u.tasdiqlangan).length || 0;
+      document.getElementById('stJami').textContent = jami;
+      document.getElementById('stTasdiqlangan').textContent = tasdiqlangan;
+      document.getElementById('stKutilmoqda').textContent = jami - tasdiqlangan;
+      document.getElementById('stMurojaatlar').textContent = mCount || 0;
+    } catch (err) { showToast('Stats xatosi: ' + err.message, 'error'); }
+  }
 
-        const deleteWorker = async (id) => {
-            if(!confirm("Haqiqatan ham ushbu ustani o'chirmoqchimisiz?")) return;
-            try {
-                await fetchAPI(`/workers/${id}`, { method: 'DELETE' });
-                showToast("Usta o'chirildi");
-                loadStats();
-                loadWorkers();
-            } catch(e) {}
-        };
+  // ----- USTALAR JADVALI -----
+  async function loadUstalarTable() {
+    const tbody = document.getElementById('ustalarTbody');
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Yuklanmoqda...</td></tr>';
+    try {
+      const { data, error } = await supabaseAdmin.from('ustalar').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      if (!data?.length) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Hali ustalar yo\'q</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.map(u => `
+        <tr>
+          <td><strong>${u.ism}</strong></td>
+          <td>${u.kasb}</td>
+          <td><a href="tel:${u.telefon}">${u.telefon}</a></td>
+          <td>${u.shahar || '—'}</td>
+          <td>
+            ${u.tasdiqlangan
+              ? '<span class="badge badge-green">✓ Tasdiqlangan</span>'
+              : '<span class="badge badge-yellow">⏳ Kutilmoqda</span>'}
+          </td>
+          <td>${new Date(u.created_at).toLocaleDateString('uz-UZ')}</td>
+          <td>
+            ${!u.tasdiqlangan ? `<button class="approve-btn" onclick="approveUsta('${u.id}')">✓ Tasdiqlash</button>` : ''}
+            <button class="del-btn" onclick="deleteUsta('${u.id}', '${u.ism}')">🗑 O'chirish</button>
+          </td>
+        </tr>
+      `).join('');
+    } catch (err) { showToast('Xato: ' + err.message, 'error'); }
+  }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadStats();
-            loadWorkers();
-        });
-    </script>
+  async function approveUsta(id) {
+    const { error } = await supabaseAdmin.from('ustalar').update({ tasdiqlangan: true }).eq('id', id);
+    if (error) return showToast('Xato: ' + error.message, 'error');
+    showToast('✅ Usta tasdiqlandi!', 'success');
+    loadUstalarTable(); loadStats();
+  }
+
+  async function deleteUsta(id, ism) {
+    if (!confirm(`"${ism}" ni o'chirishni tasdiqlaysizmi?`)) return;
+    const { error } = await supabaseAdmin.from('ustalar').delete().eq('id', id);
+    if (error) return showToast('Xato: ' + error.message, 'error');
+    showToast('🗑 Usta o\'chirildi', 'success');
+    loadUstalarTable(); loadStats();
+  }
+
+  // ----- USTA QO'SHISH -----
+  async function saveUsta(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.save-btn');
+    btn.disabled = true; btn.textContent = 'Saqlanmoqda...';
+
+    const payload = {
+      ism: document.getElementById('fIsm').value.trim(),
+      kasb: document.getElementById('fKasb').value,
+      telefon: document.getElementById('fTelfon').value.trim(),
+      shahar: document.getElementById('fShahar').value,
+      rasm_url: document.getElementById('fRasm').value.trim() || null,
+      bio: document.getElementById('fBio').value.trim(),
+      tasdiqlangan: document.getElementById('fTasdiqlangan').checked
+    };
+
+    try {
+      const { error } = await supabaseAdmin.from('ustalar').insert([payload]);
+      if (error) throw error;
+      showToast('✅ Usta muvaffaqiyatli qo\'shildi!', 'success');
+      document.getElementById('ustaForm').reset();
+      loadStats();
+    } catch (err) {
+      showToast('❌ Xato: ' + err.message, 'error');
+    } finally {
+      btn.disabled = false; btn.textContent = '💾 Saqlash';
+    }
+  }
+
+  // ----- MUROJAATLAR -----
+  async function loadMurojaatlarTable() {
+    const tbody = document.getElementById('murojaatlarTbody');
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">Yuklanmoqda...</td></tr>';
+    try {
+      const { data, error } = await supabaseAdmin
+        .from('murojaatlar')
+        .select('*, ustalar(ism)')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      if (!data?.length) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="6">Hali murojaatlar yo\'q</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.map(m => `
+        <tr>
+          <td><strong>${m.mijoz_ism}</strong></td>
+          <td><a href="tel:${m.mijoz_tel}">${m.mijoz_tel}</a></td>
+          <td>${m.ustalar?.ism || '—'}</td>
+          <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.xabar || '—'}</td>
+          <td><span class="badge ${m.status === 'yangi' ? 'badge-yellow' : 'badge-green'}">${m.status}</span></td>
+          <td>${new Date(m.created_at).toLocaleDateString('uz-UZ')}</td>
+        </tr>
+      `).join('');
+    } catch (err) { showToast('Xato: ' + err.message, 'error'); }
+  }
+
+  // ----- TOAST -----
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast show ${type}`;
+    setTimeout(() => t.className = 'toast', 3500);
+  }
+</script>
 </body>
 </html>

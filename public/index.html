@@ -1,265 +1,375 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usta Top v2 - Eng yaxshi ustalar shu yerda</title>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link rel="stylesheet" href="/css/style.css">
-    <style>
-        /* Home Specific Styles */
-        .hero {
-            padding: 4rem 0;
-            text-align: center;
-            background: linear-gradient(135deg, var(--primary-light) 0%, #E0E7FF 100%);
-            border-radius: var(--radius-xl);
-            margin-top: 1rem;
-            margin-bottom: 3rem;
-        }
-        
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .hero p {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto 2rem;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Usta Top — O'zbekiston ustalar platformasi</title>
+  <meta name="description" content="O'zbekistondagi eng yaxshi ustalarni toping. Santexnik, elektrik, duradgor va boshqa mutaxassislar." />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #2563EB;
+      --primary-dark: #1d4ed8;
+      --primary-light: #eff6ff;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-500: #6b7280;
+      --gray-700: #374151;
+      --gray-900: #111827;
+      --yellow: #f59e0b;
+      --green: #10b981;
+      --red: #ef4444;
+      --radius: 16px;
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+      --shadow-lg: 0 8px 32px rgba(37,99,235,.15);
+    }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--gray-50); color: var(--gray-900); min-height: 100vh; }
 
-        .search-container {
-            display: flex;
-            gap: 1rem;
-            max-width: 800px;
-            margin: 0 auto;
-            background: var(--bg-card);
-            padding: 1rem;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-        }
+    /* NAVBAR */
+    header { background: #fff; border-bottom: 1px solid var(--gray-200); position: sticky; top: 0; z-index: 100; }
+    .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 20px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    .logo-icon { background: var(--primary); color: #fff; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; font-size: 1.1rem; }
+    .nav-btn { background: var(--primary); color: #fff; border: none; padding: 10px 22px; border-radius: 50px; font-size: .95rem; font-weight: 600; cursor: pointer; transition: background .2s, transform .1s; text-decoration: none; }
+    .nav-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
 
-        @media (max-width: 768px) {
-            .search-container { flex-direction: column; }
-        }
+    /* HERO */
+    .hero { background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%); color: #fff; padding: 80px 20px; text-align: center; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; margin-bottom: 16px; line-height: 1.15; }
+    .hero h1 span { color: #fcd34d; }
+    .hero p { font-size: 1.15rem; opacity: .9; max-width: 560px; margin: 0 auto 36px; }
+    .hero-stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-num { font-size: 2rem; font-weight: 800; }
+    .stat-lbl { font-size: .85rem; opacity: .8; }
 
-        .search-input {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            background: var(--bg-main);
-            border-radius: var(--radius-md);
-            padding: 0 1rem;
-            border: 1px solid var(--border);
-        }
+    /* FILTERS */
+    .filters-wrap { max-width: 1200px; margin: -28px auto 0; padding: 0 20px; position: relative; z-index: 10; }
+    .filters { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 24px 28px; display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; }
+    .filter-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 180px; }
+    .filter-group label { font-size: .82rem; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: .05em; }
+    .filter-group select { border: 1.5px solid var(--gray-200); border-radius: 10px; padding: 11px 14px; font-size: .95rem; color: var(--gray-700); background: var(--gray-50); outline: none; transition: border .2s; }
+    .filter-group select:focus { border-color: var(--primary); background: var(--primary-light); }
+    .filter-clear { background: var(--gray-100); border: none; padding: 11px 20px; border-radius: 10px; font-size: .9rem; cursor: pointer; color: var(--gray-700); font-weight: 600; transition: background .2s; align-self: flex-end; white-space: nowrap; }
+    .filter-clear:hover { background: var(--gray-200); }
 
-        .search-input i {
-            color: var(--text-muted);
-            font-size: 1.2rem;
-        }
+    /* CONTENT */
+    .content { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .section-title { font-size: 1.4rem; font-weight: 700; }
+    .count-badge { background: var(--primary-light); color: var(--primary); font-weight: 700; padding: 4px 14px; border-radius: 50px; font-size: .9rem; }
 
-        .search-input input, .search-input select {
-            width: 100%;
-            border: none;
-            background: transparent;
-            padding: 0.8rem;
-            outline: none;
-            font-family: var(--font-body);
-            font-size: 1rem;
-        }
+    /* GRID */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
 
-        .workers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
+    /* CARD */
+    .card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--gray-100); overflow: hidden; transition: transform .25s, box-shadow .25s; }
+    .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .card-img { width: 100%; height: 200px; object-fit: cover; background: linear-gradient(135deg, var(--primary-light), #e0e7ff); display: flex; align-items: center; justify-content: center; font-size: 4rem; color: var(--primary); }
+    .card-img img { width: 100%; height: 100%; object-fit: cover; }
+    .card-body { padding: 20px; }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .card-name { font-size: 1.2rem; font-weight: 700; }
+    .card-kasb { display: inline-block; background: var(--primary-light); color: var(--primary); font-size: .8rem; font-weight: 700; padding: 3px 10px; border-radius: 50px; }
+    .card-location { font-size: .88rem; color: var(--gray-500); margin: 8px 0 12px; display: flex; align-items: center; gap: 5px; }
+    .stars { color: var(--yellow); font-size: 1rem; }
+    .stars span { color: var(--gray-500); font-size: .85rem; margin-left: 4px; }
+    .card-btn { width: 100%; margin-top: 14px; padding: 11px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: .95rem; font-weight: 600; cursor: pointer; transition: background .2s; }
+    .card-btn:hover { background: var(--primary-dark); }
 
-        .worker-card {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
+    /* EMPTY & LOADING */
+    .state-box { text-align: center; padding: 80px 20px; color: var(--gray-500); }
+    .state-box .icon { font-size: 4rem; margin-bottom: 16px; }
+    .state-box h3 { font-size: 1.3rem; color: var(--gray-700); margin-bottom: 8px; }
+    .spinner { display: inline-block; width: 48px; height: 48px; border: 4px solid var(--gray-200); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; margin-bottom: 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-        .worker-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+    /* MODAL */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .overlay.active { display: flex; }
+    .modal { background: #fff; border-radius: 20px; padding: 36px; width: 100%; max-width: 480px; position: relative; animation: modalIn .25s ease; }
+    @keyframes modalIn { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-close { position: absolute; top: 16px; right: 16px; background: var(--gray-100); border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; color: var(--gray-700); }
+    .modal h2 { font-size: 1.5rem; margin-bottom: 6px; }
+    .modal-sub { color: var(--gray-500); font-size: .9rem; margin-bottom: 24px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: 6px; color: var(--gray-700); }
+    .form-group input, .form-group textarea { width: 100%; border: 1.5px solid var(--gray-200); border-radius: 10px; padding: 12px 14px; font-size: .95rem; outline: none; transition: border .2s; background: var(--gray-50); }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); background: var(--primary-light); }
+    .form-group textarea { resize: vertical; min-height: 90px; }
+    .submit-btn { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background .2s; }
+    .submit-btn:hover { background: var(--primary-dark); }
+    .submit-btn:disabled { opacity: .6; cursor: not-allowed; }
 
-        .worker-img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--primary-light);
-        }
+    /* TOAST */
+    .toast { position: fixed; bottom: 24px; right: 24px; padding: 14px 22px; border-radius: 12px; font-weight: 600; font-size: .95rem; z-index: 9999; animation: toastIn .3s ease; display: none; }
+    .toast.show { display: block; }
+    .toast.success { background: var(--green); color: #fff; }
+    .toast.error { background: var(--red); color: #fff; }
+    @keyframes toastIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        .worker-info h3 {
-            font-size: 1.2rem;
-            margin-bottom: 0.2rem;
-        }
-        
-        .worker-info p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
+    /* FOOTER */
+    footer { background: var(--gray-900); color: #9ca3af; text-align: center; padding: 32px 20px; margin-top: 80px; }
+    footer strong { color: #fff; }
+    footer a { color: #60a5fa; text-decoration: none; }
 
-        .worker-stats {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
-        }
-
-        .rating {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            color: var(--warning);
-            font-weight: 600;
-        }
-    </style>
+    @media (max-width: 600px) {
+      .hero { padding: 60px 20px; }
+      .filters { padding: 20px; }
+      .hero-stats { gap: 24px; }
+    }
+  </style>
 </head>
 <body>
 
-    <nav class="navbar glass">
-        <div class="container">
-            <a href="/index.html" class="navbar-brand">
-                <i class="ph-fill ph-wrench"></i> Usta Top
-            </a>
-            <div class="navbar-nav" id="navbar-links">
-                <!-- Injected via JS -->
-            </div>
-        </div>
-    </nav>
+<!-- HEADER -->
+<header>
+  <div class="nav-inner">
+    <a href="/" class="logo"><span class="logo-icon">U</span> Usta Top</a>
+    <a href="register.html" class="nav-btn">Usta bo'lish</a>
+  </div>
+</header>
 
-    <div class="container">
-        <section class="hero">
-            <h1>O'z ishingizning ustasini toping</h1>
-            <p>Uy ishlari, ta'mirlash, tozalash va boshqa xizmatlar uchun ishonchli ustalarni bir zumda toping.</p>
-            
-            <div class="search-container">
-                <div class="search-input">
-                    <i class="ph ph-magnifying-glass"></i>
-                    <input type="text" id="searchInput" placeholder="Ism yoki manzil bo'yicha qidiruv...">
-                </div>
-                <div class="search-input">
-                    <i class="ph ph-briefcase"></i>
-                    <select id="professionFilter">
-                        <option value="">Barcha kasblar</option>
-                    </select>
-                </div>
-                <button class="btn btn-primary" onclick="loadWorkers()">Qidirish</button>
-            </div>
-        </section>
+<!-- HERO -->
+<section class="hero">
+  <h1>O'zingizga mos <span>ishonchli ustani</span> toping</h1>
+  <p>O'zbekiston bo'ylab malakali ustalar xizmatidan foydalaning. Tez, oson va ishonchli.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num" id="heroUstalar">—</div><div class="stat-lbl">Faol ustalar</div></div>
+    <div class="stat"><div class="stat-num" id="heroShaharlar">—</div><div class="stat-lbl">Shaharlar</div></div>
+    <div class="stat"><div class="stat-num" id="heroKasblar">—</div><div class="stat-lbl">Kasb turlari</div></div>
+  </div>
+</section>
 
-        <section id="workers-section">
-            <h2 style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
-                Barcha ustalar
-                <span id="worker-count" class="badge badge-primary">0 topildi</span>
-            </h2>
-            <div class="workers-grid" id="workersGrid">
-                <!-- Workers injected here -->
-            </div>
-            <div id="loading" style="text-align: center; padding: 2rem; color: var(--text-muted);">
-                <i class="ph ph-spinner ph-spin" style="font-size: 2rem;"></i>
-                <p>Yuklanmoqda...</p>
-            </div>
-        </section>
+<!-- FILTERS -->
+<div class="filters-wrap">
+  <div class="filters">
+    <div class="filter-group">
+      <label>Kasb bo'yicha</label>
+      <select id="filtKasb" onchange="applyFilters()">
+        <option value="">Barcha kasblar</option>
+        <option>Santexnik</option>
+        <option>Elektrik</option>
+        <option>Duradgor</option>
+        <option>Bo'yoqchi</option>
+        <option>Rassomchi</option>
+        <option>Boshqa</option>
+      </select>
     </div>
+    <div class="filter-group">
+      <label>Shahar bo'yicha</label>
+      <select id="filtShahar" onchange="applyFilters()">
+        <option value="">Barcha shaharlar</option>
+        <option>Toshkent</option>
+        <option>Samarqand</option>
+        <option>Buxoro</option>
+        <option>Xorazm</option>
+        <option>Andijon</option>
+        <option>Boshqa viloyatlar</option>
+      </select>
+    </div>
+    <button class="filter-clear" onclick="clearFilters()">✕ Tozalash</button>
+  </div>
+</div>
 
-    <script src="/js/main.js"></script>
-    <script>
-        // Home page logic
-        const loadProfessions = async () => {
-            try {
-                const professions = await fetchAPI('/workers/professions');
-                const select = document.getElementById('professionFilter');
-                select.innerHTML = '<option value="">Barcha kasblar</option>';
-                professions.forEach(p => {
-                    select.innerHTML += `<option value="${p}">${p}</option>`;
-                });
-            } catch (err) {
-                console.error(err);
-            }
-        };
+<!-- MAIN CONTENT -->
+<div class="content">
+  <div class="section-header">
+    <h2 class="section-title">Ustalar ro'yxati</h2>
+    <span class="count-badge" id="countBadge">Yuklanmoqda...</span>
+  </div>
+  <div class="grid" id="ustaGrid">
+    <div class="state-box" style="grid-column:1/-1">
+      <div class="spinner"></div>
+      <p>Ustalar yuklanmoqda...</p>
+    </div>
+  </div>
+</div>
 
-        const loadWorkers = async () => {
-            const search = document.getElementById('searchInput').value;
-            const profession = document.getElementById('professionFilter').value;
-            const grid = document.getElementById('workersGrid');
-            const loading = document.getElementById('loading');
-            
-            grid.innerHTML = '';
-            loading.style.display = 'block';
+<!-- MUROJAAT MODAL -->
+<div class="overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="murojaatModal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h2>Murojaat qilish</h2>
+    <p class="modal-sub" id="modalUstaIsm">Ustaga xabar yuboring</p>
+    <form id="murojaatForm" onsubmit="submitMurojaat(event)">
+      <input type="hidden" id="murojaatUstaId" />
+      <div class="form-group">
+        <label>Ismingiz</label>
+        <input type="text" id="mijozIsm" placeholder="Alisher Karimov" required />
+      </div>
+      <div class="form-group">
+        <label>Telefon raqam</label>
+        <input type="tel" id="mijozTel" placeholder="+998901234567" required pattern="\+998\d{9}" />
+      </div>
+      <div class="form-group">
+        <label>Muammo haqida (ixtiyoriy)</label>
+        <textarea id="mijozXabar" placeholder="Qisqacha tushuntiring..."></textarea>
+      </div>
+      <button type="submit" class="submit-btn" id="murojaatBtn">Yuborish</button>
+    </form>
+  </div>
+</div>
 
-            try {
-                let url = '/workers?';
-                if (search) url += `search=${encodeURIComponent(search)}&`;
-                if (profession) url += `profession=${encodeURIComponent(profession)}`;
-                
-                const workers = await fetchAPI(url);
-                loading.style.display = 'none';
-                
-                document.getElementById('worker-count').innerText = `${workers.length} topildi`;
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
-                if (workers.length === 0) {
-                    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">Ustalar topilmadi.</p>';
-                    return;
-                }
+<!-- FOOTER -->
+<footer>
+  <p><strong>Usta Top</strong> — © 2024 Barcha huquqlar himoyalangan.</p>
+  <p style="margin-top:8px;">Admin: <a href="admin.html">Kirish</a></p>
+</footer>
 
-                workers.forEach(w => {
-                    grid.innerHTML += `
-                        <div class="card worker-card">
-                            <div class="worker-header">
-                                <img src="${w.imageUrl}" alt="${w.name}" class="worker-img" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(w.name)}&background=random'">
-                                <div class="worker-info">
-                                    <h3>${w.name}</h3>
-                                    <p><i class="ph ph-map-pin"></i> ${w.address}</p>
-                                </div>
-                            </div>
-                            <div style="flex-grow: 1;">
-                                <span class="badge badge-primary" style="margin-bottom: 0.5rem">${w.profession}</span>
-                                <p style="color: var(--text-muted); font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                                    ${w.bio || "Ma'lumot kiritilmagan"}
-                                </p>
-                            </div>
-                            <div class="worker-stats">
-                                <div class="rating">
-                                    <i class="ph-fill ph-star"></i>
-                                    <span>${w.avgRating}</span>
-                                    <span style="color: var(--text-muted); font-weight: normal;">(${w.reviewCount} izoh)</span>
-                                </div>
-                                <a href="/worker.html?id=${w.id}" class="btn btn-primary" style="padding: 0.4rem 1rem">Batafsil</a>
-                            </div>
-                        </div>
-                    `;
-                });
-            } catch (err) {
-                loading.innerHTML = '<p style="color: var(--danger)">Xatolik yuz berdi</p>';
-            }
-        };
+<script>
+  let allUstalar = [];
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadProfessions();
-            loadWorkers();
+  // ----- Yuklanish -----
+  async function loadUstalar() {
+    try {
+      const { data, error } = await supabase
+        .from('ustalar')
+        .select('*')
+        .eq('tasdiqlangan', true)
+        .order('created_at', { ascending: false });
 
-            // Add enter key listener for search
-            document.getElementById('searchInput').addEventListener('keyup', (e) => {
-                if (e.key === 'Enter') loadWorkers();
-            });
-            document.getElementById('professionFilter').addEventListener('change', loadWorkers);
-        });
-    </script>
+      if (error) throw error;
+      allUstalar = data || [];
+      updateHeroStats();
+      renderUstalar(allUstalar);
+    } catch (err) {
+      document.getElementById('ustaGrid').innerHTML = `
+        <div class="state-box" style="grid-column:1/-1">
+          <div class="icon">⚠️</div>
+          <h3>Ulanish xatosi</h3>
+          <p>Supabase bilan bog'lanib bo'lmadi. config.js ni tekshiring.</p>
+        </div>`;
+      document.getElementById('countBadge').textContent = 'Xato';
+    }
+  }
+
+  function updateHeroStats() {
+    document.getElementById('heroUstalar').textContent = allUstalar.length + '+';
+    const shaharlar = new Set(allUstalar.map(u => u.shahar).filter(Boolean));
+    const kasblar = new Set(allUstalar.map(u => u.kasb).filter(Boolean));
+    document.getElementById('heroShaharlar').textContent = shaharlar.size + '+';
+    document.getElementById('heroKasblar').textContent = kasblar.size + '+';
+  }
+
+  // ----- Render -----
+  function renderUstalar(list) {
+    const grid = document.getElementById('ustaGrid');
+    document.getElementById('countBadge').textContent = list.length + ' ta usta';
+
+    if (!list.length) {
+      grid.innerHTML = `
+        <div class="state-box" style="grid-column:1/-1">
+          <div class="icon">🔍</div>
+          <h3>Ustalar topilmadi</h3>
+          <p>Boshqa filterlarni sinab ko'ring</p>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = list.map(u => `
+      <div class="card">
+        <div class="card-img">
+          ${u.rasm_url
+            ? `<img src="${u.rasm_url}" alt="${u.ism}" onerror="this.parentElement.innerHTML='👷'" />`
+            : `👷`}
+        </div>
+        <div class="card-body">
+          <div class="card-top">
+            <span class="card-name">${u.ism}</span>
+            <span class="card-kasb">${u.kasb}</span>
+          </div>
+          <div class="card-location">📍 ${u.shahar || 'Noaniq'}</div>
+          <div class="stars">
+            ${renderStars(u.reyting)}
+            <span>${u.reyting > 0 ? u.reyting.toFixed(1) : 'Yangi'}</span>
+          </div>
+          ${u.bio ? `<p style="font-size:.88rem;color:#6b7280;margin-top:10px;line-height:1.5;">${u.bio.slice(0,100)}${u.bio.length>100?'...':''}</p>` : ''}
+          <button class="card-btn" onclick="openModal('${u.id}', '${u.ism}')">📞 Murojaat qilish</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderStars(rating) {
+    const r = Math.round(rating);
+    return '★'.repeat(r) + '☆'.repeat(5 - r);
+  }
+
+  // ----- Filterlar -----
+  function applyFilters() {
+    const kasb = document.getElementById('filtKasb').value;
+    const shahar = document.getElementById('filtShahar').value;
+    let filtered = allUstalar;
+    if (kasb) filtered = filtered.filter(u => u.kasb === kasb);
+    if (shahar) filtered = filtered.filter(u => u.shahar === shahar);
+    renderUstalar(filtered);
+  }
+
+  function clearFilters() {
+    document.getElementById('filtKasb').value = '';
+    document.getElementById('filtShahar').value = '';
+    renderUstalar(allUstalar);
+  }
+
+  // ----- Modal -----
+  function openModal(ustaId, ustaIsm) {
+    document.getElementById('murojaatUstaId').value = ustaId;
+    document.getElementById('modalUstaIsm').textContent = ustaIsm + ' ga murojaat';
+    document.getElementById('murojaatForm').reset();
+    document.getElementById('modalOverlay').classList.add('active');
+  }
+
+  function closeModal(e) {
+    if (!e || e.target === document.getElementById('modalOverlay') || !e.target) {
+      document.getElementById('modalOverlay').classList.remove('active');
+    }
+  }
+
+  // ----- Murojaat yuborish -----
+  async function submitMurojaat(e) {
+    e.preventDefault();
+    const btn = document.getElementById('murojaatBtn');
+    btn.disabled = true;
+    btn.textContent = 'Yuborilmoqda...';
+
+    const payload = {
+      usta_id: document.getElementById('murojaatUstaId').value,
+      mijoz_ism: document.getElementById('mijozIsm').value.trim(),
+      mijoz_tel: document.getElementById('mijozTel').value.trim(),
+      xabar: document.getElementById('mijozXabar').value.trim()
+    };
+
+    try {
+      const { error } = await supabase.from('murojaatlar').insert([payload]);
+      if (error) throw error;
+      closeModal();
+      showToast('✅ Murojaat muvaffaqiyatli yuborildi!', 'success');
+    } catch (err) {
+      showToast('❌ Xatolik: ' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Yuborish';
+    }
+  }
+
+  // ----- Toast -----
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast show ${type}`;
+    setTimeout(() => t.className = 'toast', 3500);
+  }
+
+  // ----- Boshlash -----
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  loadUstalar();
+</script>
 </body>
 </html>
