@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usta Top v2 - Admin Panel</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-card i {
+            font-size: 2.5rem;
+            opacity: 0.8;
+        }
+
+        .stat-card h3 {
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .stat-card p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-main);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar glass">
+        <div class="container">
+            <a href="/index.html" class="navbar-brand">
+                <i class="ph-fill ph-wrench"></i> Usta Top <span class="badge badge-warning" style="margin-left: 0.5rem">Admin</span>
+            </a>
+            <div class="navbar-nav" id="navbar-links"></div>
+        </div>
+    </nav>
+
+    <div class="container" style="padding-top: 2rem;">
+        <h2 style="margin-bottom: 1.5rem;">Boshqaruv Paneli</h2>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="ph-fill ph-users"></i>
+                <div>
+                    <h3 id="s-users">0</h3>
+                    <p>Foydalanuvchilar</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="ph-fill ph-wrench"></i>
+                <div>
+                    <h3 id="s-workers">0</h3>
+                    <p>Ustalar</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="ph-fill ph-chat-centered-text"></i>
+                <div>
+                    <h3 id="s-reviews">0</h3>
+                    <p>Izohlar</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3>Ustalar ro'yxati</h3>
+                <button class="btn btn-primary" onclick="openModal()"><i class="ph ph-plus"></i> Usta qo'shish</button>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Rasm</th>
+                            <th>Ism</th>
+                            <th>Kasb</th>
+                            <th>Amallar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="workersTableBody">
+                        <!-- Workers injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Worker Modal -->
+    <div class="modal" id="workerModal">
+        <div class="modal-content">
+            <h3 id="modalTitle" style="margin-bottom: 1.5rem;">Usta qo'shish</h3>
+            <form id="workerForm" onsubmit="saveWorker(event)">
+                <input type="hidden" id="wId">
+                <div class="form-group">
+                    <label class="form-label">Ism *</label>
+                    <input type="text" id="wName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Kasb *</label>
+                    <input type="text" id="wProfession" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Manzil</label>
+                    <input type="text" id="wAddress" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Telefon</label>
+                    <input type="text" id="wPhone" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ma'lumot</label>
+                    <textarea id="wBio" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rasm (ixtiyoriy)</label>
+                    <input type="file" id="wImage" class="form-control" accept="image/*">
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal()">Bekor qilish</button>
+                    <button type="submit" class="btn btn-primary">Saqlash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script>
+        if (getRole() !== 'admin') {
+            window.location.href = '/index.html';
+        }
+
+        const loadStats = async () => {
+            try {
+                const stats = await fetchAPI('/stats');
+                document.getElementById('s-users').innerText = stats.totalUsers;
+                document.getElementById('s-workers').innerText = stats.totalWorkers;
+                document.getElementById('s-reviews').innerText = stats.totalReviews;
+            } catch (err) {}
+        };
+
+        const loadWorkers = async () => {
+            const tbody = document.getElementById('workersTableBody');
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Yuklanmoqda...</td></tr>';
+            try {
+                const workers = await fetchAPI('/workers');
+                tbody.innerHTML = '';
+                if(workers.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Ustalar topilmadi.</td></tr>';
+                    return;
+                }
+                
+                workers.forEach(w => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>#${w.id}</td>
+                            <td><img src="${w.imageUrl}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(w.name)}&background=random'"></td>
+                            <td>${w.name}</td>
+                            <td><span class="badge badge-primary">${w.profession}</span></td>
+                            <td>
+                                <button class="btn btn-outline" style="padding: 0.3rem 0.6rem; font-size: 0.8rem" onclick="editWorker(${w.id})"><i class="ph ph-pencil"></i></button>
+                                <button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.8rem" onclick="deleteWorker(${w.id})"><i class="ph ph-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {}
+        };
+
+        const modal = document.getElementById('workerModal');
+        let editMode = false;
+
+        const openModal = () => {
+            editMode = false;
+            document.getElementById('modalTitle').innerText = "Usta qo'shish";
+            document.getElementById('workerForm').reset();
+            document.getElementById('wId').value = '';
+            modal.classList.add('active');
+        };
+
+        const closeModal = () => {
+            modal.classList.remove('active');
+        };
+
+        const editWorker = async (id) => {
+            try {
+                const worker = await fetchAPI(`/workers/${id}`);
+                document.getElementById('wId').value = worker.id;
+                document.getElementById('wName').value = worker.name;
+                document.getElementById('wProfession').value = worker.profession;
+                document.getElementById('wAddress').value = worker.address;
+                document.getElementById('wPhone').value = worker.phone;
+                document.getElementById('wBio').value = worker.bio;
+                
+                editMode = true;
+                document.getElementById('modalTitle').innerText = "Ustani tahrirlash";
+                modal.classList.add('active');
+            } catch(e) {}
+        };
+
+        const saveWorker = async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('name', document.getElementById('wName').value);
+            formData.append('profession', document.getElementById('wProfession').value);
+            formData.append('address', document.getElementById('wAddress').value);
+            formData.append('phone', document.getElementById('wPhone').value);
+            formData.append('bio', document.getElementById('wBio').value);
+            
+            const imageFile = document.getElementById('wImage').files[0];
+            if (imageFile) formData.append('image', imageFile);
+
+            const id = document.getElementById('wId').value;
+            const url = editMode ? `/workers/${id}` : '/workers';
+            const method = editMode ? 'PUT' : 'POST';
+
+            try {
+                const res = await fetchAPI(url, {
+                    method: method,
+                    body: formData
+                });
+                showToast(res.message);
+                closeModal();
+                loadStats();
+                loadWorkers();
+            } catch (err) {}
+        };
+
+        const deleteWorker = async (id) => {
+            if(!confirm("Haqiqatan ham ushbu ustani o'chirmoqchimisiz?")) return;
+            try {
+                await fetchAPI(`/workers/${id}`, { method: 'DELETE' });
+                showToast("Usta o'chirildi");
+                loadStats();
+                loadWorkers();
+            } catch(e) {}
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+            loadWorkers();
+        });
+    </script>
+</body>
+</html>

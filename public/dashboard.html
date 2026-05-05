@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usta Top v2 - Shaxsiy Kabinet</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar glass">
+        <div class="container">
+            <a href="/index.html" class="navbar-brand">
+                <i class="ph-fill ph-wrench"></i> Usta Top
+            </a>
+            <div class="navbar-nav" id="navbar-links"></div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="dashboard-layout">
+            <aside class="sidebar">
+                <a href="/dashboard.html" class="sidebar-link active"><i class="ph ph-user"></i> Profil</a>
+                <a href="#" class="sidebar-link" onclick="logout()"><i class="ph ph-sign-out"></i> Chiqish</a>
+            </aside>
+            
+            <main>
+                <h2 style="margin-bottom: 2rem;">Shaxsiy Kabinet</h2>
+                
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3>Sizning ma'lumotlaringiz</h3>
+                    <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                        <p><strong>Ism:</strong> <span id="u-name">Yuklanmoqda...</span></p>
+                        <p><strong>Pochta:</strong> <span id="u-email">Yuklanmoqda...</span></p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Parolni o'zgartirish</h3>
+                    <form id="passwordForm" onsubmit="changePassword(event)" style="margin-top: 1rem; max-width: 400px;">
+                        <div class="form-group">
+                            <label class="form-label">Joriy parol</label>
+                            <input type="password" id="currentPassword" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Yangi parol (min 6ta belgi)</label>
+                            <input type="password" id="newPassword" minlength="6" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">O'zgartirish</button>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script>
+        if (!getToken()) window.location.href = '/login.html';
+
+        const loadProfile = async () => {
+            try {
+                const me = await fetchAPI('/auth/me');
+                document.getElementById('u-name').innerText = me.name;
+                document.getElementById('u-email').innerText = me.email;
+            } catch (err) {
+                if(err.message === 'Yaroqsiz token' || err.message === 'Avtorizatsiya talab qilinadi') {
+                    logout();
+                }
+            }
+        };
+
+        const changePassword = async (e) => {
+            e.preventDefault();
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+
+            try {
+                const res = await fetchAPI('/auth/password', {
+                    method: 'POST',
+                    body: { currentPassword, newPassword }
+                });
+                showToast(res.message);
+                document.getElementById('passwordForm').reset();
+            } catch (err) {}
+        };
+
+        document.addEventListener('DOMContentLoaded', loadProfile);
+    </script>
+</body>
+</html>

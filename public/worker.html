@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usta Top v2 - Usta haqida</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .worker-profile {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .worker-profile { grid-template-columns: 1fr; }
+        }
+
+        .profile-img-container {
+            text-align: center;
+        }
+
+        .profile-img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-light);
+            margin-bottom: 1rem;
+        }
+
+        .reviews-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .review-card {
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-author {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 0.2rem;
+            cursor: pointer;
+            color: var(--border);
+            font-size: 1.5rem;
+        }
+
+        .star-rating .ph-fill {
+            color: var(--warning);
+        }
+
+        .delete-review {
+            color: var(--danger);
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar glass">
+        <div class="container">
+            <a href="/index.html" class="navbar-brand">
+                <i class="ph-fill ph-wrench"></i> Usta Top
+            </a>
+            <div class="navbar-nav" id="navbar-links">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="loading" style="text-align: center; padding: 4rem;">
+            <i class="ph ph-spinner ph-spin" style="font-size: 2rem; color: var(--primary);"></i>
+        </div>
+        
+        <div id="worker-content" style="display: none;">
+            <a href="/index.html" class="btn btn-outline" style="margin-top: 2rem; display: inline-flex;"><i class="ph ph-arrow-left"></i> Orqaga</a>
+            
+            <div class="worker-profile">
+                <div class="card profile-img-container">
+                    <img src="" id="w-img" class="profile-img" alt="Usta rati" onerror="this.src='https://ui-avatars.com/api/?name=Usta&background=random'">
+                    <h2 id="w-name">Usta Ismi</h2>
+                    <span id="w-profession" class="badge badge-primary" style="margin: 0.5rem 0;">Kasbi</span>
+                    <div class="rating" style="justify-content: center; font-size: 1.2rem; margin-top: 0.5rem;">
+                        <i class="ph-fill ph-star"></i>
+                        <span id="w-rating">0.0</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Ma'lumot</h3>
+                    <p style="color: var(--text-muted); margin-top: 0.5rem; margin-bottom: 1.5rem;" id="w-bio"></p>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="ph ph-map-pin" style="color: var(--primary); font-size: 1.2rem;"></i>
+                            <span id="w-address">Manzil</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="ph ph-phone" style="color: var(--primary); font-size: 1.2rem;"></i>
+                            <span id="w-phone">Telefon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reviews-section">
+                <h3>Izohlar (<span id="w-review-count">0</span>)</h3>
+                
+                <div id="review-form-container" class="card" style="margin: 1.5rem 0; display: none;">
+                    <h4>Izoh yozish</h4>
+                    <form id="reviewForm" onsubmit="submitReview(event)" style="margin-top: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Baho qo'ying</label>
+                            <div class="star-rating" id="starSelector">
+                                <i class="ph ph-star" data-val="1"></i>
+                                <i class="ph ph-star" data-val="2"></i>
+                                <i class="ph ph-star" data-val="3"></i>
+                                <i class="ph ph-star" data-val="4"></i>
+                                <i class="ph ph-star" data-val="5"></i>
+                            </div>
+                            <input type="hidden" id="ratingVal" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Izohingiz</label>
+                            <textarea id="reviewText" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Saqlash</button>
+                    </form>
+                </div>
+                <div id="auth-prompt" style="margin: 1.5rem 0; padding: 1rem; background: var(--primary-light); border-radius: var(--radius-md);">
+                    Izoh qoldirish uchun <a href="/login.html">tizimga kiring</a>.
+                </div>
+
+                <div id="reviews-list">
+                    <!-- Reviews injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const workerId = urlParams.get('id');
+
+        // Star rating UI
+        const stars = document.querySelectorAll('#starSelector i');
+        const ratingInput = document.getElementById('ratingVal');
+        
+        stars.forEach(star => {
+            star.addEventListener('click', (e) => {
+                const val = parseInt(e.target.dataset.val);
+                ratingInput.value = val;
+                stars.forEach((s, idx) => {
+                    if (idx < val) {
+                        s.classList.remove('ph');
+                        s.classList.add('ph-fill');
+                    } else {
+                        s.classList.remove('ph-fill');
+                        s.classList.add('ph');
+                    }
+                });
+            });
+        });
+
+        const loadWorker = async () => {
+            if (!workerId) {
+                window.location.href = '/index.html';
+                return;
+            }
+
+            try {
+                const worker = await fetchAPI(`/workers/${workerId}`);
+                document.getElementById('w-name').innerText = worker.name;
+                document.getElementById('w-profession').innerText = worker.profession;
+                document.getElementById('w-bio').innerText = worker.bio || "Ma'lumot kiritilmagan";
+                document.getElementById('w-address').innerText = worker.address;
+                document.getElementById('w-phone').innerText = worker.phone || "Kiritilmagan";
+                document.getElementById('w-img').src = worker.imageUrl;
+                document.getElementById('w-rating').innerText = worker.avgRating;
+                document.getElementById('w-review-count').innerText = worker.reviewCount;
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('worker-content').style.display = 'block';
+
+                // Check auth for review form
+                if (getToken()) {
+                    document.getElementById('auth-prompt').style.display = 'none';
+                    document.getElementById('review-form-container').style.display = 'block';
+                }
+
+                loadReviews();
+            } catch (err) {
+                showToast("Usta topilmadi", "error");
+            }
+        };
+
+        const loadReviews = async () => {
+            const list = document.getElementById('reviews-list');
+            try {
+                const reviews = await fetchAPI(`/workers/${workerId}/reviews`);
+                list.innerHTML = '';
+                if (reviews.length === 0) {
+                    list.innerHTML = "<p style='color: var(--text-muted)'>Hozircha izohlar yo'q.</p>";
+                    return;
+                }
+
+                const myRole = getRole();
+                // We need to fetch 'me' to know my user ID if we want to show delete button for own reviews
+                // Alternatively, backend lets us delete if it's ours. We will just try. For UX, we can just show delete button if admin.
+                let myId = null;
+                if(getToken() && myRole !== 'admin') {
+                    try {
+                        const me = await fetchAPI('/auth/me');
+                        myId = me.id;
+                    }catch(e){}
+                }
+
+                reviews.forEach(r => {
+                    let starsHtml = '';
+                    for(let i=0; i<5; i++) {
+                        starsHtml += `<i class="ph${i < r.rating ? '-fill' : ''} ph-star" style="color: var(--warning)"></i>`;
+                    }
+
+                    const date = new Date(r.createdAt).toLocaleDateString('uz-UZ', { year: 'numeric', month: 'long', day: 'numeric' });
+                    
+                    let deleteBtn = '';
+                    if (myRole === 'admin' || r.userId === myId) {
+                        deleteBtn = `<button class="delete-review" onclick="deleteReview(${r.id})"><i class="ph ph-trash"></i></button>`;
+                    }
+
+                    list.innerHTML += `
+                        <div class="review-card">
+                            <div class="review-header">
+                                <span class="review-author">${r.userName}</span>
+                                ${deleteBtn}
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                <div style="display: flex;">${starsHtml}</div>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">${date}</span>
+                            </div>
+                            <p>${r.text}</p>
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        const submitReview = async (e) => {
+            e.preventDefault();
+            const rating = parseInt(ratingInput.value);
+            const text = document.getElementById('reviewText').value;
+
+            if(rating === 0) {
+                showToast("Iltimos, baho qo'ying", "error");
+                return;
+            }
+
+            try {
+                await fetchAPI(`/workers/${workerId}/reviews`, {
+                    method: 'POST',
+                    body: { rating, text }
+                });
+                showToast("Izoh saqlandi!");
+                document.getElementById('reviewForm').reset();
+                ratingInput.value = 0;
+                stars.forEach(s => { s.classList.remove('ph-fill'); s.classList.add('ph'); });
+                loadWorker(); // reload to get new avgRating and reviewCount
+            } catch (err) {
+                // error handled by fetchAPI
+            }
+        };
+
+        const deleteReview = async (reviewId) => {
+            if(!confirm("Izohni o'chirmoqchimisiz?")) return;
+            try {
+                await fetchAPI(`/workers/${workerId}/reviews/${reviewId}`, { method: 'DELETE' });
+                showToast("Izoh o'chirildi");
+                loadWorker();
+            } catch (err) {}
+        };
+
+        document.addEventListener('DOMContentLoaded', loadWorker);
+    </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usta Top v2 - Kirish</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .auth-container {
+            max-width: 400px;
+            margin: 4rem auto;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar glass">
+        <div class="container">
+            <a href="/index.html" class="navbar-brand">
+                <i class="ph-fill ph-wrench"></i> Usta Top
+            </a>
+            <div class="navbar-nav" id="navbar-links"></div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card auth-container">
+            <h2 style="text-align: center; margin-bottom: 1.5rem;">Tizimga Kirish</h2>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Elektron pochta</label>
+                    <input type="email" id="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Parol</label>
+                    <input type="password" id="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Kirish</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem; color: var(--text-muted);">
+                Akkountingiz yo'qmi? <a href="/register.html">Ro'yxatdan o'tish</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script>
+        if (getToken()) window.location.href = '/dashboard.html';
+
+        const handleLogin = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetchAPI('/auth/login', {
+                    method: 'POST',
+                    body: { email, password }
+                });
+                
+                setToken(res.token, res.role);
+                showToast(res.message);
+                
+                setTimeout(() => {
+                    if(res.role === 'admin') window.location.href = '/admin.html';
+                    else window.location.href = '/dashboard.html';
+                }, 1000);
+            } catch (err) {}
+        };
+    </script>
+</body>
+</html>
