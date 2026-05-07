@@ -151,6 +151,7 @@
           <button class="lang-option" onclick="changeLang('en')">🇺🇸 English</button>
         </div>
       </div>
+      <a href="register.html" class="nav-btn" data-i18n="navUstaBolish">Usta bo'lish</a>
     </div>
   </div>
 </header>
@@ -250,6 +251,7 @@
     <div class="footer-col">
       <h4 data-i18n="links">Havolalar</h4>
       <p><a href="admin.html">Admin Panel</a></p>
+      <p><a href="register.html" data-i18n="navUstaBolish">Usta bo'lish</a></p>
     </div>
   </div>
   <div class="footer-bottom">
@@ -345,53 +347,22 @@
     });
   }
 
-  function formatUzDate(dateStr) {
-    if (!dateStr) return "";
-    const d = new Date(dateStr);
-    const months = ["yanvar", "fevral", "mart", "aprel", "may", "iyun", "iyul", "avgust", "sentabr", "oktabr", "noyabr", "dekabr"];
-    return `📅 ${d.getFullYear()}-yil, ${months[d.getMonth()]} oyidan beri`;
-  }
-
   function renderUstalar(list) {
     const grid = document.getElementById('ustaGrid');
     document.getElementById('countBadge').textContent = list.length + ' ' + i18n[CURRENT_LANG].items;
-    grid.innerHTML = list.map(u => {
-      const telDigits = u.telefon.replace(/\D/g, '');
-      const waLink = `https://wa.me/998${telDigits.slice(-9)}`;
-      
-      return `
+    grid.innerHTML = list.map(u => `
       <div class="card">
-        <div class="card-img">
-          ${u.rasm_url ? `<img src="${u.rasm_url}" onerror="this.parentElement.innerHTML='👷'">` : '👷'}
-          <div class="card-badge">Top</div>
-        </div>
+        <div class="card-img">${u.rasm_url ? `<img src="${u.rasm_url}" onerror="this.parentElement.innerHTML='👷'">` : '👷'}</div>
         <div class="card-body">
           <div class="card-top">
             <span class="card-name">${u.ism}</span>
-            <span class="card-rating">⭐ 5.0</span>
+            <span class="card-kasb">${u.kasb}</span>
           </div>
-          <div class="card-kasb">${u.kasb}</div>
           <div class="card-location">📍 ${u.shahar || i18n[CURRENT_LANG].cityUnknown}</div>
-          <div class="card-joined">${formatUzDate(u.joined_date || u.created_at)}</div>
-          
-          <div class="card-contact-grid">
-            <a href="tel:${u.telefon}" class="contact-btn btn-tel">
-              <span>📞</span>
-              <span>Telefon</span>
-            </a>
-            ${u.telegram ? `
-            <a href="https://t.me/${u.telegram.replace('@','')}" target="_blank" class="contact-btn btn-tg">
-              <span>✈️</span>
-              <span>Telegram</span>
-            </a>` : ''}
-            <a href="${waLink}" target="_blank" class="contact-btn btn-wa">
-              <span>💬</span>
-              <span>WhatsApp</span>
-            </a>
-          </div>
+          <button class="card-btn" onclick="openModal('${u.id}', '${u.ism}')">${i18n[CURRENT_LANG].btnCall}</button>
         </div>
       </div>
-    `}).join('');
+    `).join('');
   }
 
   function applyFilters() {
