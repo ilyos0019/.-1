@@ -268,6 +268,14 @@
               <input type="text" id="fTelfon" required placeholder="+998901234567" />
             </div>
             <div class="form-group">
+              <label for="fTelegram" data-i18n="fTelegram">Telegram username</label>
+              <input type="text" id="fTelegram" placeholder="username" />
+            </div>
+            <div class="form-group">
+              <label for="fJoinedDate" data-i18n="fJoinedDate">Qo'shilgan sana</label>
+              <input type="date" id="fJoinedDate" />
+            </div>
+            <div class="form-group">
               <label for="fShahar" data-i18n="fCity">Shahar / Viloyat</label>
               <select id="fShahar" aria-label="Select City or Region">
                 <option value="" data-i18n="choose">Tanlang...</option>
@@ -382,6 +390,14 @@
           <input type="text" id="eTelfon" required />
         </div>
         <div class="form-group">
+          <label for="eTelegram" data-i18n="fTelegram">Telegram username</label>
+          <input type="text" id="eTelegram" placeholder="username" />
+        </div>
+        <div class="form-group">
+          <label for="eJoinedDate" data-i18n="fJoinedDate">Qo'shilgan sana</label>
+          <input type="date" id="eJoinedDate" />
+        </div>
+        <div class="form-group">
           <label for="eShahar" data-i18n="fCity">Shahar</label>
           <select id="eShahar" aria-label="Select City">
             <option>Toshkent shahri</option>
@@ -435,6 +451,7 @@
       language: "Til", logout: "Chiqish", dashTitle: "Dashboard", statTotal: "Jami ustalar", statApproved: "Tasdiqlangan", statPending: "Kutilmoqda", statRequests: "Murojaatlar",
       ustalarTitle: "Ustalar", ustalarList: "Barcha ustalar", thName: "Ism", thJob: "Kasb", thPhone: "Telefon", thCity: "Shahar", thStatus: "Holat", thAction: "Amal",
       addTitle: "Yangi usta qo'shish", fName: "Ism familiya *", fJob: "Kasb *", fPhone: "Telefon *", fCity: "Shahar / Viloyat", fImage: "Rasm tanlash", imageHint: "Galereyadan tanlang", fBio: "Bio (o'zi haqida)", fApproveNow: "Darhol tasdiqlash",
+      fTelegram: "Telegram username", fJoinedDate: "Qo'shilgan sana",
       btnSave: "Saqlash", reqTitle: "Murojaatlar", reqList: "Barcha murojaatlar", thMijoz: "Mijoz", thWorker: "Usta", thMsg: "Xabar", choose: "Tanlang...",
       settingsTitle: "Sozlamalar", changePass: "Admin parolini o'zgartirish", newPass: "Yangi parol", confirmPass: "Parolni tasdiqlang", btnUpdate: "Yangilash",
       editTitle: "Ustani tahrirlash", statusApproved: "✓ Tasdiqlangan", statusPending: "⏳ Kutilmoqda",
@@ -595,6 +612,8 @@
       kasb: document.getElementById('fKasb').value,
       telefon: document.getElementById('fTelfon').value,
       shahar: document.getElementById('fShahar').value,
+      telegram: document.getElementById('fTelegram').value,
+      joined_date: document.getElementById('fJoinedDate').value || new Date().toISOString().split('T')[0],
       rasm_url: "https://ui-avatars.com/api/?name=" + encodeURIComponent(document.getElementById('fIsm').value) + "&background=random",
       bio: document.getElementById('fBio').value,
       tasdiqlangan: document.getElementById('fTasdiqlangan').checked
@@ -615,6 +634,8 @@
       document.getElementById('eKasb').value = data.kasb;
       document.getElementById('eTelfon').value = data.telefon;
       document.getElementById('eShahar').value = data.shahar || "";
+      document.getElementById('eTelegram').value = data.telegram || "";
+      document.getElementById('eJoinedDate').value = data.joined_date || (data.created_at ? data.created_at.split('T')[0] : "");
       document.getElementById('eBio').value = data.bio || "";
       
       const preview = document.getElementById('ePreviewBox');
@@ -640,6 +661,8 @@
       kasb: document.getElementById('eKasb').value,
       telefon: document.getElementById('eTelfon').value,
       shahar: document.getElementById('eShahar').value,
+      telegram: document.getElementById('eTelegram').value,
+      joined_date: document.getElementById('eJoinedDate').value,
       bio: document.getElementById('eBio').value
     };
     await supabaseAdmin.from('ustalar').update(payload).eq('id', id);
@@ -686,6 +709,11 @@
     applyTheme();
     loadStats();
     loadUstalar();
+    
+    // Set default joined date to today
+    const today = new Date().toISOString().split('T')[0];
+    const dateInput = document.getElementById('fJoinedDate');
+    if (dateInput) dateInput.value = today;
   }
 
   if (sessionStorage.getItem('adminAuth') === '1') {
