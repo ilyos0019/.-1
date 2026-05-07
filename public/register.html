@@ -9,79 +9,71 @@
   <script src="config.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
     :root {
       --primary: #2563EB; --primary-dark: #1d4ed8; --primary-light: #eff6ff;
-      --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
-      --gray-500: #6b7280; --gray-700: #374151; --gray-900: #111827;
+      --bg: #f9fafb; --card-bg: #ffffff; --text: #111827; --text-muted: #6b7280;
+      --border: #e5e7eb; --nav-bg: #ffffff;
       --green: #10b981; --red: #ef4444;
     }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--gray-50); color: var(--gray-900); min-height: 100vh; display: flex; flex-direction: column; }
 
-    header { background: #fff; border-bottom: 1px solid var(--gray-200); }
+    [data-theme='dark'] {
+      --bg: #0f172a; --card-bg: #1e293b; --text: #f1f5f9; --text-muted: #94a3b8;
+      --border: #334155; --nav-bg: #1e293b;
+    }
+
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; transition: 0.3s; }
+
+    header { background: var(--nav-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; transition: 0.3s; }
     .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 20px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
     .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
     .logo-icon { background: var(--primary); color: #fff; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; }
-    .back-link { color: var(--gray-500); text-decoration: none; font-size: .92rem; }
+    
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .control-btn { background: var(--bg); border: 1.5px solid var(--border); padding: 8px 12px; border-radius: 10px; cursor: pointer; color: var(--text); font-size: 0.9rem; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+    .lang-select { background: none; border: none; color: inherit; font-family: inherit; font-size: inherit; cursor: pointer; outline: none; }
+    .back-link { color: var(--text-muted); text-decoration: none; font-size: .92rem; }
     .back-link:hover { color: var(--primary); }
 
     .hero-mini { background: linear-gradient(135deg, #1e40af, #3b82f6); color: #fff; padding: 48px 20px; text-align: center; }
     .hero-mini h1 { font-size: clamp(1.6rem, 4vw, 2.5rem); font-weight: 800; margin-bottom: 10px; }
     .hero-mini p { opacity: .9; font-size: 1rem; }
 
-    .form-wrap { max-width: 680px; margin: 40px auto; padding: 0 20px; flex: 1; }
+    .form-wrap { max-width: 680px; margin: 40px auto; padding: 0 20px; flex: 1; width: 100%; }
 
-    /* STEPS */
-    .steps { display: flex; justify-content: center; gap: 0; margin-bottom: 36px; }
-    .step { display: flex; align-items: center; gap: 8px; font-size: .85rem; color: var(--gray-500); }
-    .step-num { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--gray-200); display: grid; place-items: center; font-weight: 700; font-size: .8rem; }
-    .step.active .step-num { background: var(--primary); color: #fff; border-color: var(--primary); }
-    .step.active { color: var(--primary); font-weight: 600; }
-    .step.done .step-num { background: var(--green); color: #fff; border-color: var(--green); }
-    .step-line { width: 40px; height: 2px; background: var(--gray-200); margin: 0 4px; }
-    .step-line.done { background: var(--green); }
-
-    .card { background: #fff; border-radius: 20px; border: 1px solid var(--gray-200); padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+    .card { background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border); padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
     .card h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 24px; }
 
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-group.full { grid-column: 1 / -1; }
-    .form-group label { font-size: .83rem; font-weight: 600; color: var(--gray-700); }
+    .form-group label { font-size: .83rem; font-weight: 600; color: var(--text); }
     .form-group input, .form-group select, .form-group textarea {
-      border: 1.5px solid var(--gray-200); border-radius: 10px; padding: 12px 14px;
-      font-size: .95rem; outline: none; transition: border .2s, background .2s; background: var(--gray-50);
+      border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px;
+      font-size: .95rem; outline: none; transition: 0.2s; background: var(--bg); color: var(--text);
     }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      border-color: var(--primary); background: var(--primary-light);
-    }
-    .form-group input.error, .form-group select.error { border-color: var(--red); background: #fef2f2; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); }
     .field-err { font-size: .78rem; color: var(--red); }
     .form-group textarea { resize: vertical; min-height: 100px; }
-
-    .hint { font-size: .8rem; color: var(--gray-500); margin-top: 3px; }
+    .hint { font-size: .8rem; color: var(--text-muted); margin-top: 3px; }
 
     .form-footer { display: flex; gap: 12px; margin-top: 28px; align-items: center; }
-    .submit-btn { flex: 1; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background .2s; }
+    .submit-btn { flex: 1; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
     .submit-btn:hover { background: var(--primary-dark); }
-    .submit-btn:disabled { opacity: .6; cursor: not-allowed; }
 
-    /* SUCCESS */
     .success-box { text-align: center; padding: 20px; }
     .success-icon { font-size: 5rem; margin-bottom: 20px; }
     .success-box h2 { font-size: 1.8rem; font-weight: 800; color: var(--green); margin-bottom: 12px; }
-    .success-box p { color: var(--gray-500); font-size: .95rem; line-height: 1.6; margin-bottom: 28px; }
+    .success-box p { color: var(--text-muted); font-size: .95rem; line-height: 1.6; margin-bottom: 28px; }
     .home-btn { display: inline-block; padding: 13px 32px; background: var(--primary); color: #fff; border-radius: 50px; font-weight: 700; text-decoration: none; }
-    .home-btn:hover { background: var(--primary-dark); }
 
-    /* ERROR ALERT */
-    .alert-error { background: #fef2f2; border: 1px solid #fecaca; color: var(--red); padding: 12px 16px; border-radius: 10px; font-size: .9rem; margin-bottom: 20px; }
-
-    footer { background: var(--gray-900); color: #9ca3af; text-align: center; padding: 24px; margin-top: 60px; font-size: .88rem; }
-    footer a { color: #60a5fa; text-decoration: none; }
+    footer { background: var(--card-bg); color: var(--text-muted); text-align: center; padding: 24px; margin-top: 60px; font-size: .88rem; border-top: 1px solid var(--border); }
+    footer a { color: var(--primary); text-decoration: none; }
 
     @media (max-width: 560px) {
       .form-grid { grid-template-columns: 1fr; }
-      .form-group.full { grid-column: 1; }
+      .nav-inner { padding: 0 12px; }
+      .back-link { display: none; }
     }
   </style>
 </head>
@@ -90,35 +82,39 @@
 <header>
   <div class="nav-inner">
     <a href="index.html" class="logo"><span class="logo-icon">U</span> Usta Top</a>
-    <a href="index.html" class="back-link">← Bosh sahifaga qaytish</a>
+    <div class="nav-right">
+      <button class="control-btn" onclick="toggleTheme()" id="themeToggle">🌙</button>
+      <div class="control-btn">
+        🌐 <select class="lang-select" id="langSelect" onchange="changeLang(this.value)" aria-label="Language">
+          <option value="uz">UZ</option>
+          <option value="ru">RU</option>
+          <option value="en">EN</option>
+        </select>
+      </div>
+      <a href="index.html" class="back-link" data-i18n="backLink">← Bosh sahifaga qaytish</a>
+    </div>
   </div>
 </header>
 
 <div class="hero-mini">
-  <h1>Usta bo'lib ro'yxatdan o'ting</h1>
-  <p>Platformaga qo'shiling va yangi mijozlar toping — bepul!</p>
+  <h1 data-i18n="heroTitle">Usta bo'lib ro'yxatdan o'ting</h1>
+  <p data-i18n="heroSub">Platformaga qo'shiling va yangi mijozlar toping — bepul!</p>
 </div>
 
 <div class="form-wrap">
-  <!-- FORM CARD -->
   <div class="card" id="formCard">
-    <h2>Ma'lumotlaringizni kiriting</h2>
-
-    <div id="alertBox" class="alert-error" style="display:none"></div>
-
+    <h2 data-i18n="formTitle">Ma'lumotlaringizni kiriting</h2>
     <form id="regForm" onsubmit="submitForm(event)">
       <div class="form-grid">
-
         <div class="form-group full">
-          <label>Ism familiyangiz *</label>
+          <label for="ism" data-i18n="fName">Ism familiyangiz *</label>
           <input type="text" id="ism" placeholder="Masalan: Alisher Usmonov" required minlength="3" />
           <span class="field-err" id="errIsm"></span>
         </div>
-
         <div class="form-group">
-          <label>Kasb *</label>
-          <select id="kasb" required>
-            <option value="">— Tanlang —</option>
+          <label for="kasb" data-i18n="fJob">Kasb *</label>
+          <select id="kasb" required aria-label="Select Job">
+            <option value="" data-i18n="choose">— Tanlang —</option>
             <option>Santexnik</option>
             <option>Elektrik</option>
             <option>Duradgor</option>
@@ -128,147 +124,146 @@
           </select>
           <span class="field-err" id="errKasb"></span>
         </div>
-
         <div class="form-group">
-          <label>Shahar / Viloyat *</label>
-          <select id="shahar" required>
-            <option value="">— Tanlang —</option>
-            <option>Toshkent</option>
-            <option>Samarqand</option>
-            <option>Buxoro</option>
-            <option>Xorazm</option>
+          <label for="shahar" data-i18n="fCity">Shahar / Viloyat *</label>
+          <select id="shahar" required aria-label="Select City">
+            <option value="" data-i18n="choose">— Tanlang —</option>
+            <option>Toshkent shahri</option>
+            <option>Toshkent viloyati</option>
             <option>Andijon</option>
-            <option>Namangan</option>
+            <option>Buxoro</option>
             <option>Farg'ona</option>
-            <option>Qashqadaryo</option>
-            <option>Surxondaryo</option>
             <option>Jizzax</option>
-            <option>Sirdaryo</option>
+            <option>Xorazm</option>
+            <option>Namangan</option>
             <option>Navoiy</option>
+            <option>Qashqadaryo</option>
+            <option>Samarqand</option>
+            <option>Sirdaryo</option>
+            <option>Surxondaryo</option>
             <option>Qoraqalpog'iston</option>
-            <option>Boshqa viloyatlar</option>
           </select>
         </div>
-
         <div class="form-group full">
-          <label>Telefon raqam *</label>
+          <label for="telefon" data-i18n="fPhone">Telefon raqam *</label>
           <input type="text" id="telefon" placeholder="+998901234567" required />
-          <span class="hint">+998 bilan boshlang, 12 belgidan iborat bo'lsin</span>
+          <span class="hint" data-i18n="phoneHint">+998 bilan boshlang, 12 belgidan iborat bo'lsin</span>
           <span class="field-err" id="errTel"></span>
         </div>
-
         <div class="form-group full">
-          <label>Rasm URL (ixtiyoriy)</label>
+          <label for="rasm" data-i18n="fImage">Rasm URL (ixtiyoriy)</label>
           <input type="url" id="rasm" placeholder="https://example.com/rasm.jpg" />
-          <span class="hint">LinkedIn, Instagram yoki boshqa saytdagi rasim havolasi</span>
+          <span class="hint" data-i18n="imageHint">Rasm havolasi</span>
         </div>
-
         <div class="form-group full">
-          <label>O'zingiz haqida *</label>
-          <textarea id="bio" placeholder="Necha yillik tajribangiz bor? Qanday ishlarni qila olasiz? Narxlaringiz qanday?..." required minlength="20"></textarea>
-          <span class="hint">Kamida 20 belgi kiriting</span>
+          <label for="bio" data-i18n="fBio">O'zingiz haqida *</label>
+          <textarea id="bio" required minlength="20"></textarea>
+          <span class="hint" data-i18n="bioHint">Kamida 20 belgi kiriting</span>
           <span class="field-err" id="errBio"></span>
         </div>
-
       </div>
-
       <div class="form-footer">
-        <button type="submit" class="submit-btn" id="submitBtn">
-          Ro'yxatdan o'tish →
-        </button>
+        <button type="submit" class="submit-btn" id="submitBtn" data-i18n="btnSubmit">Ro'yxatdan o'tish →</button>
       </div>
     </form>
   </div>
 
-  <!-- SUCCESS BOX (yashirin) -->
   <div class="card" id="successCard" style="display:none">
     <div class="success-box">
       <div class="success-icon">🎉</div>
-      <h2>Arizangiz qabul qilindi!</h2>
-      <p>
-        Tabriklaymiz! Sizning ma'lumotlaringiz muvaffaqiyatli yuborildi.<br />
-        Admin ko'rib chiqib, tez orada profilingizni tasdiqlaydi.<br />
-        Tasdiqlangandan so'ng bosh sahifada ko'rinasiz.
-      </p>
-      <a href="index.html" class="home-btn">Bosh sahifaga qaytish</a>
+      <h2 data-i18n="successTitle">Arizangiz qabul qilindi!</h2>
+      <p data-i18n="successMsg">Ma'lumotlaringiz muvaffaqiyatli yuborildi. Admin tasdiqlagandan so'ng ko'rinasiz.</p>
+      <a href="index.html" class="home-btn" data-i18n="backHome">Bosh sahifaga qaytish</a>
     </div>
   </div>
 </div>
 
 <footer>
-  <p>© 2024 <strong style="color:#fff">Usta Top</strong> — <a href="admin.html">Admin Panel</a></p>
+  <p>© 2024 <strong style="color:var(--text)">Usta Top</strong> — <a href="admin.html">Admin Panel</a></p>
 </footer>
 
 <script>
-  function validatePhone(tel) {
-    return /^\+998\d{9}$/.test(tel.replace(/\s/g, ''));
+  let CURRENT_LANG = localStorage.getItem('siteLang') || 'uz';
+  let THEME = localStorage.getItem('siteTheme') || 'light';
+
+  const i18n = {
+    uz: {
+      backLink: "← Bosh sahifaga qaytish", heroTitle: "Usta bo'lib ro'yxatdan o'ting", heroSub: "Platformaga qo'shiling va yangi mijozlar toping — bepul!",
+      formTitle: "Ma'lumotlaringizni kiriting", fName: "Ism familiyangiz *", fJob: "Kasb *", choose: "— Tanlang —",
+      fCity: "Shahar / Viloyat *", fPhone: "Telefon raqam *", phoneHint: "+998 bilan boshlang, 12 belgidan iborat bo'lsin",
+      fImage: "Rasm URL (ixtiyoriy)", imageHint: "Rasm havolasi", fBio: "O'zingiz haqida *", bioHint: "Kamida 20 belgi kiriting",
+      btnSubmit: "Ro'yxatdan o'tish →", successTitle: "Arizangiz qabul qilindi!",
+      successMsg: "Ma'lumotlaringiz muvaffaqiyatli yuborildi. Admin ko'rib chiqib, profilingizni tasdiqlaydi.", backHome: "Bosh sahifaga qaytish"
+    },
+    ru: {
+      backLink: "← Вернуться на главную", heroTitle: "Зарегистрируйтесь как мастер", heroSub: "Присоединяйтесь к платформе и находите новых клиентов — бесплатно!",
+      formTitle: "Введите свои данные", fName: "Имя и фамилия *", fJob: "Профессия *", choose: "— Выберите —",
+      fCity: "Город / Область *", fPhone: "Номер телефона *", phoneHint: "Начните с +998, 12 символов",
+      fImage: "URL фото (опционально)", imageHint: "Ссылка на фото", fBio: "О себе *", bioHint: "Минимум 20 символов",
+      btnSubmit: "Зарегистрироваться →", successTitle: "Заявка принята!",
+      successMsg: "Ваши данные успешно отправлены. После проверки админом вы появитесь на главной.", backHome: "Вернуться на главную"
+    },
+    en: {
+      backLink: "← Back to home", heroTitle: "Register as a Master", heroSub: "Join the platform and find new customers — for free!",
+      formTitle: "Enter your details", fName: "Full name *", fJob: "Profession *", choose: "— Choose —",
+      fCity: "City / Region *", fPhone: "Phone number *", phoneHint: "Start with +998, 12 characters",
+      fImage: "Image URL (optional)", imageHint: "Link to image", fBio: "About yourself *", bioHint: "At least 20 characters",
+      btnSubmit: "Register Now →", successTitle: "Application received!",
+      successMsg: "Your information has been sent successfully. You will appear on the main page after admin approval.", backHome: "Back to Home"
+    }
+  };
+
+  function toggleTheme() {
+    THEME = THEME === 'light' ? 'dark' : 'light';
+    localStorage.setItem('siteTheme', THEME);
+    applyTheme();
+  }
+  function applyTheme() {
+    document.documentElement.setAttribute('data-theme', THEME);
+    document.getElementById('themeToggle').textContent = THEME === 'light' ? '🌙' : '☀️';
+  }
+  function changeLang(lang) {
+    CURRENT_LANG = lang;
+    localStorage.setItem('siteLang', lang);
+    applyLang();
+  }
+  function applyLang() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (i18n[CURRENT_LANG][key]) el.textContent = i18n[CURRENT_LANG][key];
+    });
+    document.getElementById('langSelect').value = CURRENT_LANG;
   }
 
   async function submitForm(e) {
     e.preventDefault();
-
-    // Clear errors
-    ['errIsm','errKasb','errTel','errBio'].forEach(id => document.getElementById(id).textContent = '');
-    document.getElementById('alertBox').style.display = 'none';
-
-    const ism = document.getElementById('ism').value.trim();
-    const kasb = document.getElementById('kasb').value;
-    const shahar = document.getElementById('shahar').value;
-    const telefon = document.getElementById('telefon').value.trim();
-    const rasm_url = document.getElementById('rasm').value.trim() || null;
-    const bio = document.getElementById('bio').value.trim();
-
-    let valid = true;
-
-    if (ism.length < 3) {
-      document.getElementById('errIsm').textContent = 'Ism kamida 3 ta belgi bo\'lsin';
-      valid = false;
-    }
-    if (!kasb) {
-      document.getElementById('errKasb').textContent = 'Kasbni tanlang';
-      valid = false;
-    }
-    if (!validatePhone(telefon)) {
-      document.getElementById('errTel').textContent = 'Telefon +998XXXXXXXXX formatida bo\'lsin (12 raqam)';
-      valid = false;
-    }
-    if (bio.length < 20) {
-      document.getElementById('errBio').textContent = 'Bio kamida 20 ta belgi bo\'lsin';
-      valid = false;
-    }
-
-    if (!valid) return;
-
     const btn = document.getElementById('submitBtn');
     btn.disabled = true;
-    btn.textContent = 'Yuborilmoqda...';
+    btn.textContent = '...';
 
-    try {
-      const { error } = await supabaseClient.from('ustalar').insert([{
-        ism, kasb, shahar, telefon, rasm_url, bio,
-        tasdiqlangan: false
-      }]);
+    const payload = {
+      ism: document.getElementById('ism').value.trim(),
+      kasb: document.getElementById('kasb').value,
+      shahar: document.getElementById('shahar').value,
+      telefon: document.getElementById('telefon').value.trim(),
+      rasm_url: document.getElementById('rasm').value.trim() || null,
+      bio: document.getElementById('bio').value.trim(),
+      tasdiqlangan: false
+    };
 
-      if (error) throw error;
-
+    const { error } = await supabaseClient.from('ustalar').insert([payload]);
+    if (error) {
+      alert("Xato: " + error.message);
+      btn.disabled = false;
+      btn.textContent = 'Ro\'yxatdan o'tish →';
+    } else {
       document.getElementById('formCard').style.display = 'none';
       document.getElementById('successCard').style.display = 'block';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    } catch (err) {
-      const alertBox = document.getElementById('alertBox');
-      alertBox.textContent = '❌ Xatolik yuz berdi: ' + err.message;
-      alertBox.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'Ro\'yxatdan o\'tish →';
     }
   }
 
-  // +998 bilan avtomatik boshlash
-  const telInput = document.getElementById('telefon');
-  telInput.addEventListener('focus', () => {
-    if (!telInput.value) telInput.value = '+998';
-  });
+  applyTheme();
+  applyLang();
 </script>
 </body>
 </html>
