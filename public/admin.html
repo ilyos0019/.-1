@@ -157,8 +157,8 @@
 
     <div class="sidebar-controls">
       <div class="control-item">
-        <span data-i18n="language">Til</span>
-        <select id="langSelect" onchange="changeLang(this.value)">
+        <label for="langSelect" data-i18n="language">Til</label>
+        <select id="langSelect" onchange="changeLang(this.value)" aria-label="Select Language">
           <option value="uz">UZ</option>
           <option value="ru">RU</option>
           <option value="en">EN</option>
@@ -222,11 +222,11 @@
         <form id="ustaForm" onsubmit="saveUsta(event)">
           <div class="form-grid">
             <div class="form-group">
-              <label data-i18n="fName">Ism familiya *</label>
+              <label for="fIsm" data-i18n="fName">Ism familiya *</label>
               <input type="text" id="fIsm" required placeholder="Alisher Usmonov" />
             </div>
             <div class="form-group">
-              <label data-i18n="fJob">Kasb *</label>
+              <label for="fKasb" data-i18n="fJob">Kasb *</label>
               <input type="text" id="fKasb" list="kasbList" required placeholder="Santexnik" />
               <datalist id="kasbList">
                 <option value="Santexnik">
@@ -240,12 +240,12 @@
               </datalist>
             </div>
             <div class="form-group">
-              <label data-i18n="fPhone">Telefon *</label>
+              <label for="fTelfon" data-i18n="fPhone">Telefon *</label>
               <input type="text" id="fTelfon" required placeholder="+998901234567" />
             </div>
             <div class="form-group">
-              <label data-i18n="fCity">Shahar / Viloyat</label>
-              <select id="fShahar">
+              <label for="fShahar" data-i18n="fCity">Shahar / Viloyat</label>
+              <select id="fShahar" aria-label="Select City or Region">
                 <option value="" data-i18n="choose">Tanlang...</option>
                 <option>Toshkent shahri</option>
                 <option>Toshkent viloyati</option>
@@ -264,11 +264,11 @@
               </select>
             </div>
             <div class="form-group full">
-              <label data-i18n="fImage">Rasm URL</label>
+              <label for="fRasm" data-i18n="fImage">Rasm URL</label>
               <input type="url" id="fRasm" placeholder="https://..." />
             </div>
             <div class="form-group full">
-              <label data-i18n="fBio">Bio (o'zi haqida)</label>
+              <label for="fBio" data-i18n="fBio">Bio (o'zi haqida)</label>
               <textarea id="fBio" rows="3"></textarea>
             </div>
             <div class="form-group">
@@ -352,8 +352,8 @@
           <input type="text" id="eTelfon" required />
         </div>
         <div class="form-group">
-          <label data-i18n="fCity">Shahar</label>
-          <select id="eShahar">
+          <label for="eShahar" data-i18n="fCity">Shahar</label>
+          <select id="eShahar" aria-label="Select City">
             <option>Toshkent shahri</option>
             <option>Toshkent viloyati</option>
             <option>Andijon</option>

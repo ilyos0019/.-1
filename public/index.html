@@ -128,7 +128,7 @@
     <div class="nav-right">
       <button class="control-btn" onclick="toggleTheme()" id="themeToggle">🌙</button>
       <div class="control-btn">
-        🌐 <select class="lang-select" id="langSelect" onchange="changeLang(this.value)">
+        🌐 <select class="lang-select" id="langSelect" onchange="changeLang(this.value)" aria-label="Select Language">
           <option value="uz">UZ</option>
           <option value="ru">RU</option>
           <option value="en">EN</option>
@@ -154,14 +154,14 @@
 <div class="filters-wrap">
   <div class="filters">
     <div class="filter-group">
-      <label data-i18n="filterJob">Kasb bo'yicha</label>
-      <select id="filtKasb" onchange="applyFilters()">
+      <label for="filtKasb" data-i18n="filterJob">Kasb bo'yicha</label>
+      <select id="filtKasb" onchange="applyFilters()" aria-label="Filter by profession">
         <option value="" data-i18n="allJobs">Barcha kasblar</option>
       </select>
     </div>
     <div class="filter-group">
-      <label data-i18n="filterCity">Shahar bo'yicha</label>
-      <select id="filtShahar" onchange="applyFilters()">
+      <label for="filtShahar" data-i18n="filterCity">Shahar bo'yicha</label>
+      <select id="filtShahar" onchange="applyFilters()" aria-label="Filter by city">
         <option value="" data-i18n="allCities">Barcha shaharlar</option>
         <option>Toshkent shahri</option>
         <option>Toshkent viloyati</option>
