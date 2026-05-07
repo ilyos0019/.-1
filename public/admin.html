@@ -227,6 +227,7 @@
                 <th data-i18n="thJob">Kasb</th>
                 <th data-i18n="thPhone">Telefon</th>
                 <th data-i18n="thCity">Shahar</th>
+                <th data-i18n="thDate">Sana</th>
                 <th data-i18n="thStatus">Holat</th>
                 <th data-i18n="thAction">Amal</th>
               </tr>
@@ -433,7 +434,7 @@
       loginSub: "Admin paneliga kirish", loginBtn: "Kirish", contactText: "Murojaat uchun:",
       navDashboard: "Dashboard", navUstalar: "Ustalar", navQoshish: "Usta qo'shish", navMurojaatlar: "Murojaatlar", navSozlamalar: "Sozlamalar",
       language: "Til", logout: "Chiqish", dashTitle: "Dashboard", statTotal: "Jami ustalar", statApproved: "Tasdiqlangan", statPending: "Kutilmoqda", statRequests: "Murojaatlar",
-      ustalarTitle: "Ustalar", ustalarList: "Barcha ustalar", thName: "Ism", thJob: "Kasb", thPhone: "Telefon", thCity: "Shahar", thStatus: "Holat", thAction: "Amal",
+      ustalarTitle: "Ustalar", ustalarList: "Barcha ustalar", thName: "Ism", thJob: "Kasb", thPhone: "Telefon", thCity: "Shahar", thStatus: "Holat", thAction: "Amal", thDate: "Sana",
       addTitle: "Yangi usta qo'shish", fName: "Ism familiya *", fJob: "Kasb *", fPhone: "Telefon *", fCity: "Shahar / Viloyat", fImage: "Rasm tanlash", imageHint: "Galereyadan tanlang", fBio: "Bio (o'zi haqida)", fApproveNow: "Darhol tasdiqlash",
       btnSave: "Saqlash", reqTitle: "Murojaatlar", reqList: "Barcha murojaatlar", thMijoz: "Mijoz", thWorker: "Usta", thMsg: "Xabar", choose: "Tanlang...",
       settingsTitle: "Sozlamalar", changePass: "Admin parolini o'zgartirish", newPass: "Yangi parol", confirmPass: "Parolni tasdiqlang", btnUpdate: "Yangilash",
@@ -445,7 +446,7 @@
       loginSub: "Вход в админ-панель", loginBtn: "Войти", contactText: "Для связи:",
       navDashboard: "Дашборд", navUstalar: "Мастера", navQoshish: "Добавить мастера", navMurojaatlar: "Заявки", navSozlamalar: "Настройки",
       language: "Язык", logout: "Выйти", dashTitle: "Дашборд", statTotal: "Всего мастеров", statApproved: "Одобрено", statPending: "Ожидают", statRequests: "Заявки",
-      ustalarTitle: "Мастера", ustalarList: "Список всех мастеров", thName: "Имя", thJob: "Профессия", thPhone: "Телефон", thCity: "Город", thStatus: "Статус", thAction: "Действие",
+      ustalarTitle: "Мастера", ustalarList: "Список всех мастеров", thName: "Имя", thJob: "Профессия", thPhone: "Телефон", thCity: "Город", thStatus: "Статус", thAction: "Действие", thDate: "Дата",
       addTitle: "Добавить нового мастера", fName: "Имя и фамилия *", fJob: "Профессия *", fPhone: "Телефон *", fCity: "Город / Область", fImage: "Выбрать фото", imageHint: "Выберите из галереи", fBio: "Био (о себе)", fApproveNow: "Одобрить сразу",
       btnSave: "Сохранить", reqTitle: "Заявки", reqList: "Все заявки", thMijoz: "Клиент", thWorker: "Мастер", thMsg: "Сообщение", choose: "Выберите...",
       settingsTitle: "Настройки", changePass: "Изменить пароль админа", newPass: "Новый пароль", confirmPass: "Подтвердите пароль", btnUpdate: "Обновить",
@@ -457,7 +458,7 @@
       loginSub: "Admin Panel Login", loginBtn: "Login", contactText: "Contact info:",
       navDashboard: "Dashboard", navUstalar: "Workers", navQoshish: "Add Worker", navMurojaatlar: "Requests", navSozlamalar: "Settings",
       language: "Language", logout: "Logout", dashTitle: "Dashboard", statTotal: "Total workers", statApproved: "Approved", statPending: "Pending", statRequests: "Requests",
-      ustalarTitle: "Workers", ustalarList: "All workers", thName: "Name", thJob: "Job", thPhone: "Phone", thCity: "City", thStatus: "Status", thAction: "Action",
+      ustalarTitle: "Workers", ustalarList: "All workers", thName: "Name", thJob: "Job", thPhone: "Phone", thCity: "City", thStatus: "Status", thAction: "Action", thDate: "Date",
       addTitle: "Add New Worker", fName: "Full Name *", fJob: "Profession *", fPhone: "Phone *", fCity: "City / Region", fImage: "Choose image", imageHint: "Pick from gallery", fBio: "Bio", fApproveNow: "Approve immediately",
       btnSave: "Save", reqTitle: "Requests", reqList: "All requests", thMijoz: "Client", thWorker: "Worker", thMsg: "Message", choose: "Choose...",
       settingsTitle: "Settings", changePass: "Change Admin Password", newPass: "New Password", confirmPass: "Confirm Password", btnUpdate: "Update",
@@ -554,9 +555,20 @@
     document.getElementById('stMurojaatlar').textContent = mCount || 0;
   }
 
+  function formatFullDate(isoStr) {
+    if (!isoStr) return '—';
+    const d = new Date(isoStr);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    const hour = String(d.getHours()).padStart(2, '0');
+    const min = String(d.getMinutes()).padStart(2, '0');
+    return `${day}/${month}/${year} || ${hour}:${min}`;
+  }
+
   async function loadUstalar() {
     const tbody = document.getElementById('ustalarTbody');
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Loading...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Loading...</td></tr>';
     const { data } = await supabaseAdmin.from('ustalar').select('*').order('created_at', { ascending: false });
     tbody.innerHTML = data.map(u => `
       <tr>
@@ -564,6 +576,7 @@
         <td>${u.kasb}</td>
         <td>${u.telefon}</td>
         <td>${u.shahar || '—'}</td>
+        <td><small>${formatFullDate(u.created_at)}</small></td>
         <td><span class="badge ${u.tasdiqlangan ? 'badge-green' : 'badge-yellow'}">${u.tasdiqlangan ? i18n[CURRENT_LANG].statusApproved : i18n[CURRENT_LANG].statusPending}</span></td>
         <td>
           <div class="action-btns">
