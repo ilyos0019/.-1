@@ -9,32 +9,37 @@
   <script src="config.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
     :root {
-      --primary: #2563EB;
-      --primary-dark: #1d4ed8;
-      --primary-light: #eff6ff;
-      --gray-50: #f9fafb;
-      --gray-100: #f3f4f6;
-      --gray-200: #e5e7eb;
-      --gray-500: #6b7280;
-      --gray-700: #374151;
-      --gray-900: #111827;
-      --yellow: #f59e0b;
-      --green: #10b981;
-      --red: #ef4444;
+      --primary: #2563EB; --primary-dark: #1d4ed8; --primary-light: #eff6ff;
+      --bg: #f9fafb; --card-bg: #ffffff; --text: #111827; --text-muted: #6b7280;
+      --border: #e5e7eb; --nav-bg: #ffffff;
+      --yellow: #f59e0b; --green: #10b981; --red: #ef4444;
       --radius: 16px;
       --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
       --shadow-lg: 0 8px 32px rgba(37,99,235,.15);
     }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--gray-50); color: var(--gray-900); min-height: 100vh; }
+
+    [data-theme='dark'] {
+      --bg: #0f172a; --card-bg: #1e293b; --text: #f1f5f9; --text-muted: #94a3b8;
+      --border: #334155; --nav-bg: #1e293b;
+    }
+
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; transition: 0.3s; }
 
     /* NAVBAR */
-    header { background: #fff; border-bottom: 1px solid var(--gray-200); position: sticky; top: 0; z-index: 100; }
+    header { background: var(--nav-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; transition: 0.3s; }
     .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 20px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
     .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
     .logo-icon { background: var(--primary); color: #fff; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; font-size: 1.1rem; }
-    .nav-btn { background: var(--primary); color: #fff; border: none; padding: 10px 22px; border-radius: 50px; font-size: .95rem; font-weight: 600; cursor: pointer; transition: background .2s, transform .1s; text-decoration: none; }
+    
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .nav-btn { background: var(--primary); color: #fff; border: none; padding: 10px 22px; border-radius: 50px; font-size: .95rem; font-weight: 600; cursor: pointer; transition: 0.2s; text-decoration: none; }
     .nav-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+    .control-btn { background: var(--bg); border: 1.5px solid var(--border); padding: 8px 12px; border-radius: 10px; cursor: pointer; color: var(--text); font-size: 0.9rem; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+    .control-btn:hover { border-color: var(--primary); }
+    .lang-select { background: none; border: none; color: inherit; font-family: inherit; font-size: inherit; cursor: pointer; outline: none; }
 
     /* HERO */
     .hero { background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%); color: #fff; padding: 80px 20px; text-align: center; }
@@ -48,13 +53,13 @@
 
     /* FILTERS */
     .filters-wrap { max-width: 1200px; margin: -28px auto 0; padding: 0 20px; position: relative; z-index: 10; }
-    .filters { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 24px 28px; display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; }
+    .filters { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 24px 28px; display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; border: 1px solid var(--border); }
     .filter-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 180px; }
-    .filter-group label { font-size: .82rem; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: .05em; }
-    .filter-group select { border: 1.5px solid var(--gray-200); border-radius: 10px; padding: 11px 14px; font-size: .95rem; color: var(--gray-700); background: var(--gray-50); outline: none; transition: border .2s; }
-    .filter-group select:focus { border-color: var(--primary); background: var(--primary-light); }
-    .filter-clear { background: var(--gray-100); border: none; padding: 11px 20px; border-radius: 10px; font-size: .9rem; cursor: pointer; color: var(--gray-700); font-weight: 600; transition: background .2s; align-self: flex-end; white-space: nowrap; }
-    .filter-clear:hover { background: var(--gray-200); }
+    .filter-group label { font-size: .82rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; }
+    .filter-group select { border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 14px; font-size: .95rem; color: var(--text); background: var(--bg); outline: none; transition: 0.2s; }
+    .filter-group select:focus { border-color: var(--primary); }
+    .filter-clear { background: var(--border); border: none; padding: 11px 20px; border-radius: 10px; font-size: .9rem; cursor: pointer; color: var(--text); font-weight: 600; transition: 0.2s; align-self: flex-end; white-space: nowrap; }
+    .filter-clear:hover { background: var(--primary-light); color: var(--primary); }
 
     /* CONTENT */
     .content { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
@@ -66,7 +71,7 @@
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
 
     /* CARD */
-    .card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--gray-100); overflow: hidden; transition: transform .25s, box-shadow .25s; }
+    .card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; transition: 0.3s; }
     .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
     .card-img { width: 100%; height: 200px; object-fit: cover; background: linear-gradient(135deg, var(--primary-light), #e0e7ff); display: flex; align-items: center; justify-content: center; font-size: 4rem; color: var(--primary); }
     .card-img img { width: 100%; height: 100%; object-fit: cover; }
@@ -74,52 +79,43 @@
     .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
     .card-name { font-size: 1.2rem; font-weight: 700; }
     .card-kasb { display: inline-block; background: var(--primary-light); color: var(--primary); font-size: .8rem; font-weight: 700; padding: 3px 10px; border-radius: 50px; }
-    .card-location { font-size: .88rem; color: var(--gray-500); margin: 8px 0 12px; display: flex; align-items: center; gap: 5px; }
+    .card-location { font-size: .88rem; color: var(--text-muted); margin: 8px 0 12px; display: flex; align-items: center; gap: 5px; }
     .stars { color: var(--yellow); font-size: 1rem; }
-    .stars span { color: var(--gray-500); font-size: .85rem; margin-left: 4px; }
-    .card-btn { width: 100%; margin-top: 14px; padding: 11px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: .95rem; font-weight: 600; cursor: pointer; transition: background .2s; }
+    .stars span { color: var(--text-muted); font-size: .85rem; margin-left: 4px; }
+    .card-btn { width: 100%; margin-top: 14px; padding: 11px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: .95rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
     .card-btn:hover { background: var(--primary-dark); }
-
-    /* EMPTY & LOADING */
-    .state-box { text-align: center; padding: 80px 20px; color: var(--gray-500); }
-    .state-box .icon { font-size: 4rem; margin-bottom: 16px; }
-    .state-box h3 { font-size: 1.3rem; color: var(--gray-700); margin-bottom: 8px; }
-    .spinner { display: inline-block; width: 48px; height: 48px; border: 4px solid var(--gray-200); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; margin-bottom: 16px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
     /* MODAL */
     .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
     .overlay.active { display: flex; }
-    .modal { background: #fff; border-radius: 20px; padding: 36px; width: 100%; max-width: 480px; position: relative; animation: modalIn .25s ease; }
+    .modal { background: var(--card-bg); border-radius: 20px; padding: 36px; width: 100%; max-width: 480px; position: relative; animation: modalIn .25s ease; border: 1px solid var(--border); color: var(--text); }
     @keyframes modalIn { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    .modal-close { position: absolute; top: 16px; right: 16px; background: var(--gray-100); border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; color: var(--gray-700); }
+    .modal-close { position: absolute; top: 16px; right: 16px; background: var(--bg); border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; color: var(--text); }
     .modal h2 { font-size: 1.5rem; margin-bottom: 6px; }
-    .modal-sub { color: var(--gray-500); font-size: .9rem; margin-bottom: 24px; }
+    .modal-sub { color: var(--text-muted); font-size: .9rem; margin-bottom: 24px; }
     .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: 6px; color: var(--gray-700); }
-    .form-group input, .form-group textarea { width: 100%; border: 1.5px solid var(--gray-200); border-radius: 10px; padding: 12px 14px; font-size: .95rem; outline: none; transition: border .2s; background: var(--gray-50); }
-    .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); background: var(--primary-light); }
-    .form-group textarea { resize: vertical; min-height: 90px; }
-    .submit-btn { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background .2s; }
-    .submit-btn:hover { background: var(--primary-dark); }
-    .submit-btn:disabled { opacity: .6; cursor: not-allowed; }
+    .form-group label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+    .form-group input, .form-group textarea { width: 100%; border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: .95rem; outline: none; transition: 0.2s; background: var(--bg); color: var(--text); }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); }
+    .submit-btn { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
 
     /* TOAST */
-    .toast { position: fixed; bottom: 24px; right: 24px; padding: 14px 22px; border-radius: 12px; font-weight: 600; font-size: .95rem; z-index: 9999; animation: toastIn .3s ease; display: none; }
+    .toast { position: fixed; bottom: 24px; right: 24px; padding: 14px 22px; border-radius: 12px; font-weight: 600; z-index: 9999; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
     .toast.show { display: block; }
     .toast.success { background: var(--green); color: #fff; }
-    .toast.error { background: var(--red); color: #fff; }
-    @keyframes toastIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
     /* FOOTER */
-    footer { background: var(--gray-900); color: #9ca3af; text-align: center; padding: 32px 20px; margin-top: 80px; }
-    footer strong { color: #fff; }
-    footer a { color: #60a5fa; text-decoration: none; }
+    footer { background: var(--card-bg); color: var(--text-muted); border-top: 1px solid var(--border); padding: 48px 20px; margin-top: 80px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; text-align: left; }
+    .footer-col h4 { color: var(--text); margin-bottom: 20px; font-size: 1.1rem; }
+    .footer-col p { font-size: 0.95rem; line-height: 1.6; margin-bottom: 10px; }
+    .footer-col a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .footer-bottom { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; font-size: 0.85rem; }
 
     @media (max-width: 600px) {
       .hero { padding: 60px 20px; }
       .filters { padding: 20px; }
-      .hero-stats { gap: 24px; }
+      .nav-btn { display: none; }
     }
   </style>
 </head>
@@ -129,18 +125,28 @@
 <header>
   <div class="nav-inner">
     <a href="/" class="logo"><span class="logo-icon">U</span> Usta Top</a>
-    <a href="register.html" class="nav-btn">Usta bo'lish</a>
+    <div class="nav-right">
+      <button class="control-btn" onclick="toggleTheme()" id="themeToggle">🌙</button>
+      <div class="control-btn">
+        🌐 <select class="lang-select" id="langSelect" onchange="changeLang(this.value)">
+          <option value="uz">UZ</option>
+          <option value="ru">RU</option>
+          <option value="en">EN</option>
+        </select>
+      </div>
+      <a href="register.html" class="nav-btn" data-i18n="navUstaBolish">Usta bo'lish</a>
+    </div>
   </div>
 </header>
 
 <!-- HERO -->
 <section class="hero">
-  <h1>O'zingizga mos <span>ishonchli ustani</span> toping</h1>
-  <p>O'zbekiston bo'ylab malakali ustalar xizmatidan foydalaning. Tez, oson va ishonchli.</p>
+  <h1 data-i18n="heroTitle">O'zingizga mos <span>ishonchli ustani</span> toping</h1>
+  <p data-i18n="heroSub">O'zbekiston bo'ylab malakali ustalar xizmatidan foydalaning. Tez, oson va ishonchli.</p>
   <div class="hero-stats">
-    <div class="stat"><div class="stat-num" id="heroUstalar">—</div><div class="stat-lbl">Faol ustalar</div></div>
-    <div class="stat"><div class="stat-num" id="heroShaharlar">—</div><div class="stat-lbl">Shaharlar</div></div>
-    <div class="stat"><div class="stat-num" id="heroKasblar">—</div><div class="stat-lbl">Kasb turlari</div></div>
+    <div class="stat"><div class="stat-num" id="heroUstalar">—</div><div class="stat-lbl" data-i18n="statWorkers">Faol ustalar</div></div>
+    <div class="stat"><div class="stat-num" id="heroShaharlar">—</div><div class="stat-lbl" data-i18n="statCities">Shaharlar</div></div>
+    <div class="stat"><div class="stat-num" id="heroKasblar">—</div><div class="stat-lbl" data-i18n="statJobs">Kasb turlari</div></div>
   </div>
 </section>
 
@@ -148,168 +154,203 @@
 <div class="filters-wrap">
   <div class="filters">
     <div class="filter-group">
-      <label>Kasb bo'yicha</label>
+      <label data-i18n="filterJob">Kasb bo'yicha</label>
       <select id="filtKasb" onchange="applyFilters()">
-        <option value="">Barcha kasblar</option>
-        <option>Santexnik</option>
-        <option>Elektrik</option>
-        <option>Duradgor</option>
-        <option>Bo'yoqchi</option>
-        <option>Rassomchi</option>
-        <option>Boshqa</option>
+        <option value="" data-i18n="allJobs">Barcha kasblar</option>
       </select>
     </div>
     <div class="filter-group">
-      <label>Shahar bo'yicha</label>
+      <label data-i18n="filterCity">Shahar bo'yicha</label>
       <select id="filtShahar" onchange="applyFilters()">
-        <option value="">Barcha shaharlar</option>
-        <option>Toshkent</option>
-        <option>Samarqand</option>
-        <option>Buxoro</option>
-        <option>Xorazm</option>
+        <option value="" data-i18n="allCities">Barcha shaharlar</option>
+        <option>Toshkent shahri</option>
+        <option>Toshkent viloyati</option>
         <option>Andijon</option>
-        <option>Boshqa viloyatlar</option>
+        <option>Boxoro</option>
+        <option>Farg'ona</option>
+        <option>Jizzax</option>
+        <option>Xorazm</option>
+        <option>Namangan</option>
+        <option>Navoiy</option>
+        <option>Qashqadaryo</option>
+        <option>Samarqand</option>
+        <option>Sirdaryo</option>
+        <option>Surxondaryo</option>
+        <option>Qoraqalpog'iston</option>
       </select>
     </div>
-    <button class="filter-clear" onclick="clearFilters()">✕ Tozalash</button>
+    <button class="filter-clear" onclick="clearFilters()" data-i18n="clear">✕ Tozalash</button>
   </div>
 </div>
 
 <!-- MAIN CONTENT -->
 <div class="content">
   <div class="section-header">
-    <h2 class="section-title">Ustalar ro'yxati</h2>
-    <span class="count-badge" id="countBadge">Yuklanmoqda...</span>
+    <h2 class="section-title" data-i18n="listTitle">Ustalar ro'yxati</h2>
+    <span class="count-badge" id="countBadge" data-i18n="loading">Yuklanmoqda...</span>
   </div>
-  <div class="grid" id="ustaGrid">
-    <div class="state-box" style="grid-column:1/-1">
-      <div class="spinner"></div>
-      <p>Ustalar yuklanmoqda...</p>
-    </div>
-  </div>
+  <div class="grid" id="ustaGrid"></div>
 </div>
 
 <!-- MUROJAAT MODAL -->
 <div class="overlay" id="modalOverlay" onclick="closeModal(event)">
   <div class="modal" id="murojaatModal">
     <button class="modal-close" onclick="closeModal()">✕</button>
-    <h2>Murojaat qilish</h2>
+    <h2 data-i18n="modalTitle">Murojaat qilish</h2>
     <p class="modal-sub" id="modalUstaIsm">Ustaga xabar yuboring</p>
     <form id="murojaatForm" onsubmit="submitMurojaat(event)">
       <input type="hidden" id="murojaatUstaId" />
       <div class="form-group">
-        <label>Ismingiz</label>
+        <label data-i18n="fName">Ismingiz</label>
         <input type="text" id="mijozIsm" placeholder="Alisher Karimov" required />
       </div>
       <div class="form-group">
-        <label>Telefon raqam</label>
-        <input type="tel" id="mijozTel" placeholder="+998901234567" required pattern="\+998\d{9}" />
+        <label data-i18n="fPhone">Telefon raqam</label>
+        <input type="tel" id="mijozTel" placeholder="+998901234567" required />
       </div>
       <div class="form-group">
-        <label>Muammo haqida (ixtiyoriy)</label>
-        <textarea id="mijozXabar" placeholder="Qisqacha tushuntiring..."></textarea>
+        <label data-i18n="fMsg">Xabar (ixtiyoriy)</label>
+        <textarea id="mijozXabar"></textarea>
       </div>
-      <button type="submit" class="submit-btn" id="murojaatBtn">Yuborish</button>
+      <button type="submit" class="submit-btn" id="murojaatBtn" data-i18n="btnSend">Yuborish</button>
     </form>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <!-- FOOTER -->
 <footer>
-  <p><strong>Usta Top</strong> — © 2024 Barcha huquqlar himoyalangan.</p>
-  <p style="margin-top:8px;">Admin: <a href="admin.html">Kirish</a></p>
+  <div class="footer-inner">
+    <div class="footer-col">
+      <h4>Usta Top</h4>
+      <p data-i18n="footerAbout">O'zbekistondagi eng yaxshi ustalarni topish va ularga murojaat qilish uchun qulay platforma.</p>
+    </div>
+    <div class="footer-col">
+      <h4 data-i18n="contactMe">Men bilan bog'lanish</h4>
+      <p>Telegram: <a href="https://t.me/Bahromovv04" target="_blank">@Bahromovv04</a></p>
+      <p>Tel: <a href="tel:+998974593222">+998 97 459 32 22</a></p>
+    </div>
+    <div class="footer-col">
+      <h4 data-i18n="links">Havolalar</h4>
+      <p><a href="admin.html">Admin Panel</a></p>
+      <p><a href="register.html" data-i18n="navUstaBolish">Usta bo'lish</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2024 Usta Top — <span data-i18n="allRights">Barcha huquqlar himoyalangan.</span></p>
+  </div>
 </footer>
 
 <script>
   let allUstalar = [];
+  let CURRENT_LANG = localStorage.getItem('siteLang') || 'uz';
+  let THEME = localStorage.getItem('siteTheme') || 'light';
 
-  // ----- Yuklanish -----
-  async function loadUstalar() {
-    try {
-      const { data, error } = await supabaseClient
-        .from('ustalar')
-        .select('*')
-        .eq('tasdiqlangan', true)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      allUstalar = data || [];
-      updateHeroStats();
-      renderUstalar(allUstalar);
-    } catch (err) {
-      document.getElementById('ustaGrid').innerHTML = `
-        <div class="state-box" style="grid-column:1/-1">
-          <div class="icon">⚠️</div>
-          <h3>Ulanish xatosi</h3>
-          <p>Supabase bilan bog'lanib bo'lmadi. config.js ni tekshiring.</p>
-        </div>`;
-      document.getElementById('countBadge').textContent = 'Xato';
+  const i18n = {
+    uz: {
+      navUstaBolish: "Usta bo'lish", heroTitle: "O'zingizga mos ishonchli ustani toping", heroSub: "O'zbekiston bo'ylab malakali ustalar xizmatidan foydalaning. Tez, oson va ishonchli.",
+      statWorkers: "Faol ustalar", statCities: "Shaharlar", statJobs: "Kasb turlari", filterJob: "Kasb bo'yicha", allJobs: "Barcha kasblar",
+      filterCity: "Shahar bo'yicha", allCities: "Barcha shaharlar", clear: "✕ Tozalash", listTitle: "Ustalar ro'yxati", loading: "Yuklanmoqda...",
+      modalTitle: "Murojaat qilish", fName: "Ismingiz", fPhone: "Telefon raqam", fMsg: "Xabar (ixtiyoriy)", btnSend: "Yuborish",
+      footerAbout: "O'zbekistondagi eng yaxshi ustalarni topish va ularga murojaat qilish uchun qulay platforma.",
+      contactMe: "Men bilan bog'lanish", links: "Havolalar", allRights: "Barcha huquqlar himoyalangan.",
+      msgSuccess: "✅ Murojaat muvaffaqiyatli yuborildi!", btnCall: "📞 Murojaat qilish", cityUnknown: "Noaniq", items: "ta usta"
+    },
+    ru: {
+      navUstaBolish: "Стать мастером", heroTitle: "Найдите подходящего надежного мастера", heroSub: "Пользуйтесь услугами квалифицированных мастеров по всему Узбекистану. Быстро, просто и надежно.",
+      statWorkers: "Активных мастеров", statCities: "Городов", statJobs: "Видов профессий", filterJob: "По профессии", allJobs: "Все профессии",
+      filterCity: "По городу", allCities: "Все города", clear: "✕ Очистить", listTitle: "Список мастеров", loading: "Загрузка...",
+      modalTitle: "Оставить заявку", fName: "Ваше имя", fPhone: "Номер телефона", fMsg: "Сообщение (необязательно)", btnSend: "Отправить",
+      footerAbout: "Удобная платформа для поиска и обращения к лучшим мастерам Узбекистана.",
+      contactMe: "Связаться со мной", links: "Ссылки", allRights: "Все права защищены.",
+      msgSuccess: "✅ Заявка успешно отправлена!", btnCall: "📞 Связаться", cityUnknown: "Неизвестно", items: "мастеров"
+    },
+    en: {
+      navUstaBolish: "Become a Worker", heroTitle: "Find a reliable master that fits you", heroSub: "Use services of qualified workers across Uzbekistan. Fast, easy, and reliable.",
+      statWorkers: "Active workers", statCities: "Cities", statJobs: "Professions", filterJob: "By profession", allJobs: "All professions",
+      filterCity: "By city", allCities: "All cities", clear: "✕ Clear", listTitle: "List of workers", loading: "Loading...",
+      modalTitle: "Contact Master", fName: "Your name", fPhone: "Phone number", fMsg: "Message (optional)", btnSend: "Send",
+      footerAbout: "A convenient platform for finding and contacting the best workers in Uzbekistan.",
+      contactMe: "Contact Me", links: "Links", allRights: "All rights reserved.",
+      msgSuccess: "✅ Request sent successfully!", btnCall: "📞 Contact Now", cityUnknown: "Unknown", items: "workers"
     }
+  };
+
+  // ----- THEME & LANG -----
+  function toggleTheme() {
+    THEME = THEME === 'light' ? 'dark' : 'light';
+    localStorage.setItem('siteTheme', THEME);
+    applyTheme();
+  }
+  function applyTheme() {
+    document.documentElement.setAttribute('data-theme', THEME);
+    document.getElementById('themeToggle').textContent = THEME === 'light' ? '🌙' : '☀️';
+  }
+  function changeLang(lang) {
+    CURRENT_LANG = lang;
+    localStorage.setItem('siteLang', lang);
+    applyLang();
+    renderUstalar(allUstalar);
+  }
+  function applyLang() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (i18n[CURRENT_LANG][key]) el.textContent = i18n[CURRENT_LANG][key];
+    });
+    document.getElementById('langSelect').value = CURRENT_LANG;
+  }
+
+  // ----- LOGIC -----
+  async function loadUstalar() {
+    const { data } = await supabaseClient.from('ustalar').select('*').eq('tasdiqlangan', true).order('created_at', { ascending: false });
+    allUstalar = data || [];
+    updateHeroStats();
+    renderUstalar(allUstalar);
+    populateProfessions();
   }
 
   function updateHeroStats() {
     document.getElementById('heroUstalar').textContent = allUstalar.length + '+';
-    const shaharlar = new Set(allUstalar.map(u => u.shahar).filter(Boolean));
-    const kasblar = new Set(allUstalar.map(u => u.kasb).filter(Boolean));
-    document.getElementById('heroShaharlar').textContent = shaharlar.size + '+';
-    document.getElementById('heroKasblar').textContent = kasblar.size + '+';
+    document.getElementById('heroShaharlar').textContent = new Set(allUstalar.map(u => u.shahar)).size + '+';
+    document.getElementById('heroKasblar').textContent = new Set(allUstalar.map(u => u.kasb)).size + '+';
   }
 
-  // ----- Render -----
+  function populateProfessions() {
+    const sel = document.getElementById('filtKasb');
+    const jobs = [...new Set(allUstalar.map(u => u.kasb))];
+    jobs.forEach(j => {
+      const opt = document.createElement('option');
+      opt.value = opt.textContent = j;
+      sel.appendChild(opt);
+    });
+  }
+
   function renderUstalar(list) {
     const grid = document.getElementById('ustaGrid');
-    document.getElementById('countBadge').textContent = list.length + ' ta usta';
-
-    if (!list.length) {
-      grid.innerHTML = `
-        <div class="state-box" style="grid-column:1/-1">
-          <div class="icon">🔍</div>
-          <h3>Ustalar topilmadi</h3>
-          <p>Boshqa filterlarni sinab ko'ring</p>
-        </div>`;
-      return;
-    }
-
+    document.getElementById('countBadge').textContent = list.length + ' ' + i18n[CURRENT_LANG].items;
     grid.innerHTML = list.map(u => `
       <div class="card">
-        <div class="card-img">
-          ${u.rasm_url
-            ? `<img src="${u.rasm_url}" alt="${u.ism}" onerror="this.parentElement.innerHTML='👷'" />`
-            : `👷`}
-        </div>
+        <div class="card-img">${u.rasm_url ? `<img src="${u.rasm_url}" onerror="this.parentElement.innerHTML='👷'">` : '👷'}</div>
         <div class="card-body">
           <div class="card-top">
             <span class="card-name">${u.ism}</span>
             <span class="card-kasb">${u.kasb}</span>
           </div>
-          <div class="card-location">📍 ${u.shahar || 'Noaniq'}</div>
-          <div class="stars">
-            ${renderStars(u.reyting)}
-            <span>${u.reyting > 0 ? u.reyting.toFixed(1) : 'Yangi'}</span>
-          </div>
-          ${u.bio ? `<p style="font-size:.88rem;color:#6b7280;margin-top:10px;line-height:1.5;">${u.bio.slice(0,100)}${u.bio.length>100?'...':''}</p>` : ''}
-          <button class="card-btn" onclick="openModal('${u.id}', '${u.ism}')">📞 Murojaat qilish</button>
+          <div class="card-location">📍 ${u.shahar || i18n[CURRENT_LANG].cityUnknown}</div>
+          <button class="card-btn" onclick="openModal('${u.id}', '${u.ism}')">${i18n[CURRENT_LANG].btnCall}</button>
         </div>
       </div>
     `).join('');
   }
 
-  function renderStars(rating) {
-    const r = Math.round(rating);
-    return '★'.repeat(r) + '☆'.repeat(5 - r);
-  }
-
-  // ----- Filterlar -----
   function applyFilters() {
-    const kasb = document.getElementById('filtKasb').value;
-    const shahar = document.getElementById('filtShahar').value;
-    let filtered = allUstalar;
-    if (kasb) filtered = filtered.filter(u => u.kasb === kasb);
-    if (shahar) filtered = filtered.filter(u => u.shahar === shahar);
-    renderUstalar(filtered);
+    const k = document.getElementById('filtKasb').value;
+    const s = document.getElementById('filtShahar').value;
+    let res = allUstalar;
+    if (k) res = res.filter(u => u.kasb === k);
+    if (s) res = res.filter(u => u.shahar === s);
+    renderUstalar(res);
   }
 
   function clearFilters() {
@@ -318,57 +359,38 @@
     renderUstalar(allUstalar);
   }
 
-  // ----- Modal -----
-  function openModal(ustaId, ustaIsm) {
-    document.getElementById('murojaatUstaId').value = ustaId;
-    document.getElementById('modalUstaIsm').textContent = ustaIsm + ' ga murojaat';
-    document.getElementById('murojaatForm').reset();
+  function openModal(id, name) {
+    document.getElementById('murojaatUstaId').value = id;
+    document.getElementById('modalUstaIsm').textContent = name;
     document.getElementById('modalOverlay').classList.add('active');
   }
 
   function closeModal(e) {
-    if (!e || e.target === document.getElementById('modalOverlay') || !e.target) {
-      document.getElementById('modalOverlay').classList.remove('active');
-    }
+    if (!e || e.target === document.getElementById('modalOverlay') || !e.target) document.getElementById('modalOverlay').classList.remove('active');
   }
 
-  // ----- Murojaat yuborish -----
   async function submitMurojaat(e) {
     e.preventDefault();
-    const btn = document.getElementById('murojaatBtn');
-    btn.disabled = true;
-    btn.textContent = 'Yuborilmoqda...';
-
     const payload = {
       usta_id: document.getElementById('murojaatUstaId').value,
-      mijoz_ism: document.getElementById('mijozIsm').value.trim(),
-      mijoz_tel: document.getElementById('mijozTel').value.trim(),
-      xabar: document.getElementById('mijozXabar').value.trim()
+      mijoz_ism: document.getElementById('mijozIsm').value,
+      mijoz_tel: document.getElementById('mijozTel').value,
+      xabar: document.getElementById('mijozXabar').value
     };
-
-    try {
-      const { error } = await supabaseClient.from('murojaatlar').insert([payload]);
-      if (error) throw error;
-      closeModal();
-      showToast('✅ Murojaat muvaffaqiyatli yuborildi!', 'success');
-    } catch (err) {
-      showToast('❌ Xatolik: ' + err.message, 'error');
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Yuborish';
-    }
+    await supabaseClient.from('murojaatlar').insert([payload]);
+    closeModal();
+    showToast(i18n[CURRENT_LANG].msgSuccess);
   }
 
-  // ----- Toast -----
-  function showToast(msg, type = 'success') {
+  function showToast(msg) {
     const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = `toast show ${type}`;
-    setTimeout(() => t.className = 'toast', 3500);
+    t.textContent = msg; t.className = 'toast show success';
+    setTimeout(() => t.className = 'toast', 3000);
   }
 
-  // ----- Boshlash -----
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  // Init
+  applyTheme();
+  applyLang();
   loadUstalar();
 </script>
 </body>
