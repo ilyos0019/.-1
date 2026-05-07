@@ -52,6 +52,20 @@
     .control-item select { background: #334155; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; outline: none; }
     .theme-toggle { cursor: pointer; display: flex; align-items: center; gap: 8px; background: #334155; padding: 6px 12px; border-radius: 20px; border: none; color: #fff; font-size: 0.8rem; }
 
+    .lang-dropdown { position: relative; width: 100%; }
+    .lang-menu { 
+      position: absolute; bottom: calc(100% + 8px); left: 0; 
+      background: var(--card-bg); border: 1px solid var(--border); 
+      border-radius: 12px; box-shadow: var(--shadow-lg); 
+      display: none; flex-direction: column; min-width: 150px; 
+      overflow: hidden; z-index: 1000; backdrop-filter: blur(8px);
+      animation: langIn 0.2s ease;
+    }
+    .lang-menu.active { display: flex; }
+    .lang-option { padding: 12px 16px; cursor: pointer; transition: 0.2s; font-size: 0.92rem; color: var(--text); border: none; background: none; text-align: left; width: 100%; display: flex; align-items: center; gap: 10px; }
+    .lang-option:hover { background: var(--primary-light); color: var(--primary); }
+    @keyframes langIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
     .aside-footer { padding: 20px; border-top: 1px solid var(--border); }
     .logout-btn { width: 100%; background: #334155; color: #fff; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-size: .88rem; }
     .logout-btn:hover { background: var(--red); }
@@ -117,19 +131,10 @@
 
     @keyframes toastIn { from { transform: translateY(20px); opacity: 0; } }
 
-    .lang-dropdown { position: relative; width: 100%; }
-    .lang-menu { 
-      position: absolute; bottom: calc(100% + 8px); left: 0; 
-      background: var(--card-bg); border: 1px solid var(--border); 
-      border-radius: 12px; box-shadow: var(--shadow-lg); 
-      display: none; flex-direction: column; min-width: 150px; 
-      overflow: hidden; z-index: 1000; backdrop-filter: blur(8px);
-      animation: langIn 0.2s ease;
-    }
-    .lang-menu.active { display: flex; }
-    .lang-option { padding: 12px 16px; cursor: pointer; transition: 0.2s; font-size: 0.92rem; color: var(--text); border: none; background: none; text-align: left; width: 100%; display: flex; align-items: center; gap: 10px; }
-    .lang-option:hover { background: var(--primary-light); color: var(--primary); }
-    @keyframes langIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .image-picker-admin { border: 2px dashed var(--border); border-radius: 10px; padding: 15px; text-align: center; cursor: pointer; transition: 0.3s; background: var(--bg); }
+    .image-picker-admin:hover { border-color: var(--primary); }
+    .preview-box { margin-top: 10px; display: none; }
+    .preview-box img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid var(--primary); }
 
     @media (max-width: 768px) {
       aside { width: 0; position: fixed; left: -260px; z-index: 100; transition: 0.3s; }
@@ -283,8 +288,14 @@
               </select>
             </div>
             <div class="form-group full">
-              <label for="fRasm" data-i18n="fImage">Rasm URL</label>
-              <input type="url" id="fRasm" placeholder="https://..." />
+              <label data-i18n="fImage">Rasm tanlash</label>
+              <label class="image-picker-admin">
+                <span data-i18n="imageHint">Galereyadan tanlang</span>
+                <input type="file" id="fRasmFile" accept="image/*" style="display:none" onchange="previewImage(this, 'fPreviewBox')">
+              </label>
+              <div id="fPreviewBox" class="preview-box">
+                <img src="" alt="Preview">
+              </div>
             </div>
             <div class="form-group full">
               <label for="fBio" data-i18n="fBio">Bio (o'zi haqida)</label>
@@ -359,15 +370,15 @@
       <input type="hidden" id="editId" />
       <div class="form-grid">
         <div class="form-group">
-          <label data-i18n="fName">Ism familiya</label>
+          <label for="eIsm" data-i18n="fName">Ism familiya</label>
           <input type="text" id="eIsm" required />
         </div>
         <div class="form-group">
-          <label data-i18n="fJob">Kasb</label>
+          <label for="eKasb" data-i18n="fJob">Kasb</label>
           <input type="text" id="eKasb" list="kasbList" required />
         </div>
         <div class="form-group">
-          <label data-i18n="fPhone">Telefon</label>
+          <label for="eTelfon" data-i18n="fPhone">Telefon</label>
           <input type="text" id="eTelfon" required />
         </div>
         <div class="form-group">
@@ -390,11 +401,17 @@
           </select>
         </div>
         <div class="form-group full">
-          <label data-i18n="fImage">Rasm URL</label>
-          <input type="url" id="eRasm" />
+          <label data-i18n="fImage">Rasm tanlash</label>
+          <label class="image-picker-admin">
+            <span data-i18n="imageHint">Galereyadan tanlang</span>
+            <input type="file" id="eRasmFile" accept="image/*" style="display:none" onchange="previewImage(this, 'ePreviewBox')">
+          </label>
+          <div id="ePreviewBox" class="preview-box">
+            <img src="" alt="Preview">
+          </div>
         </div>
         <div class="form-group full">
-          <label data-i18n="fBio">Bio</label>
+          <label for="eBio" data-i18n="fBio">Bio</label>
           <textarea id="eBio" rows="3"></textarea>
         </div>
       </div>
@@ -407,8 +424,8 @@
 
 <script>
   // ----- DATA & i18n -----
-  let CURRENT_LANG = localStorage.getItem('adminLang') || 'uz';
-  let THEME = localStorage.getItem('adminTheme') || 'light';
+  let CURRENT_LANG = localStorage.getItem('appLang') || 'uz';
+  let THEME = localStorage.getItem('appTheme') || 'light';
   let ADMIN_PASS = localStorage.getItem('adminPass') || 'usta2024admin';
 
   const i18n = {
@@ -417,7 +434,7 @@
       navDashboard: "Dashboard", navUstalar: "Ustalar", navQoshish: "Usta qo'shish", navMurojaatlar: "Murojaatlar", navSozlamalar: "Sozlamalar",
       language: "Til", logout: "Chiqish", dashTitle: "Dashboard", statTotal: "Jami ustalar", statApproved: "Tasdiqlangan", statPending: "Kutilmoqda", statRequests: "Murojaatlar",
       ustalarTitle: "Ustalar", ustalarList: "Barcha ustalar", thName: "Ism", thJob: "Kasb", thPhone: "Telefon", thCity: "Shahar", thStatus: "Holat", thAction: "Amal",
-      addTitle: "Yangi usta qo'shish", fName: "Ism familiya *", fJob: "Kasb *", fPhone: "Telefon *", fCity: "Shahar / Viloyat", fImage: "Rasm URL", fBio: "Bio (o'zi haqida)", fApproveNow: "Darhol tasdiqlash",
+      addTitle: "Yangi usta qo'shish", fName: "Ism familiya *", fJob: "Kasb *", fPhone: "Telefon *", fCity: "Shahar / Viloyat", fImage: "Rasm tanlash", imageHint: "Galereyadan tanlang", fBio: "Bio (o'zi haqida)", fApproveNow: "Darhol tasdiqlash",
       btnSave: "Saqlash", reqTitle: "Murojaatlar", reqList: "Barcha murojaatlar", thMijoz: "Mijoz", thWorker: "Usta", thMsg: "Xabar", choose: "Tanlang...",
       settingsTitle: "Sozlamalar", changePass: "Admin parolini o'zgartirish", newPass: "Yangi parol", confirmPass: "Parolni tasdiqlang", btnUpdate: "Yangilash",
       editTitle: "Ustani tahrirlash", statusApproved: "✓ Tasdiqlangan", statusPending: "⏳ Kutilmoqda",
@@ -429,7 +446,7 @@
       navDashboard: "Дашборд", navUstalar: "Мастера", navQoshish: "Добавить мастера", navMurojaatlar: "Заявки", navSozlamalar: "Настройки",
       language: "Язык", logout: "Выйти", dashTitle: "Дашборд", statTotal: "Всего мастеров", statApproved: "Одобрено", statPending: "Ожидают", statRequests: "Заявки",
       ustalarTitle: "Мастера", ustalarList: "Список всех мастеров", thName: "Имя", thJob: "Профессия", thPhone: "Телефон", thCity: "Город", thStatus: "Статус", thAction: "Действие",
-      addTitle: "Добавить нового мастера", fName: "Имя и фамилия *", fJob: "Профессия *", fPhone: "Телефон *", fCity: "Город / Область", fImage: "URL фото", fBio: "Био (о себе)", fApproveNow: "Одобрить сразу",
+      addTitle: "Добавить нового мастера", fName: "Имя и фамилия *", fJob: "Профессия *", fPhone: "Телефон *", fCity: "Город / Область", fImage: "Выбрать фото", imageHint: "Выберите из галереи", fBio: "Био (о себе)", fApproveNow: "Одобрить сразу",
       btnSave: "Сохранить", reqTitle: "Заявки", reqList: "Все заявки", thMijoz: "Клиент", thWorker: "Мастер", thMsg: "Сообщение", choose: "Выберите...",
       settingsTitle: "Настройки", changePass: "Изменить пароль админа", newPass: "Новый пароль", confirmPass: "Подтвердите пароль", btnUpdate: "Обновить",
       editTitle: "Редактировать мастера", statusApproved: "✓ Одобрен", statusPending: "⏳ Ожидает",
@@ -441,7 +458,7 @@
       navDashboard: "Dashboard", navUstalar: "Workers", navQoshish: "Add Worker", navMurojaatlar: "Requests", navSozlamalar: "Settings",
       language: "Language", logout: "Logout", dashTitle: "Dashboard", statTotal: "Total workers", statApproved: "Approved", statPending: "Pending", statRequests: "Requests",
       ustalarTitle: "Workers", ustalarList: "All workers", thName: "Name", thJob: "Job", thPhone: "Phone", thCity: "City", thStatus: "Status", thAction: "Action",
-      addTitle: "Add New Worker", fName: "Full Name *", fJob: "Profession *", fPhone: "Phone *", fCity: "City / Region", fImage: "Image URL", fBio: "Bio", fApproveNow: "Approve immediately",
+      addTitle: "Add New Worker", fName: "Full Name *", fJob: "Profession *", fPhone: "Phone *", fCity: "City / Region", fImage: "Choose image", imageHint: "Pick from gallery", fBio: "Bio", fApproveNow: "Approve immediately",
       btnSave: "Save", reqTitle: "Requests", reqList: "All requests", thMijoz: "Client", thWorker: "Worker", thMsg: "Message", choose: "Choose...",
       settingsTitle: "Settings", changePass: "Change Admin Password", newPass: "New Password", confirmPass: "Confirm Password", btnUpdate: "Update",
       editTitle: "Edit Worker", statusApproved: "✓ Approved", statusPending: "⏳ Pending",
@@ -467,32 +484,51 @@
 
   function toggleTheme() {
     THEME = THEME === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', THEME);
-    localStorage.setItem('adminTheme', THEME);
-    updateThemeUI();
+    localStorage.setItem('appTheme', THEME);
+    applyTheme();
   }
 
-  function updateThemeUI() {
+  function applyTheme() {
     document.documentElement.setAttribute('data-theme', THEME);
-    document.getElementById('themeIcon').textContent = THEME === 'light' ? '🌙' : '☀️';
-    document.getElementById('themeText').textContent = THEME === 'light' ? 'Dark Mode' : 'Light Mode';
+    const icon = document.getElementById('themeIcon');
+    const text = document.getElementById('themeText');
+    if (icon) icon.textContent = THEME === 'light' ? '🌙' : '☀️';
+    if (text) text.textContent = THEME === 'light' ? 'Dark Mode' : 'Light Mode';
   }
 
   function changeLang(lang) {
     CURRENT_LANG = lang;
-    localStorage.setItem('adminLang', lang);
+    localStorage.setItem('appLang', lang);
     applyLang();
     document.getElementById('langMenu').classList.remove('active');
   }
+
   function toggleLangMenu() {
     document.getElementById('langMenu').classList.toggle('active');
   }
+
   function applyLang() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
       if (i18n[CURRENT_LANG][key]) el.textContent = i18n[CURRENT_LANG][key];
     });
-    document.getElementById('currentLangLabel').textContent = CURRENT_LANG.toUpperCase();
+    const label = document.getElementById('currentLangLabel');
+    if (label) label.textContent = CURRENT_LANG.toUpperCase();
+  }
+
+  function previewImage(input, targetId) {
+    const preview = document.getElementById(targetId);
+    const img = preview.querySelector('img');
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        img.src = e.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(input.files[0]);
+    } else {
+      preview.style.display = 'none';
+    }
   }
 
   // ----- NAVIGATION -----
@@ -559,13 +595,15 @@
       kasb: document.getElementById('fKasb').value,
       telefon: document.getElementById('fTelfon').value,
       shahar: document.getElementById('fShahar').value,
-      rasm_url: document.getElementById('fRasm').value || null,
+      rasm_url: "https://ui-avatars.com/api/?name=" + encodeURIComponent(document.getElementById('fIsm').value) + "&background=random",
       bio: document.getElementById('fBio').value,
       tasdiqlangan: document.getElementById('fTasdiqlangan').checked
     };
     await supabaseAdmin.from('ustalar').insert([payload]);
     showToast(i18n[CURRENT_LANG].msgSaveSuccess);
-    e.target.reset(); loadStats();
+    e.target.reset(); 
+    document.getElementById('fPreviewBox').style.display = 'none';
+    loadStats();
   }
 
   // --- EDIT ---
@@ -577,8 +615,17 @@
       document.getElementById('eKasb').value = data.kasb;
       document.getElementById('eTelfon').value = data.telefon;
       document.getElementById('eShahar').value = data.shahar || "";
-      document.getElementById('eRasm').value = data.rasm_url || "";
       document.getElementById('eBio').value = data.bio || "";
+      
+      const preview = document.getElementById('ePreviewBox');
+      const img = preview.querySelector('img');
+      if (data.rasm_url) {
+        img.src = data.rasm_url;
+        preview.style.display = 'block';
+      } else {
+        preview.style.display = 'none';
+      }
+      
       document.getElementById('editModal').classList.add('active');
     }
   }
@@ -593,7 +640,6 @@
       kasb: document.getElementById('eKasb').value,
       telefon: document.getElementById('eTelfon').value,
       shahar: document.getElementById('eShahar').value,
-      rasm_url: document.getElementById('eRasm').value || null,
       bio: document.getElementById('eBio').value
     };
     await supabaseAdmin.from('ustalar').update(payload).eq('id', id);
@@ -637,7 +683,7 @@
 
   function init() {
     applyLang();
-    updateThemeUI();
+    applyTheme();
     loadStats();
     loadUstalar();
   }

@@ -261,8 +261,8 @@
 
 <script>
   let allUstalar = [];
-  let CURRENT_LANG = localStorage.getItem('siteLang') || 'uz';
-  let THEME = localStorage.getItem('siteTheme') || 'light';
+  let CURRENT_LANG = localStorage.getItem('appLang') || 'uz';
+  let THEME = localStorage.getItem('appTheme') || 'light';
 
   const i18n = {
     uz: {
@@ -297,7 +297,7 @@
   // ----- THEME & LANG -----
   function toggleTheme() {
     THEME = THEME === 'light' ? 'dark' : 'light';
-    localStorage.setItem('siteTheme', THEME);
+    localStorage.setItem('appTheme', THEME);
     applyTheme();
   }
   function applyTheme() {
@@ -306,7 +306,7 @@
   }
   function changeLang(lang) {
     CURRENT_LANG = lang;
-    localStorage.setItem('siteLang', lang);
+    localStorage.setItem('appLang', lang);
     applyLang();
     renderUstalar(allUstalar);
     document.getElementById('langMenu').classList.remove('active');
