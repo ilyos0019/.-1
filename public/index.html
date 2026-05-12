@@ -6,418 +6,1057 @@
   <title>Usta Top — O'zbekiston ustalar platformasi</title>
   <meta name="description" content="O'zbekistondagi eng yaxshi ustalarni toping. Santexnik, elektrik, duradgor va boshqa mutaxassislar." />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="config.js"></script>
+  <script src="./config.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    
+
     :root {
-      --primary: #2563EB; --primary-dark: #1d4ed8; --primary-light: #eff6ff;
-      --bg: #f9fafb; --card-bg: #ffffff; --text: #111827; --text-muted: #6b7280;
-      --border: #e5e7eb; --nav-bg: #ffffff;
-      --yellow: #f59e0b; --green: #10b981; --red: #ef4444;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #eff6ff;
+      --bg: #f9fafb;
+      --card-bg: #ffffff;
+      --text: #111827;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --nav-bg: #ffffff;
+      --yellow: #f59e0b;
+      --green: #10b981;
       --radius: 16px;
-      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
-      --shadow-lg: 0 8px 32px rgba(37,99,235,.15);
+      --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 8px 32px rgba(37, 99, 235, 0.15);
     }
 
-    [data-theme='dark'] {
-      --bg: #0f172a; --card-bg: #1e293b; --text: #f1f5f9; --text-muted: #94a3b8;
-      --border: #334155; --nav-bg: #1e293b;
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --nav-bg: #1e293b;
     }
 
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; transition: 0.3s; }
-
-    /* NAVBAR */
-    header { background: var(--nav-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; transition: 0.3s; }
-    .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 20px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
-    .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
-    .logo-icon { background: var(--primary); color: #fff; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; font-size: 1.1rem; }
-    
-    .nav-right { display: flex; align-items: center; gap: 12px; }
-    .nav-btn { background: var(--primary); color: #fff; border: none; padding: 10px 22px; border-radius: 50px; font-size: .95rem; font-weight: 600; cursor: pointer; transition: 0.2s; text-decoration: none; }
-    .nav-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
-
-    .control-btn { background: var(--bg); border: 1.5px solid var(--border); padding: 8px 12px; border-radius: 10px; cursor: pointer; color: var(--text); font-size: 0.9rem; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
-    .control-btn:hover { border-color: var(--primary); }
-    .lang-select { background: none; border: none; color: inherit; font-family: inherit; font-size: inherit; cursor: pointer; outline: none; }
-
-    /* HERO */
-    .hero { background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%); color: #fff; padding: 80px 20px; text-align: center; }
-    .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; margin-bottom: 16px; line-height: 1.15; }
-    .hero h1 span { color: #fcd34d; }
-    .hero p { font-size: 1.15rem; opacity: .9; max-width: 560px; margin: 0 auto 36px; }
-    .hero-stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
-    .stat { text-align: center; }
-    .stat-num { font-size: 2rem; font-weight: 800; }
-    .stat-lbl { font-size: .85rem; opacity: .8; }
-
-    /* FILTERS */
-    .filters-wrap { max-width: 1200px; margin: -28px auto 0; padding: 0 20px; position: relative; z-index: 10; }
-    .filters { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 24px 28px; display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; border: 1px solid var(--border); }
-    .filter-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 180px; }
-    .filter-group label { font-size: .82rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; }
-    .filter-group select { border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 14px; font-size: .95rem; color: var(--text); background: var(--bg); outline: none; transition: 0.2s; }
-    .filter-group select:focus { border-color: var(--primary); }
-    .filter-clear { background: var(--border); border: none; padding: 11px 20px; border-radius: 10px; font-size: .9rem; cursor: pointer; color: var(--text); font-weight: 600; transition: 0.2s; align-self: flex-end; white-space: nowrap; }
-    .filter-clear:hover { background: var(--primary-light); color: var(--primary); }
-
-    .lang-dropdown { position: relative; }
-    .lang-menu { 
-      position: absolute; top: calc(100% + 8px); right: 0; 
-      background: var(--card-bg); border: 1px solid var(--border); 
-      border-radius: 12px; box-shadow: var(--shadow-lg); 
-      display: none; flex-direction: column; min-width: 150px; 
-      overflow: hidden; z-index: 1000; backdrop-filter: blur(8px);
-      animation: langIn 0.2s ease;
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background-color 0.25s, color 0.25s;
     }
-    .lang-menu.active { display: flex; }
-    .lang-option { padding: 12px 16px; cursor: pointer; transition: 0.2s; font-size: 0.92rem; color: var(--text); border: none; background: none; text-align: left; width: 100%; display: flex; align-items: center; gap: 10px; }
-    .lang-option:hover { background: var(--primary-light); color: var(--primary); }
-    @keyframes langIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* CONTENT */
-    .content { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .section-title { font-size: 1.4rem; font-weight: 700; }
-    .count-badge { background: var(--primary-light); color: var(--primary); font-weight: 700; padding: 4px 14px; border-radius: 50px; font-size: .9rem; }
+    a { color: var(--primary); }
 
-    /* GRID */
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+    header {
+      background: var(--nav-bg);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: background-color 0.25s, border-color 0.25s;
+    }
 
-    /* CARD */
-    .card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; transition: 0.3s; }
-    .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
-    .card-img { width: 100%; height: 200px; object-fit: cover; background: linear-gradient(135deg, var(--primary-light), #e0e7ff); display: flex; align-items: center; justify-content: center; font-size: 4rem; color: var(--primary); }
-    .card-img img { width: 100%; height: 100%; object-fit: cover; }
-    .card-body { padding: 20px; }
-    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-    .card-name { font-size: 1.2rem; font-weight: 700; }
-    .card-kasb { display: inline-block; background: var(--primary-light); color: var(--primary); font-size: .8rem; font-weight: 700; padding: 3px 10px; border-radius: 50px; }
-    .card-location { font-size: .88rem; color: var(--text-muted); margin: 8px 0 12px; display: flex; align-items: center; gap: 5px; }
-    .stars { color: var(--yellow); font-size: 1rem; }
-    .stars span { color: var(--text-muted); font-size: .85rem; margin-left: 4px; }
-    .card-btn { width: 100%; margin-top: 14px; padding: 11px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: .95rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .card-btn:hover { background: var(--primary-dark); }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-    /* MODAL */
-    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
-    .overlay.active { display: flex; }
-    .modal { background: var(--card-bg); border-radius: 20px; padding: 36px; width: 100%; max-width: 480px; position: relative; animation: modalIn .25s ease; border: 1px solid var(--border); color: var(--text); }
-    @keyframes modalIn { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    .modal-close { position: absolute; top: 16px; right: 16px; background: var(--bg); border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; color: var(--text); }
-    .modal h2 { font-size: 1.5rem; margin-bottom: 6px; }
-    .modal-sub { color: var(--text-muted); font-size: .9rem; margin-bottom: 24px; }
-    .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
-    .form-group input, .form-group textarea { width: 100%; border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: .95rem; outline: none; transition: 0.2s; background: var(--bg); color: var(--text); }
-    .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); }
-    .submit-btn { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-    /* TOAST */
-    .toast { position: fixed; bottom: 24px; right: 24px; padding: 14px 22px; border-radius: 12px; font-weight: 600; z-index: 9999; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    .toast.show { display: block; }
-    .toast.success { background: var(--green); color: #fff; }
+    .logo-icon {
+      background: var(--primary);
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 1.1rem;
+    }
 
-    /* FOOTER */
-    footer { background: var(--card-bg); color: var(--text-muted); border-top: 1px solid var(--border); padding: 48px 20px; margin-top: 80px; }
-    .footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; text-align: left; }
-    .footer-col h4 { color: var(--text); margin-bottom: 20px; font-size: 1.1rem; }
-    .footer-col p { font-size: 0.95rem; line-height: 1.6; margin-bottom: 10px; }
-    .footer-col a { color: var(--primary); text-decoration: none; font-weight: 600; }
-    .footer-bottom { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); text-align: center; font-size: 0.85rem; }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .control-btn {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 0.9rem;
+      transition: border-color 0.2s, background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+    }
+
+    .control-btn:hover {
+      border-color: var(--primary);
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%);
+      color: #fff;
+      padding: 80px 20px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+      line-height: 1.15;
+    }
+
+    .hero h1 .hero-accent {
+      color: #fcd34d;
+    }
+
+    .hero > p {
+      font-size: 1.15rem;
+      opacity: 0.9;
+      max-width: 560px;
+      margin: 0 auto 36px;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+    }
+
+    .stat-lbl {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+
+    .filters-wrap {
+      max-width: 1200px;
+      margin: -28px auto 0;
+      padding: 0 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .filters {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      padding: 24px 28px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: flex-end;
+      border: 1px solid var(--border);
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .filter-group label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .filter-group select {
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 0.95rem;
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+
+    .filter-group select:focus {
+      border-color: var(--primary);
+    }
+
+    .filter-clear {
+      background: var(--border);
+      border: none;
+      padding: 11px 20px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: var(--text);
+      font-weight: 600;
+      transition: background 0.2s, color 0.2s;
+      align-self: flex-end;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .filter-clear:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .lang-dropdown {
+      position: relative;
+    }
+
+    .lang-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      display: none;
+      flex-direction: column;
+      min-width: 150px;
+      overflow: hidden;
+      z-index: 1000;
+      backdrop-filter: blur(8px);
+    }
+
+    .lang-menu.is-open {
+      display: flex;
+    }
+
+    .lang-option {
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      font-size: 0.92rem;
+      color: var(--text);
+      border: none;
+      background: none;
+      text-align: left;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: inherit;
+    }
+
+    .lang-option:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .content {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .count-badge {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 50px;
+      font-size: 0.9rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card-img {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, var(--primary-light), #e0e7ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      color: var(--primary);
+    }
+
+    .card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+
+    .card-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .card-kasb {
+      display: inline-block;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 50px;
+      white-space: nowrap;
+    }
+
+    .card-location {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin: 8px 0 12px;
+    }
+
+    .card-btn {
+      width: 100%;
+      margin-top: 14px;
+      padding: 11px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+
+    .card-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .overlay.is-active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 36px;
+      width: 100%;
+      max-width: 480px;
+      position: relative;
+      border: 1px solid var(--border);
+      color: var(--text);
+      animation: modalIn 0.25s ease;
+    }
+
+    @keyframes modalIn {
+      from {
+        transform: scale(0.92);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--text);
+      font-family: inherit;
+      line-height: 1;
+    }
+
+    .modal h2 {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+    }
+
+    .modal-sub {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+      background: var(--bg);
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--primary);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+
+    .submit-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-weight: 600;
+      z-index: 9999;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .toast.is-visible {
+      display: block;
+    }
+
+    .toast.success {
+      background: var(--green);
+      color: #fff;
+    }
+
+    footer {
+      background: var(--card-bg);
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      padding: 48px 20px;
+      margin-top: 80px;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      text-align: left;
+    }
+
+    .footer-col h4 {
+      color: var(--text);
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+    }
+
+    .footer-col p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .footer-col a {
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer-bottom {
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.85rem;
+    }
 
     @media (max-width: 600px) {
-      .hero { padding: 60px 20px; }
-      .filters { padding: 20px; }
-      .nav-btn { display: none; }
+      .hero {
+        padding: 60px 20px;
+      }
+      .filters {
+        padding: 20px;
+      }
     }
   </style>
 </head>
 <body>
-
-<!-- HEADER -->
-<header>
-  <div class="nav-inner">
-    <a href="/" class="logo"><span class="logo-icon">U</span> Usta Top</a>
-    <div class="nav-right">
-      <button class="control-btn" onclick="toggleTheme()" id="themeToggle">🌙</button>
-      <div class="lang-dropdown">
-        <button class="control-btn" onclick="toggleLangMenu()" id="langBtn" aria-label="Change Language">
-          🌐 <span id="currentLangLabel">UZ</span>
-        </button>
-        <div class="lang-menu" id="langMenu">
-          <button class="lang-option" onclick="changeLang('uz')">🇺🇿 O'zbek</button>
-          <button class="lang-option" onclick="changeLang('ru')">🇷🇺 Русский</button>
-          <button class="lang-option" onclick="changeLang('en')">🇺🇸 English</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</header>
-
-<!-- HERO -->
-<section class="hero">
-  <h1 data-i18n="heroTitle">O'zingizga mos <span>ishonchli ustani</span> toping</h1>
-  <p data-i18n="heroSub">O'zbekiston bo'ylab malakali ustalar xizmatidan foydalaning. Tez, oson va ishonchli.</p>
-  <div class="hero-stats">
-    <div class="stat"><div class="stat-num" id="heroUstalar">—</div><div class="stat-lbl" data-i18n="statWorkers">Faol ustalar</div></div>
-    <div class="stat"><div class="stat-num" id="heroShaharlar">—</div><div class="stat-lbl" data-i18n="statCities">Shaharlar</div></div>
-    <div class="stat"><div class="stat-num" id="heroKasblar">—</div><div class="stat-lbl" data-i18n="statJobs">Kasb turlari</div></div>
-  </div>
-</section>
-
-<!-- FILTERS -->
-<div class="filters-wrap">
-  <div class="filters">
-    <div class="filter-group">
-      <label for="filtKasb" data-i18n="filterJob">Kasb bo'yicha</label>
-      <select id="filtKasb" onchange="applyFilters()" aria-label="Filter by profession">
-        <option value="" data-i18n="allJobs">Barcha kasblar</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label for="filtShahar" data-i18n="filterCity">Shahar bo'yicha</label>
-      <select id="filtShahar" onchange="applyFilters()" aria-label="Filter by city">
-        <option value="" data-i18n="allCities">Barcha shaharlar</option>
-        <option>Toshkent shahri</option>
-        <option>Toshkent viloyati</option>
-        <option>Andijon</option>
-        <option>Boxoro</option>
-        <option>Farg'ona</option>
-        <option>Jizzax</option>
-        <option>Xorazm</option>
-        <option>Namangan</option>
-        <option>Navoiy</option>
-        <option>Qashqadaryo</option>
-        <option>Samarqand</option>
-        <option>Sirdaryo</option>
-        <option>Surxondaryo</option>
-        <option>Qoraqalpog'iston</option>
-      </select>
-    </div>
-    <button class="filter-clear" onclick="clearFilters()" data-i18n="clear">✕ Tozalash</button>
-  </div>
-</div>
-
-<!-- MAIN CONTENT -->
-<div class="content">
-  <div class="section-header">
-    <h2 class="section-title" data-i18n="listTitle">Ustalar ro'yxati</h2>
-    <span class="count-badge" id="countBadge" data-i18n="loading">Yuklanmoqda...</span>
-  </div>
-  <div class="grid" id="ustaGrid"></div>
-</div>
-
-<!-- MUROJAAT MODAL -->
-<div class="overlay" id="modalOverlay" onclick="closeModal(event)">
-  <div class="modal" id="murojaatModal">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <h2 data-i18n="modalTitle">Murojaat qilish</h2>
-    <p class="modal-sub" id="modalUstaIsm">Ustaga xabar yuboring</p>
-    <form id="murojaatForm" onsubmit="submitMurojaat(event)">
-      <input type="hidden" id="murojaatUstaId" />
-      <div class="form-group">
-        <label data-i18n="fName">Ismingiz</label>
-        <input type="text" id="mijozIsm" placeholder="Alisher Karimov" required />
-      </div>
-      <div class="form-group">
-        <label data-i18n="fPhone">Telefon raqam</label>
-        <input type="tel" id="mijozTel" placeholder="+998901234567" required />
-      </div>
-      <div class="form-group">
-        <label data-i18n="fMsg">Xabar (ixtiyoriy)</label>
-        <textarea id="mijozXabar"></textarea>
-      </div>
-      <button type="submit" class="submit-btn" id="murojaatBtn" data-i18n="btnSend">Yuborish</button>
-    </form>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-col">
-      <h4>Usta Top</h4>
-      <p data-i18n="footerAbout">O'zbekistondagi eng yaxshi ustalarni topish va ularga murojaat qilish uchun qulay platforma.</p>
-    </div>
-    <div class="footer-col">
-      <h4 data-i18n="contactMe">Men bilan bog'lanish</h4>
-      <p>Telegram: <a href="https://t.me/Bahromovv04" target="_blank">@Bahromovv04</a></p>
-      <p>Tel: <a href="tel:+998974593222">+998 97 459 32 22</a></p>
-    </div>
-    <div class="footer-col">
-      <h4 data-i18n="links">Havolalar</h4>
-      <p><a href="admin.html">Admin Panel</a></p>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>&copy; 2024 Usta Top — <span data-i18n="allRights">Barcha huquqlar himoyalangan.</span></p>
-  </div>
-</footer>
-
-<script>
-  let allUstalar = [];
-  let CURRENT_LANG = localStorage.getItem('appLang') || 'uz';
-  let THEME = localStorage.getItem('appTheme') || 'light';
-
-  const i18n = {
-    uz: {
-      navUstaBolish: "Usta bo'lish", heroTitle: "O'zingizga mos ishonchli ustani toping", heroSub: "O'zbekiston bo'ylab malakali ustalar xizmatidan foydalaning. Tez, oson va ishonchli.",
-      statWorkers: "Faol ustalar", statCities: "Shaharlar", statJobs: "Kasb turlari", filterJob: "Kasb bo'yicha", allJobs: "Barcha kasblar",
-      filterCity: "Shahar bo'yicha", allCities: "Barcha shaharlar", clear: "✕ Tozalash", listTitle: "Ustalar ro'yxati", loading: "Yuklanmoqda...",
-      modalTitle: "Murojaat qilish", fName: "Ismingiz", fPhone: "Telefon raqam", fMsg: "Xabar (ixtiyoriy)", btnSend: "Yuborish",
-      footerAbout: "O'zbekistondagi eng yaxshi ustalarni topish va ularga murojaat qilish uchun qulay platforma.",
-      contactMe: "Men bilan bog'lanish", links: "Havolalar", allRights: "Barcha huquqlar himoyalangan.",
-      msgSuccess: "✅ Murojaat muvaffaqiyatli yuborildi!", btnCall: "📞 Murojaat qilish", cityUnknown: "Noaniq", items: "ta usta"
-    },
-    ru: {
-      navUstaBolish: "Стать мастером", heroTitle: "Найдите подходящего надежного мастера", heroSub: "Пользуйтесь услугами квалифицированных мастеров по всему Узбекистану. Быстро, просто и надежно.",
-      statWorkers: "Активных мастеров", statCities: "Городов", statJobs: "Видов профессий", filterJob: "По профессии", allJobs: "Все профессии",
-      filterCity: "По городу", allCities: "Все города", clear: "✕ Очистить", listTitle: "Список мастеров", loading: "Загрузка...",
-      modalTitle: "Оставить заявку", fName: "Ваше имя", fPhone: "Номер телефона", fMsg: "Сообщение (необязательно)", btnSend: "Отправить",
-      footerAbout: "Удобная платформа для поиска и обращения к лучшим мастерам Узбекистана.",
-      contactMe: "Связаться со мной", links: "Ссылки", allRights: "Все права защищены.",
-      msgSuccess: "✅ Заявка успешно отправлена!", btnCall: "📞 Связаться", cityUnknown: "Неизвестно", items: "мастеров"
-    },
-    en: {
-      navUstaBolish: "Become a Worker", heroTitle: "Find a reliable master that fits you", heroSub: "Use services of qualified workers across Uzbekistan. Fast, easy, and reliable.",
-      statWorkers: "Active workers", statCities: "Cities", statJobs: "Professions", filterJob: "By profession", allJobs: "All professions",
-      filterCity: "By city", allCities: "All cities", clear: "✕ Clear", listTitle: "List of workers", loading: "Loading...",
-      modalTitle: "Contact Master", fName: "Your name", fPhone: "Phone number", fMsg: "Message (optional)", btnSend: "Send",
-      footerAbout: "A convenient platform for finding and contacting the best workers in Uzbekistan.",
-      contactMe: "Contact Me", links: "Links", allRights: "All rights reserved.",
-      msgSuccess: "✅ Request sent successfully!", btnCall: "📞 Contact Now", cityUnknown: "Unknown", items: "workers"
-    }
-  };
-
-  // ----- THEME & LANG -----
-  function toggleTheme() {
-    THEME = THEME === 'light' ? 'dark' : 'light';
-    localStorage.setItem('appTheme', THEME);
-    applyTheme();
-  }
-  function applyTheme() {
-    document.documentElement.setAttribute('data-theme', THEME);
-    document.getElementById('themeToggle').textContent = THEME === 'light' ? '🌙' : '☀️';
-  }
-  function changeLang(lang) {
-    CURRENT_LANG = lang;
-    localStorage.setItem('appLang', lang);
-    applyLang();
-    renderUstalar(allUstalar);
-    document.getElementById('langMenu').classList.remove('active');
-  }
-  function toggleLangMenu() {
-    document.getElementById('langMenu').classList.toggle('active');
-  }
-  function applyLang() {
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-      const key = el.getAttribute('data-i18n');
-      if (i18n[CURRENT_LANG][key]) el.textContent = i18n[CURRENT_LANG][key];
-    });
-    document.getElementById('currentLangLabel').textContent = CURRENT_LANG.toUpperCase();
-  }
-
-  // ----- LOGIC -----
-  async function loadUstalar() {
-    const { data } = await supabaseClient.from('ustalar').select('*').eq('tasdiqlangan', true).order('created_at', { ascending: false });
-    allUstalar = data || [];
-    updateHeroStats();
-    renderUstalar(allUstalar);
-    populateProfessions();
-  }
-
-  function updateHeroStats() {
-    document.getElementById('heroUstalar').textContent = allUstalar.length + '+';
-    document.getElementById('heroShaharlar').textContent = new Set(allUstalar.map(u => u.shahar)).size + '+';
-    document.getElementById('heroKasblar').textContent = new Set(allUstalar.map(u => u.kasb)).size + '+';
-  }
-
-  function populateProfessions() {
-    const sel = document.getElementById('filtKasb');
-    const jobs = [...new Set(allUstalar.map(u => u.kasb))];
-    jobs.forEach(j => {
-      const opt = document.createElement('option');
-      opt.value = opt.textContent = j;
-      sel.appendChild(opt);
-    });
-  }
-
-  function renderUstalar(list) {
-    const grid = document.getElementById('ustaGrid');
-    document.getElementById('countBadge').textContent = list.length + ' ' + i18n[CURRENT_LANG].items;
-    grid.innerHTML = list.map(u => `
-      <div class="card">
-        <div class="card-img">${u.rasm_url ? `<img src="${u.rasm_url}" onerror="this.parentElement.innerHTML='👷'">` : '👷'}</div>
-        <div class="card-body">
-          <div class="card-top">
-            <span class="card-name">${u.ism}</span>
-            <span class="card-kasb">${u.kasb}</span>
+  <header>
+    <div class="nav-inner">
+      <a href="./" class="logo" id="logoHome"><span class="logo-icon">U</span> Usta Top</a>
+      <div class="nav-right">
+        <button type="button" class="control-btn" id="themeToggle" aria-label="Mavzu">🌙</button>
+        <div class="lang-dropdown">
+          <button type="button" class="control-btn" id="langBtn" aria-label="Tilni o'zgartirish">
+            🌐 <span id="currentLangLabel">UZ</span>
+          </button>
+          <div class="lang-menu" id="langMenu" role="menu">
+            <button type="button" class="lang-option" data-lang="uz" role="menuitem">🇺🇿 O'zbek</button>
+            <button type="button" class="lang-option" data-lang="ru" role="menuitem">🇷🇺 Русский</button>
+            <button type="button" class="lang-option" data-lang="en" role="menuitem">🇺🇸 English</button>
           </div>
-          <div class="card-location">📍 ${u.shahar || i18n[CURRENT_LANG].cityUnknown}</div>
-          <button class="card-btn" onclick="openModal('${u.id}', '${u.ism}')">${i18n[CURRENT_LANG].btnCall}</button>
         </div>
       </div>
-    `).join('');
-  }
+    </div>
+  </header>
 
-  function applyFilters() {
-    const k = document.getElementById('filtKasb').value;
-    const s = document.getElementById('filtShahar').value;
-    let res = allUstalar;
-    if (k) res = res.filter(u => u.kasb === k);
-    if (s) res = res.filter(u => u.shahar === s);
-    renderUstalar(res);
-  }
+  <section class="hero" aria-label="Asosiy">
+    <h1 id="heroHeading"></h1>
+    <p data-i18n="heroSub">O'zbekiston bo'ylab malakali ustalar xizmatidan foydalaning. Tez, oson va ishonchli.</p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num" id="heroUstalar">—</div>
+        <div class="stat-lbl" data-i18n="statWorkers">Faol ustalar</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="heroShaharlar">—</div>
+        <div class="stat-lbl" data-i18n="statCities">Shaharlar</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="heroKasblar">—</div>
+        <div class="stat-lbl" data-i18n="statJobs">Kasb turlari</div>
+      </div>
+    </div>
+  </section>
 
-  function clearFilters() {
-    document.getElementById('filtKasb').value = '';
-    document.getElementById('filtShahar').value = '';
-    renderUstalar(allUstalar);
-  }
+  <div class="filters-wrap">
+    <div class="filters">
+      <div class="filter-group">
+        <label for="filtKasb" data-i18n="filterJob">Kasb bo'yicha</label>
+        <select id="filtKasb" aria-label="Kasb bo'yicha filtr">
+          <option value="" data-i18n="allJobs">Barcha kasblar</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="filtShahar" data-i18n="filterCity">Shahar bo'yicha</label>
+        <select id="filtShahar" aria-label="Shahar bo'yicha filtr">
+          <option value="" data-i18n="allCities">Barcha shaharlar</option>
+          <option>Toshkent shahri</option>
+          <option>Toshkent viloyati</option>
+          <option>Andijon</option>
+          <option>Boxoro</option>
+          <option>Farg'ona</option>
+          <option>Jizzax</option>
+          <option>Xorazm</option>
+          <option>Namangan</option>
+          <option>Navoiy</option>
+          <option>Qashqadaryo</option>
+          <option>Samarqand</option>
+          <option>Sirdaryo</option>
+          <option>Surxondaryo</option>
+          <option>Qoraqalpog'iston</option>
+        </select>
+      </div>
+      <button type="button" class="filter-clear" id="filterClear" data-i18n="clear">✕ Tozalash</button>
+    </div>
+  </div>
 
-  function openModal(id, name) {
-    document.getElementById('murojaatUstaId').value = id;
-    document.getElementById('modalUstaIsm').textContent = name;
-    document.getElementById('modalOverlay').classList.add('active');
-  }
+  <main class="content">
+    <div class="section-header">
+      <h2 class="section-title" data-i18n="listTitle">Ustalar ro'yxati</h2>
+      <span class="count-badge" id="countBadge" data-i18n="loading">Yuklanmoqda...</span>
+    </div>
+    <div class="grid" id="ustaGrid"></div>
+  </main>
 
-  function closeModal(e) {
-    if (!e || e.target === document.getElementById('modalOverlay') || !e.target) document.getElementById('modalOverlay').classList.remove('active');
-  }
+  <div class="overlay" id="modalOverlay" aria-hidden="true">
+    <div class="modal" id="murojaatModal" role="dialog" aria-modal="true" aria-labelledby="modalTitleEl">
+      <button type="button" class="modal-close" id="modalClose" aria-label="Yopish">✕</button>
+      <h2 id="modalTitleEl" data-i18n="modalTitle">Murojaat qilish</h2>
+      <p class="modal-sub" id="modalUstaIsm">Ustaga xabar yuboring</p>
+      <form id="murojaatForm">
+        <input type="hidden" id="murojaatUstaId" />
+        <div class="form-group">
+          <label for="mijozIsm" data-i18n="fName">Ismingiz</label>
+          <input type="text" id="mijozIsm" name="ism" placeholder="Alisher Karimov" required autocomplete="name" />
+        </div>
+        <div class="form-group">
+          <label for="mijozTel" data-i18n="fPhone">Telefon raqam</label>
+          <input type="tel" id="mijozTel" name="tel" placeholder="+998901234567" required autocomplete="tel" />
+        </div>
+        <div class="form-group">
+          <label for="mijozXabar" data-i18n="fMsg">Xabar (ixtiyoriy)</label>
+          <textarea id="mijozXabar" name="xabar" rows="3"></textarea>
+        </div>
+        <button type="submit" class="submit-btn" id="murojaatBtn" data-i18n="btnSend">Yuborish</button>
+      </form>
+    </div>
+  </div>
 
-  async function submitMurojaat(e) {
-    e.preventDefault();
-    const payload = {
-      usta_id: document.getElementById('murojaatUstaId').value,
-      mijoz_ism: document.getElementById('mijozIsm').value,
-      mijoz_tel: document.getElementById('mijozTel').value,
-      xabar: document.getElementById('mijozXabar').value
-    };
-    await supabaseClient.from('murojaatlar').insert([payload]);
-    closeModal();
-    showToast(i18n[CURRENT_LANG].msgSuccess);
-  }
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.className = 'toast show success';
-    setTimeout(() => t.className = 'toast', 3000);
-  }
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-col">
+        <h4>Usta Top</h4>
+        <p data-i18n="footerAbout">O'zbekistondagi eng yaxshi ustalarni topish va ularga murojaat qilish uchun qulay platforma.</p>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="contactMe">Men bilan bog'lanish</h4>
+        <p>Telegram: <a href="https://t.me/Bahromovv04" target="_blank" rel="noopener noreferrer">@Bahromovv04</a></p>
+        <p>Tel: <a href="tel:+998974593222">+998 97 459 32 22</a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Usta Top — <span data-i18n="allRights">Barcha huquqlar himoyalangan.</span></p>
+    </div>
+  </footer>
 
-  // Init
-  applyTheme();
-  applyLang();
-  loadUstalar();
+  <script>
+    (function () {
+      "use strict";
 
-  document.addEventListener('click', e => {
-    if (!e.target.closest('.lang-dropdown')) {
-      const menu = document.getElementById('langMenu');
-      if (menu) menu.classList.remove('active');
-    }
-  });
-</script>
+      const STORAGE_LANG = "appLang";
+      const STORAGE_THEME = "appTheme";
+
+      const i18n = {
+        uz: {
+          heroHtml:
+            "O'zingizga mos <span class=\"hero-accent\">ishonchli ustani</span> toping",
+          heroSub:
+            "O'zbekiston bo'ylab malakali ustalar xizmatidan foydalaning. Tez, oson va ishonchli.",
+          statWorkers: "Faol ustalar",
+          statCities: "Shaharlar",
+          statJobs: "Kasb turlari",
+          filterJob: "Kasb bo'yicha",
+          allJobs: "Barcha kasblar",
+          filterCity: "Shahar bo'yicha",
+          allCities: "Barcha shaharlar",
+          clear: "✕ Tozalash",
+          listTitle: "Ustalar ro'yxati",
+          loading: "Yuklanmoqda...",
+          modalTitle: "Murojaat qilish",
+          fName: "Ismingiz",
+          fPhone: "Telefon raqam",
+          fMsg: "Xabar (ixtiyoriy)",
+          btnSend: "Yuborish",
+          footerAbout:
+            "O'zbekistondagi eng yaxshi ustalarni topish va ularga murojaat qilish uchun qulay platforma.",
+          contactMe: "Men bilan bog'lanish",
+          allRights: "Barcha huquqlar himoyalangan.",
+          msgSuccess: "✅ Murojaat muvaffaqiyatli yuborildi!",
+          btnCall: "📞 Murojaat qilish",
+          cityUnknown: "Noaniq",
+          items: "ta usta",
+        },
+        ru: {
+          heroHtml:
+            "Найдите <span class=\"hero-accent\">надежного мастера</span>, который вам подходит",
+          heroSub:
+            "Пользуйтесь услугами квалифицированных мастеров по всему Узбекистану. Быстро, просто и надежно.",
+          statWorkers: "Активных мастеров",
+          statCities: "Городов",
+          statJobs: "Видов профессий",
+          filterJob: "По профессии",
+          allJobs: "Все профессии",
+          filterCity: "По городу",
+          allCities: "Все города",
+          clear: "✕ Очистить",
+          listTitle: "Список мастеров",
+          loading: "Загрузка...",
+          modalTitle: "Оставить заявку",
+          fName: "Ваше имя",
+          fPhone: "Номер телефона",
+          fMsg: "Сообщение (необязательно)",
+          btnSend: "Отправить",
+          footerAbout:
+            "Удобная платформа для поиска и обращения к лучшим мастерам Узбекистана.",
+          contactMe: "Связаться со мной",
+          allRights: "Все права защищены.",
+          msgSuccess: "✅ Заявка успешно отправлена!",
+          btnCall: "📞 Связаться",
+          cityUnknown: "Неизвестно",
+          items: "мастеров",
+        },
+        en: {
+          heroHtml:
+            "Find a <span class=\"hero-accent\">reliable professional</span> that fits you",
+          heroSub:
+            "Use services of qualified workers across Uzbekistan. Fast, easy, and reliable.",
+          statWorkers: "Active workers",
+          statCities: "Cities",
+          statJobs: "Professions",
+          filterJob: "By profession",
+          allJobs: "All professions",
+          filterCity: "By city",
+          allCities: "All cities",
+          clear: "✕ Clear",
+          listTitle: "List of workers",
+          loading: "Loading...",
+          modalTitle: "Contact Master",
+          fName: "Your name",
+          fPhone: "Phone number",
+          fMsg: "Message (optional)",
+          btnSend: "Send",
+          footerAbout:
+            "A convenient platform for finding and contacting the best workers in Uzbekistan.",
+          contactMe: "Contact Me",
+          allRights: "All rights reserved.",
+          msgSuccess: "✅ Request sent successfully!",
+          btnCall: "📞 Contact Now",
+          cityUnknown: "Unknown",
+          items: "workers",
+        },
+      };
+
+      let allUstalar = [];
+      let currentLang = localStorage.getItem(STORAGE_LANG) || "uz";
+      let theme = localStorage.getItem(STORAGE_THEME) || "light";
+
+      const $ = (id) => document.getElementById(id);
+
+      function esc(s) {
+        return String(s ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function t(key) {
+        const pack = i18n[currentLang] || i18n.uz;
+        return pack[key] != null ? pack[key] : key;
+      }
+
+      function applyHeroHeading() {
+        const el = $("heroHeading");
+        if (el) el.innerHTML = t("heroHtml");
+      }
+
+      function applyTheme() {
+        document.documentElement.setAttribute("data-theme", theme);
+        const btn = $("themeToggle");
+        if (btn) btn.textContent = theme === "light" ? "🌙" : "☀️";
+      }
+
+      function applyLang() {
+        applyHeroHeading();
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          if (!key || key === "heroHtml") return;
+          const val = t(key);
+          if (val != null) el.textContent = val;
+        });
+        const label = $("currentLangLabel");
+        if (label) label.textContent = currentLang.toUpperCase();
+      }
+
+      function setLang(lang) {
+        if (!i18n[lang]) return;
+        currentLang = lang;
+        localStorage.setItem(STORAGE_LANG, lang);
+        applyLang();
+        renderUstalar(allUstalar);
+        $("langMenu")?.classList.remove("is-open");
+      }
+
+      function toggleLangMenu() {
+        $("langMenu")?.classList.toggle("is-open");
+      }
+
+      function toggleTheme() {
+        theme = theme === "light" ? "dark" : "light";
+        localStorage.setItem(STORAGE_THEME, theme);
+        applyTheme();
+      }
+
+      function updateHeroStats() {
+        const n = allUstalar.length;
+        const cities = new Set(allUstalar.map((u) => u.shahar).filter(Boolean)).size;
+        const jobs = new Set(allUstalar.map((u) => u.kasb).filter(Boolean)).size;
+        const hu = $("heroUstalar");
+        const hs = $("heroShaharlar");
+        const hk = $("heroKasblar");
+        if (hu) hu.textContent = n + "+";
+        if (hs) hs.textContent = cities + "+";
+        if (hk) hk.textContent = jobs + "+";
+      }
+
+      function populateProfessions() {
+        const sel = $("filtKasb");
+        if (!sel) return;
+        while (sel.options.length > 1) sel.remove(1);
+        const jobs = [...new Set(allUstalar.map((u) => u.kasb).filter(Boolean))].sort();
+        jobs.forEach((j) => {
+          const opt = document.createElement("option");
+          opt.value = j;
+          opt.textContent = j;
+          sel.appendChild(opt);
+        });
+      }
+
+      function renderUstalar(list) {
+        const grid = $("ustaGrid");
+        const badge = $("countBadge");
+        if (badge) badge.textContent = list.length + " " + t("items");
+        if (!grid) return;
+        grid.innerHTML = list
+          .map((u) => {
+            const img = u.rasm_url
+              ? `<img src="${esc(u.rasm_url)}" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.replaceWith(document.createTextNode('👷'));" />`
+              : "";
+            const placeholder = u.rasm_url ? "" : "👷";
+            const city = u.shahar || t("cityUnknown");
+            return `
+          <article class="card">
+            <div class="card-img">${img || placeholder}</div>
+            <div class="card-body">
+              <div class="card-top">
+                <span class="card-name">${esc(u.ism)}</span>
+                <span class="card-kasb">${esc(u.kasb)}</span>
+              </div>
+              <div class="card-location">📍 ${esc(city)}</div>
+              <button type="button" class="card-btn" data-usta-id="${esc(u.id)}">${esc(t("btnCall"))}</button>
+            </div>
+          </article>`;
+          })
+          .join("");
+      }
+
+      function applyFilters() {
+        const k = $("filtKasb")?.value || "";
+        const s = $("filtShahar")?.value || "";
+        let res = allUstalar;
+        if (k) res = res.filter((u) => u.kasb === k);
+        if (s) res = res.filter((u) => u.shahar === s);
+        renderUstalar(res);
+      }
+
+      function clearFilters() {
+        const ks = $("filtKasb");
+        const sh = $("filtShahar");
+        if (ks) ks.value = "";
+        if (sh) sh.value = "";
+        renderUstalar(allUstalar);
+      }
+
+      function openModal(ustaId) {
+        const u = allUstalar.find((x) => String(x.id) === String(ustaId));
+        $("murojaatUstaId").value = ustaId;
+        $("modalUstaIsm").textContent = u ? u.ism : "";
+        $("modalOverlay").classList.add("is-active");
+        $("modalOverlay").setAttribute("aria-hidden", "false");
+      }
+
+      function closeModal() {
+        $("modalOverlay").classList.remove("is-active");
+        $("modalOverlay").setAttribute("aria-hidden", "true");
+      }
+
+      async function loadUstalar() {
+        try {
+          const client = window.supabaseClient;
+          if (!client) throw new Error("Supabase client yo'q");
+          const { data, error } = await client
+            .from("ustalar")
+            .select("*")
+            .eq("tasdiqlangan", true)
+            .order("created_at", { ascending: false });
+          if (error) throw error;
+          allUstalar = data || [];
+          updateHeroStats();
+          renderUstalar(allUstalar);
+          populateProfessions();
+        } catch (e) {
+          console.error(e);
+          allUstalar = [];
+          updateHeroStats();
+          renderUstalar(allUstalar);
+        }
+      }
+
+      async function submitMurojaat(ev) {
+        ev.preventDefault();
+        const payload = {
+          usta_id: $("murojaatUstaId").value,
+          mijoz_ism: $("mijozIsm").value.trim(),
+          mijoz_tel: $("mijozTel").value.trim(),
+          xabar: $("mijozXabar").value.trim(),
+        };
+        try {
+          await window.supabaseClient.from("murojaatlar").insert([payload]);
+        } catch (e) {
+          console.error(e);
+        }
+        $("murojaatForm").reset();
+        closeModal();
+        const toast = $("toast");
+        if (toast) {
+          toast.textContent = t("msgSuccess");
+          toast.className = "toast is-visible success";
+          setTimeout(() => {
+            toast.className = "toast";
+            toast.textContent = "";
+          }, 3000);
+        }
+      }
+
+      function bindAdminShortcut() {
+        const target = new URL("admin.html", window.location.href).href;
+        document.addEventListener(
+          "keydown",
+          (e) => {
+            const save =
+              (e.ctrlKey || e.metaKey) &&
+              !e.shiftKey &&
+              !e.altKey &&
+              (e.key === "s" || e.key === "S" || e.code === "KeyS");
+            if (!save) return;
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.assign(target);
+          },
+          true
+        );
+      }
+
+      function init() {
+        applyTheme();
+        applyLang();
+
+        $("themeToggle")?.addEventListener("click", toggleTheme);
+        $("langBtn")?.addEventListener("click", (e) => {
+          e.stopPropagation();
+          toggleLangMenu();
+        });
+        $("langMenu")?.querySelectorAll("[data-lang]").forEach((btn) => {
+          btn.addEventListener("click", () => setLang(btn.getAttribute("data-lang")));
+        });
+
+        document.addEventListener("click", (e) => {
+          if (!e.target.closest(".lang-dropdown")) $("langMenu")?.classList.remove("is-open");
+        });
+
+        $("filtKasb")?.addEventListener("change", applyFilters);
+        $("filtShahar")?.addEventListener("change", applyFilters);
+        $("filterClear")?.addEventListener("click", clearFilters);
+
+        $("ustaGrid")?.addEventListener("click", (e) => {
+          const btn = e.target.closest("[data-usta-id]");
+          if (!btn) return;
+          openModal(btn.getAttribute("data-usta-id"));
+        });
+
+        const overlay = $("modalOverlay");
+        overlay?.addEventListener("click", (e) => {
+          if (e.target === overlay) closeModal();
+        });
+        $("modalClose")?.addEventListener("click", closeModal);
+        $("murojaatModal")?.addEventListener("click", (e) => e.stopPropagation());
+        $("murojaatForm")?.addEventListener("submit", submitMurojaat);
+
+        bindAdminShortcut();
+        loadUstalar();
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
 </body>
 </html>
