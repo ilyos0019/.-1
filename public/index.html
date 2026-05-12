@@ -374,6 +374,13 @@
       margin: 8px 0 12px;
     }
 
+    .card-rating {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin: 0 0 6px;
+      font-weight: 600;
+    }
+
     .card-btn {
       width: 100%;
       margin-top: 14px;
@@ -396,116 +403,308 @@
     .overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(4px);
+      background: rgba(15, 15, 25, 0.65);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       z-index: 1000;
-      display: none;
+      display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 16px;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.28s ease, visibility 0.28s ease;
     }
 
     .overlay.is-active {
-      display: flex;
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
     }
 
-    .modal {
-      background: var(--card-bg);
+    .usta-contact-panel {
+      background: #1a1a2e;
       border-radius: 20px;
-      padding: 36px;
       width: 100%;
-      max-width: 480px;
+      max-width: 420px;
+      max-height: min(92vh, 900px);
+      overflow-y: auto;
       position: relative;
-      border: 1px solid var(--border);
-      color: var(--text);
-      animation: modalIn 0.25s ease;
+      color: #e8e8ef;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      transform: scale(0.94);
+      opacity: 0;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.28s ease;
     }
 
-    @keyframes modalIn {
-      from {
-        transform: scale(0.92);
-        opacity: 0;
-      }
-      to {
-        transform: scale(1);
-        opacity: 1;
-      }
+    .overlay.is-active .usta-contact-panel {
+      transform: scale(1);
+      opacity: 1;
     }
 
-    .modal-close {
+    .usta-contact-close {
       position: absolute;
-      top: 16px;
-      right: 16px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      width: 36px;
-      height: 36px;
+      top: 12px;
+      right: 12px;
+      width: 40px;
+      height: 40px;
+      border: none;
       border-radius: 50%;
-      font-size: 1.2rem;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 1.25rem;
       cursor: pointer;
-      color: var(--text);
+      z-index: 2;
       font-family: inherit;
       line-height: 1;
+      transition: background 0.2s;
     }
 
-    .modal h2 {
-      font-size: 1.5rem;
-      margin-bottom: 6px;
+    .usta-contact-close:hover {
+      background: rgba(255, 255, 255, 0.15);
     }
 
-    .modal-sub {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      margin-bottom: 24px;
+    .cm-header {
+      text-align: center;
+      padding: 28px 24px 20px;
     }
 
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-group label {
+    .cm-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto 14px;
       display: block;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: var(--text);
+      border: 3px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
     }
 
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 14px;
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.2s;
-      background: var(--bg);
-      color: var(--text);
-      font-family: inherit;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus {
-      border-color: var(--primary);
-    }
-
-    .submit-btn {
-      width: 100%;
-      padding: 14px;
-      background: var(--primary);
+    .cm-avatar.initials {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.65rem;
+      font-weight: 800;
       color: #fff;
+    }
+
+    .cm-name {
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      line-height: 1.25;
+      color: #fff;
+    }
+
+    .cm-kasb {
+      display: inline-block;
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: rgba(37, 99, 235, 0.35);
+      color: #93c5fd;
+      margin-bottom: 10px;
+    }
+
+    .cm-city {
+      font-size: 0.9rem;
+      color: #a8a8c0;
+      margin-top: 4px;
+    }
+
+    .cm-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 0 20px 20px;
+    }
+
+    .cm-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 12px;
+      border-radius: 14px;
       border: none;
-      border-radius: 12px;
-      font-size: 1rem;
+      font-size: 0.92rem;
       font-weight: 700;
       cursor: pointer;
-      transition: background 0.2s;
       font-family: inherit;
+      color: #fff;
+      text-decoration: none;
+      transition: transform 0.15s, filter 0.15s;
     }
 
-    .submit-btn:hover {
-      background: var(--primary-dark);
+    .cm-btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .cm-btn-phone {
+      background: #22c55e;
+    }
+
+    .cm-btn-tg {
+      background: #2aabee;
+    }
+
+    .cm-no-contact {
+      text-align: center;
+      color: #8888a0;
+      font-size: 0.88rem;
+      padding: 8px 20px 16px;
+    }
+
+    .cm-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 20px;
+      color: #7c7c94;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .cm-divider::before,
+    .cm-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .cm-review {
+      padding: 0 20px 24px;
+    }
+
+    .cm-stars-row {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+
+    .cm-star {
+      background: none;
+      border: none;
+      font-size: 1.75rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 4px;
+      filter: grayscale(1);
+      opacity: 0.35;
+      transition: transform 0.15s, filter 0.15s, opacity 0.15s;
+    }
+
+    .cm-star.on,
+    .cm-star.hover {
+      filter: grayscale(0);
+      opacity: 1;
+    }
+
+    .cm-rating-label {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #c4c4dc;
+      min-height: 22px;
+      margin-bottom: 14px;
+    }
+
+    .cm-textarea {
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: rgba(0, 0, 0, 0.35);
+      color: #f0f0f8;
+      resize: vertical;
+      min-height: 72px;
+      margin-bottom: 12px;
+    }
+
+    .cm-textarea::placeholder {
+      color: #6b6b80;
+    }
+
+    .cm-textarea:focus {
+      outline: none;
+      border-color: rgba(37, 99, 235, 0.6);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+
+    .cm-submit {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 12px;
+      background: #2563eb;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+
+    .cm-submit:hover {
+      background: #1d4ed8;
+    }
+
+    .cm-reviews-list {
+      margin-top: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cm-review-item {
+      font-size: 0.88rem;
+      color: #c8c8dc;
+      line-height: 1.45;
+      padding: 10px 12px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .cm-review-stars {
+      color: #fbbf24;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+    }
+
+    .cm-empty-reviews {
+      text-align: center;
+      color: #6b6b80;
+      font-size: 0.88rem;
+      padding: 8px 0;
+    }
+
+    .card-img .card-initials {
+      width: 100%;
+      height: 100%;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    @media (max-width: 480px) {
+      .cm-actions {
+        grid-template-columns: 1fr;
+      }
     }
 
     .toast {
@@ -526,6 +725,11 @@
 
     .toast.success {
       background: var(--green);
+      color: #fff;
+    }
+
+    .toast.warn {
+      background: #64748b;
       color: #fff;
     }
 
@@ -661,26 +865,38 @@
   </main>
 
   <div class="overlay" id="modalOverlay" aria-hidden="true">
-    <div class="modal" id="murojaatModal" role="dialog" aria-modal="true" aria-labelledby="modalTitleEl">
-      <button type="button" class="modal-close" id="modalClose" aria-label="Yopish">✕</button>
-      <h2 id="modalTitleEl" data-i18n="modalTitle">Murojaat qilish</h2>
-      <p class="modal-sub" id="modalUstaIsm">Ustaga xabar yuboring</p>
-      <form id="murojaatForm">
-        <input type="hidden" id="murojaatUstaId" />
-        <div class="form-group">
-          <label for="mijozIsm" data-i18n="fName">Ismingiz</label>
-          <input type="text" id="mijozIsm" name="ism" placeholder="Alisher Karimov" required autocomplete="name" />
-        </div>
-        <div class="form-group">
-          <label for="mijozTel" data-i18n="fPhone">Telefon raqam</label>
-          <input type="tel" id="mijozTel" name="tel" placeholder="+998901234567" required autocomplete="tel" />
-        </div>
-        <div class="form-group">
-          <label for="mijozXabar" data-i18n="fMsg">Xabar (ixtiyoriy)</label>
-          <textarea id="mijozXabar" name="xabar" rows="3"></textarea>
-        </div>
-        <button type="submit" class="submit-btn" id="murojaatBtn" data-i18n="btnSend">Yuborish</button>
-      </form>
+    <div
+      class="usta-contact-panel"
+      id="ustaContactPanel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cmName"
+    >
+      <button type="button" class="usta-contact-close" id="modalClose" aria-label="Yopish">✕</button>
+      <input type="hidden" id="cmUstaId" value="" />
+      <div class="cm-header">
+        <div id="cmAvatarWrap"></div>
+        <div class="cm-name" id="cmName"></div>
+        <div><span class="cm-kasb" id="cmKasb"></span></div>
+        <div class="cm-city" id="cmCity"></div>
+      </div>
+      <div class="cm-actions" id="cmActions" style="display: none"></div>
+      <p class="cm-no-contact" id="cmNoContact" style="display: none" data-i18n="noContact">Aloqa ma'lumotlari mavjud emas</p>
+      <div class="cm-divider" data-i18n="reviewDivider">Sharh qoldiring</div>
+      <div class="cm-review">
+        <div class="cm-stars-row" id="cmStars" aria-label="Reyting"></div>
+        <div class="cm-rating-label" id="cmRatingLabel"></div>
+        <textarea
+          class="cm-textarea"
+          id="cmTextarea"
+          rows="3"
+          maxlength="2000"
+          autocomplete="off"
+        ></textarea>
+        <button type="button" class="cm-submit" id="cmSubmit" data-i18n="reviewSubmit">Sharh yuborish</button>
+        <div class="cm-reviews-list" id="cmReviewsList" hidden></div>
+        <p class="cm-empty-reviews" id="cmEmptyReviews" data-i18n="noReviewsYet">Hali sharh yo'q</p>
+      </div>
     </div>
   </div>
 
@@ -726,19 +942,28 @@
           clear: "✕ Tozalash",
           listTitle: "Ustalar ro'yxati",
           loading: "Yuklanmoqda...",
-          modalTitle: "Murojaat qilish",
-          fName: "Ismingiz",
-          fPhone: "Telefon raqam",
-          fMsg: "Xabar (ixtiyoriy)",
-          btnSend: "Yuborish",
+          modalTitle: "Aloqa",
           footerAbout:
             "O'zbekistondagi eng yaxshi ustalarni topish va ularga murojaat qilish uchun qulay platforma.",
           contactMe: "Men bilan bog'lanish",
           allRights: "Barcha huquqlar himoyalangan.",
-          msgSuccess: "✅ Murojaat muvaffaqiyatli yuborildi!",
           btnCall: "📞 Murojaat qilish",
           cityUnknown: "Noaniq",
           items: "ta usta",
+          reviewDivider: "Sharh qoldiring",
+          reviewPlaceholder: "Fikringiz...",
+          reviewSubmit: "Sharh yuborish",
+          reviewThanks: "✅ Rahmat!",
+          noContact: "Aloqa ma'lumotlari mavjud emas",
+          noReviewsYet: "Hali sharh yo'q",
+          reviewCount: "ta sharh",
+          telegramBtn: "Telegram",
+          rating1: "1 — Juda yomon",
+          rating2: "2 — Yomon",
+          rating3: "3 — O'rtacha",
+          rating4: "4 — Yaxshi",
+          rating5: "5 — Ajoyib!",
+          selectRating: "Avval yulduzlarni tanlang",
         },
         ru: {
           heroHtml:
@@ -755,19 +980,28 @@
           clear: "✕ Очистить",
           listTitle: "Список мастеров",
           loading: "Загрузка...",
-          modalTitle: "Оставить заявку",
-          fName: "Ваше имя",
-          fPhone: "Номер телефона",
-          fMsg: "Сообщение (необязательно)",
-          btnSend: "Отправить",
+          modalTitle: "Контакт",
           footerAbout:
             "Удобная платформа для поиска и обращения к лучшим мастерам Узбекистана.",
           contactMe: "Связаться со мной",
           allRights: "Все права защищены.",
-          msgSuccess: "✅ Заявка успешно отправлена!",
           btnCall: "📞 Связаться",
           cityUnknown: "Неизвестно",
           items: "мастеров",
+          reviewDivider: "Оставьте отзыв",
+          reviewPlaceholder: "Ваш отзыв...",
+          reviewSubmit: "Отправить отзыв",
+          reviewThanks: "✅ Спасибо!",
+          noContact: "Нет контактных данных",
+          noReviewsYet: "Пока нет отзывов",
+          reviewCount: "отзывов",
+          telegramBtn: "Telegram",
+          rating1: "1 — Очень плохо",
+          rating2: "2 — Плохо",
+          rating3: "3 — Средне",
+          rating4: "4 — Хорошо",
+          rating5: "5 — Отлично!",
+          selectRating: "Сначала выберите звёзды",
         },
         en: {
           heroHtml:
@@ -784,25 +1018,36 @@
           clear: "✕ Clear",
           listTitle: "List of workers",
           loading: "Loading...",
-          modalTitle: "Contact Master",
-          fName: "Your name",
-          fPhone: "Phone number",
-          fMsg: "Message (optional)",
-          btnSend: "Send",
+          modalTitle: "Contact",
           footerAbout:
             "A convenient platform for finding and contacting the best workers in Uzbekistan.",
           contactMe: "Contact Me",
           allRights: "All rights reserved.",
-          msgSuccess: "✅ Request sent successfully!",
           btnCall: "📞 Contact Now",
           cityUnknown: "Unknown",
           items: "workers",
+          reviewDivider: "Leave a review",
+          reviewPlaceholder: "Your thoughts...",
+          reviewSubmit: "Submit review",
+          reviewThanks: "✅ Thank you!",
+          noContact: "No contact details available",
+          noReviewsYet: "No reviews yet",
+          reviewCount: "reviews",
+          telegramBtn: "Telegram",
+          rating1: "1 — Very bad",
+          rating2: "2 — Bad",
+          rating3: "3 — Average",
+          rating4: "4 — Good",
+          rating5: "5 — Excellent!",
+          selectRating: "Please pick a star rating first",
         },
       };
 
       let allUstalar = [];
       let currentLang = localStorage.getItem(STORAGE_LANG) || "uz";
       let theme = localStorage.getItem(STORAGE_THEME) || "light";
+      let cmSelectedRating = 0;
+      let cmHoverRating = 0;
 
       const $ = (id) => document.getElementById(id);
 
@@ -841,6 +1086,8 @@
         });
         const label = $("currentLangLabel");
         if (label) label.textContent = currentLang.toUpperCase();
+        const cmTa = $("cmTextarea");
+        if (cmTa) cmTa.placeholder = t("reviewPlaceholder");
       }
 
       function setLang(lang) {
@@ -887,6 +1134,81 @@
         });
       }
 
+      function hashHue(str) {
+        let h = 0;
+        const s = String(str || "");
+        for (let i = 0; i < s.length; i++) h += s.charCodeAt(i);
+        return h % 360;
+      }
+
+      function getInitials(name) {
+        const parts = String(name || "")
+          .trim()
+          .split(/\s+/)
+          .filter(Boolean);
+        let ini = "";
+        if (parts[0]) ini += parts[0][0] || "";
+        if (parts[1]) ini += parts[1][0] || "";
+        else if (parts[0] && parts[0].length > 1) ini += parts[0][1];
+        return (ini || "?").toUpperCase().slice(0, 2);
+      }
+
+      function cardPhotoInner(u) {
+        const url = u.rasm_url;
+        if (url && (String(url).startsWith("data:") || String(url).startsWith("http"))) {
+          return `<img src="${esc(url)}" alt="" loading="lazy" decoding="async" />`;
+        }
+        const hue = hashHue(u.ism);
+        return `<div class="card-initials" style="background:linear-gradient(135deg,hsl(${hue},55%,48%),hsl(${(hue + 40) % 360},45%,38%))">${esc(getInitials(u.ism))}</div>`;
+      }
+
+      function getReviews(ustaId) {
+        try {
+          const raw = localStorage.getItem("reviews_" + ustaId);
+          if (!raw) return [];
+          const arr = JSON.parse(raw);
+          return Array.isArray(arr) ? arr : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function getReviewStats(ustaId) {
+        const arr = getReviews(ustaId);
+        if (!arr.length) return { avg: 0, count: 0 };
+        const sum = arr.reduce((s, x) => s + (Number(x.stars) || 0), 0);
+        return { avg: sum / arr.length, count: arr.length };
+      }
+
+      function appendReview(ustaId, stars, text) {
+        const arr = getReviews(ustaId);
+        arr.push({ stars: Math.min(5, Math.max(1, Number(stars) || 1)), text: String(text || "").trim() });
+        localStorage.setItem("reviews_" + ustaId, JSON.stringify(arr.slice(-5)));
+      }
+
+      function formatPhoneDisplay(phone) {
+        if (!phone) return "";
+        const d = String(phone).replace(/\D/g, "");
+        if (d.length === 12 && d.startsWith("998")) {
+          return `+${d.slice(0, 3)} ${d.slice(3, 5)} ${d.slice(5, 8)} ${d.slice(8, 10)} ${d.slice(10)}`;
+        }
+        return String(phone).trim();
+      }
+
+      function telHref(phone) {
+        const d = String(phone || "").replace(/\D/g, "");
+        return d ? "tel:" + d : "";
+      }
+
+      function tgUsername(raw) {
+        if (!raw) return "";
+        let s = String(raw).trim();
+        if (s.startsWith("@")) s = s.slice(1);
+        const m = s.match(/(?:https?:\/\/)?(?:www\.)?t\.me\/([a-zA-Z0-9_]+)/i);
+        if (m) return m[1];
+        return s.replace(/[^a-zA-Z0-9_]/g, "");
+      }
+
       function renderUstalar(list) {
         const grid = $("ustaGrid");
         const badge = $("countBadge");
@@ -894,19 +1216,21 @@
         if (!grid) return;
         grid.innerHTML = list
           .map((u) => {
-            const img = u.rasm_url
-              ? `<img src="${esc(u.rasm_url)}" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.replaceWith(document.createTextNode('👷'));" />`
-              : "";
-            const placeholder = u.rasm_url ? "" : "👷";
             const city = u.shahar || t("cityUnknown");
+            const st = getReviewStats(u.id);
+            const ratingLine =
+              st.count > 0
+                ? `<div class="card-rating">⭐ ${st.avg.toFixed(1)} (${st.count} ${t("reviewCount")})</div>`
+                : "";
             return `
           <article class="card">
-            <div class="card-img">${img || placeholder}</div>
+            <div class="card-img">${cardPhotoInner(u)}</div>
             <div class="card-body">
               <div class="card-top">
                 <span class="card-name">${esc(u.ism)}</span>
                 <span class="card-kasb">${esc(u.kasb)}</span>
               </div>
+              ${ratingLine}
               <div class="card-location">📍 ${esc(city)}</div>
               <button type="button" class="card-btn" data-usta-id="${esc(u.id)}">${esc(t("btnCall"))}</button>
             </div>
@@ -932,10 +1256,158 @@
         renderUstalar(allUstalar);
       }
 
+      function buildCmStars() {
+        const row = $("cmStars");
+        if (!row) return;
+        row.innerHTML = [1, 2, 3, 4, 5]
+          .map(
+            (n) =>
+              `<button type="button" class="cm-star" data-star="${n}" aria-label="${n}">★</button>`
+          )
+          .join("");
+        if (!row.dataset.bound) {
+          row.dataset.bound = "1";
+          row.addEventListener("mouseover", (e) => {
+            const btn = e.target.closest(".cm-star");
+            if (!btn) return;
+            cmHoverRating = +btn.getAttribute("data-star");
+            updateCmStarVisual();
+          });
+          row.addEventListener("mouseleave", () => {
+            cmHoverRating = 0;
+            updateCmStarVisual();
+          });
+          row.addEventListener("click", (e) => {
+            const btn = e.target.closest(".cm-star");
+            if (!btn) return;
+            cmSelectedRating = +btn.getAttribute("data-star");
+            updateCmRatingLabel();
+            updateCmStarVisual();
+          });
+        }
+      }
+
+      function updateCmStarVisual() {
+        const row = $("cmStars");
+        if (!row) return;
+        const active = cmHoverRating || cmSelectedRating;
+        row.querySelectorAll(".cm-star").forEach((btn) => {
+          const n = +btn.getAttribute("data-star");
+          btn.classList.toggle("on", n <= active);
+        });
+      }
+
+      function updateCmRatingLabel() {
+        const el = $("cmRatingLabel");
+        if (!el) return;
+        const n = cmSelectedRating;
+        el.textContent = n >= 1 && n <= 5 ? t("rating" + n) : "";
+      }
+
+      function renderCmReviewsList(ustaId) {
+        const arr = getReviews(ustaId);
+        const list = $("cmReviewsList");
+        const empty = $("cmEmptyReviews");
+        if (!list || !empty) return;
+        if (!arr.length) {
+          list.hidden = true;
+          list.innerHTML = "";
+          empty.style.display = "block";
+          return;
+        }
+        empty.style.display = "none";
+        list.hidden = false;
+        list.innerHTML = arr
+          .slice()
+          .reverse()
+          .map((r) => {
+            const n = Math.min(5, Math.max(1, Number(r.stars) || 1));
+            const stars = "★".repeat(n) + "☆".repeat(5 - n);
+            const tx = esc(r.text || "");
+            return `<div class="cm-review-item"><div class="cm-review-stars">${stars}</div>${tx}</div>`;
+          })
+          .join("");
+      }
+
       function openModal(ustaId) {
         const u = allUstalar.find((x) => String(x.id) === String(ustaId));
-        $("murojaatUstaId").value = ustaId;
-        $("modalUstaIsm").textContent = u ? u.ism : "";
+        if (!u) return;
+
+        $("cmUstaId").value = ustaId;
+        $("cmName").textContent = u.ism || "";
+        $("cmKasb").textContent = u.kasb || "";
+        $("cmCity").textContent = "📍 " + (u.shahar || t("cityUnknown"));
+
+        const wrap = $("cmAvatarWrap");
+        if (wrap) {
+          wrap.innerHTML = "";
+          const url = u.rasm_url;
+          if (url && String(url).trim()) {
+            const img = document.createElement("img");
+            img.className = "cm-avatar";
+            img.alt = "";
+            img.src = url;
+            img.onerror = () => {
+              wrap.innerHTML = "";
+              const hue = hashHue(u.ism);
+              const d = document.createElement("div");
+              d.className = "cm-avatar initials";
+              d.style.background = `linear-gradient(135deg,hsl(${hue},55%,48%),hsl(${(hue + 40) % 360},45%,38%))`;
+              d.textContent = getInitials(u.ism);
+              wrap.appendChild(d);
+            };
+            wrap.appendChild(img);
+          } else {
+            const hue = hashHue(u.ism);
+            const d = document.createElement("div");
+            d.className = "cm-avatar initials";
+            d.style.background = `linear-gradient(135deg,hsl(${hue},55%,48%),hsl(${(hue + 40) % 360},45%,38%))`;
+            d.textContent = getInitials(u.ism);
+            wrap.appendChild(d);
+          }
+        }
+
+        const tel = (u.telefon || "").trim();
+        const tg = tgUsername(u.telegram);
+        const th = telHref(tel);
+        const actions = $("cmActions");
+        const noC = $("cmNoContact");
+        if (actions && noC) {
+          actions.innerHTML = "";
+          let has = false;
+          if (tel && th) {
+            has = true;
+            actions.insertAdjacentHTML(
+              "beforeend",
+              `<a class="cm-btn cm-btn-phone" href="${esc(th)}"><span>📞</span> ${esc(formatPhoneDisplay(tel))}</a>`
+            );
+          }
+          if (tg) {
+            has = true;
+            actions.insertAdjacentHTML(
+              "beforeend",
+              `<a class="cm-btn cm-btn-tg" href="https://t.me/${esc(tg)}" target="_blank" rel="noopener noreferrer"><span>✈️</span> ${esc(t("telegramBtn"))}</a>`
+            );
+          }
+          if (has) {
+            actions.style.display = "grid";
+            noC.style.display = "none";
+          } else {
+            actions.style.display = "none";
+            noC.style.display = "block";
+          }
+        }
+
+        buildCmStars();
+        cmSelectedRating = 0;
+        cmHoverRating = 0;
+        updateCmStarVisual();
+        updateCmRatingLabel();
+        const ta = $("cmTextarea");
+        if (ta) ta.value = "";
+
+        renderCmReviewsList(ustaId);
+
         $("modalOverlay").classList.add("is-active");
         $("modalOverlay").setAttribute("aria-hidden", "false");
       }
@@ -943,6 +1415,41 @@
       function closeModal() {
         $("modalOverlay").classList.remove("is-active");
         $("modalOverlay").setAttribute("aria-hidden", "true");
+      }
+
+      function submitCmReview() {
+        const id = $("cmUstaId")?.value;
+        if (!id) return;
+        if (!cmSelectedRating) {
+          const toast = $("toast");
+          if (toast) {
+            toast.textContent = t("selectRating");
+            toast.className = "toast is-visible warn";
+            setTimeout(() => {
+              toast.className = "toast";
+              toast.textContent = "";
+            }, 2500);
+          }
+          return;
+        }
+        const text = $("cmTextarea")?.value?.trim() || "";
+        appendReview(id, cmSelectedRating, text);
+        renderCmReviewsList(id);
+        applyFilters();
+        const toast = $("toast");
+        if (toast) {
+          toast.textContent = t("reviewThanks");
+          toast.className = "toast is-visible success";
+          setTimeout(() => {
+            toast.className = "toast";
+            toast.textContent = "";
+          }, 2500);
+        }
+        cmSelectedRating = 0;
+        cmHoverRating = 0;
+        if ($("cmTextarea")) $("cmTextarea").value = "";
+        updateCmStarVisual();
+        updateCmRatingLabel();
       }
 
       async function loadUstalar() {
@@ -964,32 +1471,6 @@
           allUstalar = [];
           updateHeroStats();
           renderUstalar(allUstalar);
-        }
-      }
-
-      async function submitMurojaat(ev) {
-        ev.preventDefault();
-        const payload = {
-          usta_id: $("murojaatUstaId").value,
-          mijoz_ism: $("mijozIsm").value.trim(),
-          mijoz_tel: $("mijozTel").value.trim(),
-          xabar: $("mijozXabar").value.trim(),
-        };
-        try {
-          await window.supabaseClient.from("murojaatlar").insert([payload]);
-        } catch (e) {
-          console.error(e);
-        }
-        $("murojaatForm").reset();
-        closeModal();
-        const toast = $("toast");
-        if (toast) {
-          toast.textContent = t("msgSuccess");
-          toast.className = "toast is-visible success";
-          setTimeout(() => {
-            toast.className = "toast";
-            toast.textContent = "";
-          }, 3000);
         }
       }
 
@@ -1044,8 +1525,8 @@
           if (e.target === overlay) closeModal();
         });
         $("modalClose")?.addEventListener("click", closeModal);
-        $("murojaatModal")?.addEventListener("click", (e) => e.stopPropagation());
-        $("murojaatForm")?.addEventListener("submit", submitMurojaat);
+        $("ustaContactPanel")?.addEventListener("click", (e) => e.stopPropagation());
+        $("cmSubmit")?.addEventListener("click", submitCmReview);
 
         bindAdminShortcut();
         loadUstalar();

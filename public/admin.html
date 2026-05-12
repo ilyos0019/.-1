@@ -221,6 +221,7 @@
           <table>
             <thead>
               <tr>
+                <th data-i18n="thImage">Rasm</th>
                 <th data-i18n="thName">Ism</th>
                 <th data-i18n="thJob">Kasb</th>
                 <th data-i18n="thPhone">Telefon</th>
@@ -267,6 +268,10 @@
               <input type="text" id="fTelfon" required placeholder="+998901234567" />
             </div>
             <div class="form-group">
+              <label for="fTelegram" data-i18n="fTelegram">Telegram</label>
+              <input type="text" id="fTelegram" placeholder="username (masalan: Bahromovv04)" autocomplete="off" />
+            </div>
+            <div class="form-group">
               <label for="fShahar" data-i18n="fCity">Shahar / Viloyat</label>
               <select id="fShahar" aria-label="Select City or Region">
                 <option value="" data-i18n="choose">Tanlang...</option>
@@ -287,13 +292,13 @@
               </select>
             </div>
             <div class="form-group full">
-              <label data-i18n="fImage">Rasm tanlash</label>
+              <label for="fRasmFile" data-i18n="rasmUpload">Rasm yuklash</label>
               <label class="image-picker-admin">
-                <span data-i18n="imageHint">Galereyadan tanlang</span>
-                <input type="file" id="fRasmFile" accept="image/*" style="display:none" onchange="previewImage(this, 'fPreviewBox')">
+                <span data-i18n="imageHint">JPG, PNG yoki WebP</span>
+                <input type="file" id="fRasmFile" accept="image/jpeg,image/png,image/webp,image/*" style="display:none">
               </label>
               <div id="fPreviewBox" class="preview-box">
-                <img src="" alt="Preview">
+                <img src="" alt="" width="80" height="80" style="border-radius:12px;object-fit:cover;">
               </div>
             </div>
             <div class="form-group full">
@@ -381,6 +386,10 @@
           <input type="text" id="eTelfon" required />
         </div>
         <div class="form-group">
+          <label for="eTelegram" data-i18n="fTelegram">Telegram</label>
+          <input type="text" id="eTelegram" placeholder="username" autocomplete="off" />
+        </div>
+        <div class="form-group">
           <label for="eShahar" data-i18n="fCity">Shahar</label>
           <select id="eShahar" aria-label="Select City">
             <option>Toshkent shahri</option>
@@ -400,13 +409,13 @@
           </select>
         </div>
         <div class="form-group full">
-          <label data-i18n="fImage">Rasm tanlash</label>
+          <label for="eRasmFile" data-i18n="rasmUpload">Rasm yuklash</label>
           <label class="image-picker-admin">
-            <span data-i18n="imageHint">Galereyadan tanlang</span>
-            <input type="file" id="eRasmFile" accept="image/*" style="display:none" onchange="previewImage(this, 'ePreviewBox')">
+            <span data-i18n="imageHint">JPG, PNG yoki WebP</span>
+            <input type="file" id="eRasmFile" accept="image/jpeg,image/png,image/webp,image/*" style="display:none">
           </label>
           <div id="ePreviewBox" class="preview-box">
-            <img src="" alt="Preview">
+            <img src="" alt="" width="80" height="80" style="border-radius:12px;object-fit:cover;">
           </div>
         </div>
         <div class="form-group full">
@@ -432,8 +441,8 @@
       loginSub: "Admin paneliga kirish", loginBtn: "Kirish", backHome: "← Bosh sahifaga qaytish",
       navDashboard: "Dashboard", navUstalar: "Ustalar", navQoshish: "Usta qo'shish", navMurojaatlar: "Murojaatlar", navSozlamalar: "Sozlamalar",
       language: "Til", logout: "Chiqish", dashTitle: "Dashboard", statTotal: "Jami ustalar", statApproved: "Tasdiqlangan", statPending: "Kutilmoqda", statRequests: "Murojaatlar",
-      ustalarTitle: "Ustalar", ustalarList: "Barcha ustalar", thName: "Ism", thJob: "Kasb", thPhone: "Telefon", thCity: "Shahar", thStatus: "Holat", thAction: "Amal", thDate: "Sana",
-      addTitle: "Yangi usta qo'shish", fName: "Ism familiya *", fJob: "Kasb *", fPhone: "Telefon *", fCity: "Shahar / Viloyat", fImage: "Rasm tanlash", imageHint: "Galereyadan tanlang", fBio: "Bio (o'zi haqida)", fApproveNow: "Darhol tasdiqlash",
+      ustalarTitle: "Ustalar", ustalarList: "Barcha ustalar", thImage: "Rasm", thName: "Ism", thJob: "Kasb", thPhone: "Telefon", thCity: "Shahar", thStatus: "Holat", thAction: "Amal", thDate: "Sana",
+      addTitle: "Yangi usta qo'shish", fName: "Ism familiya *", fJob: "Kasb *", fPhone: "Telefon *", fTelegram: "Telegram (username)", fCity: "Shahar / Viloyat", rasmUpload: "Rasm yuklash", imageHint: "JPG, PNG yoki WebP", fBio: "Bio (o'zi haqida)", fApproveNow: "Darhol tasdiqlash",
       btnSave: "Saqlash", reqTitle: "Murojaatlar", reqList: "Barcha murojaatlar", thMijoz: "Mijoz", thWorker: "Usta", thMsg: "Xabar", choose: "Tanlang...",
       settingsTitle: "Sozlamalar", changePass: "Admin parolini o'zgartirish", newPass: "Yangi parol", confirmPass: "Parolni tasdiqlang", btnUpdate: "Yangilash",
       editTitle: "Ustani tahrirlash", statusApproved: "✓ Tasdiqlangan", statusPending: "⏳ Kutilmoqda",
@@ -444,8 +453,8 @@
       loginSub: "Вход в админ-панель", loginBtn: "Войти", backHome: "← На главную",
       navDashboard: "Дашборд", navUstalar: "Мастера", navQoshish: "Добавить мастера", navMurojaatlar: "Заявки", navSozlamalar: "Настройки",
       language: "Язык", logout: "Выйти", dashTitle: "Дашборд", statTotal: "Всего мастеров", statApproved: "Одобрено", statPending: "Ожидают", statRequests: "Заявки",
-      ustalarTitle: "Мастера", ustalarList: "Список всех мастеров", thName: "Имя", thJob: "Профессия", thPhone: "Телефон", thCity: "Город", thStatus: "Статус", thAction: "Действие", thDate: "Дата",
-      addTitle: "Добавить нового мастера", fName: "Имя и фамилия *", fJob: "Профессия *", fPhone: "Телефон *", fCity: "Город / Область", fImage: "Выбрать фото", imageHint: "Выберите из галереи", fBio: "Био (о себе)", fApproveNow: "Одобрить сразу",
+      ustalarTitle: "Мастера", ustalarList: "Список всех мастеров", thImage: "Фото", thName: "Имя", thJob: "Профессия", thPhone: "Телефон", thCity: "Город", thStatus: "Статус", thAction: "Действие", thDate: "Дата",
+      addTitle: "Добавить нового мастера", fName: "Имя и фамилия *", fJob: "Профессия *", fPhone: "Телефон *", fTelegram: "Telegram (username)", fCity: "Город / Область", rasmUpload: "Загрузить фото", imageHint: "JPG, PNG или WebP", fBio: "Био (о себе)", fApproveNow: "Одобрить сразу",
       btnSave: "Сохранить", reqTitle: "Заявки", reqList: "Все заявки", thMijoz: "Клиент", thWorker: "Мастер", thMsg: "Сообщение", choose: "Выберите...",
       settingsTitle: "Настройки", changePass: "Изменить пароль админа", newPass: "Новый пароль", confirmPass: "Подтвердите пароль", btnUpdate: "Обновить",
       editTitle: "Редактировать мастера", statusApproved: "✓ Одобрен", statusPending: "⏳ Ожидает",
@@ -456,8 +465,8 @@
       loginSub: "Admin Panel Login", loginBtn: "Login", backHome: "← Back to home",
       navDashboard: "Dashboard", navUstalar: "Workers", navQoshish: "Add Worker", navMurojaatlar: "Requests", navSozlamalar: "Settings",
       language: "Language", logout: "Logout", dashTitle: "Dashboard", statTotal: "Total workers", statApproved: "Approved", statPending: "Pending", statRequests: "Requests",
-      ustalarTitle: "Workers", ustalarList: "All workers", thName: "Name", thJob: "Job", thPhone: "Phone", thCity: "City", thStatus: "Status", thAction: "Action", thDate: "Date",
-      addTitle: "Add New Worker", fName: "Full Name *", fJob: "Profession *", fPhone: "Phone *", fCity: "City / Region", fImage: "Choose image", imageHint: "Pick from gallery", fBio: "Bio", fApproveNow: "Approve immediately",
+      ustalarTitle: "Workers", ustalarList: "All workers", thImage: "Photo", thName: "Name", thJob: "Job", thPhone: "Phone", thCity: "City", thStatus: "Status", thAction: "Action", thDate: "Date",
+      addTitle: "Add New Worker", fName: "Full Name *", fJob: "Profession *", fPhone: "Phone *", fTelegram: "Telegram (username)", fCity: "City / Region", rasmUpload: "Upload photo", imageHint: "JPG, PNG or WebP", fBio: "Bio", fApproveNow: "Approve immediately",
       btnSave: "Save", reqTitle: "Requests", reqList: "All requests", thMijoz: "Client", thWorker: "Worker", thMsg: "Message", choose: "Choose...",
       settingsTitle: "Settings", changePass: "Change Admin Password", newPass: "New Password", confirmPass: "Confirm Password", btnUpdate: "Update",
       editTitle: "Edit Worker", statusApproved: "✓ Approved", statusPending: "⏳ Pending",
@@ -515,19 +524,76 @@
     if (label) label.textContent = CURRENT_LANG.toUpperCase();
   }
 
-  function previewImage(input, targetId) {
-    const preview = document.getElementById(targetId);
-    const img = preview.querySelector('img');
-    if (input.files && input.files[0]) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        img.src = e.target.result;
-        preview.style.display = 'block';
-      };
-      reader.readAsDataURL(input.files[0]);
-    } else {
-      preview.style.display = 'none';
+  let pendingAddBase64 = null;
+  let pendingEditBase64 = null;
+  let editStoredRasmUrl = '';
+
+  function normalizeTelegram(raw) {
+    if (!raw) return '';
+    let s = String(raw).trim();
+    if (s.startsWith('@')) s = s.slice(1);
+    const tm = s.match(/(?:https?:\/\/)?(?:www\.)?t\.me\/([a-zA-Z0-9_]+)/i);
+    if (tm) return tm[1];
+    return s.replace(/[^a-zA-Z0-9_]/g, '');
+  }
+
+  function adminEsc(s) {
+    return String(s ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+      .replace(/</g, '&lt;');
+  }
+
+  function adminInitialsHtml(name) {
+    const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+    let ini = '';
+    if (parts[0]) ini += parts[0][0] || '';
+    if (parts[1]) ini += parts[1][0] || '';
+    else if (parts[0] && parts[0].length > 1) ini += parts[0][1];
+    ini = (ini || '?').toUpperCase().slice(0, 2);
+    let h = 0;
+    const str = String(name || '');
+    for (let i = 0; i < str.length; i++) h += str.charCodeAt(i);
+    const hue = h % 360;
+    return `<div style="width:40px;height:40px;border-radius:8px;background:hsl(${hue},52%,42%);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px">${adminEsc(ini)}</div>`;
+  }
+
+  function thumbCellHtml(u) {
+    const url = u.rasm_url;
+    if (url && (String(url).startsWith('data:') || String(url).startsWith('http'))) {
+      const safe = adminEsc(url);
+      return `<img src="${safe}" alt="" width="40" height="40" style="border-radius:8px;object-fit:cover;display:block" loading="lazy" />`;
     }
+    return adminInitialsHtml(u.ism);
+  }
+
+  function wireImageUploads() {
+    const bind = (inputId, previewId, mode) => {
+      const input = document.getElementById(inputId);
+      const box = document.getElementById(previewId);
+      if (!input || !box) return;
+      input.addEventListener('change', function () {
+        const img = box.querySelector('img');
+        if (!input.files || !input.files[0]) {
+          if (mode === 'add') pendingAddBase64 = null;
+          if (mode === 'edit') pendingEditBase64 = null;
+          box.style.display = 'none';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const dataUrl = e.target.result;
+          if (mode === 'add') pendingAddBase64 = dataUrl;
+          if (mode === 'edit') pendingEditBase64 = dataUrl;
+          img.src = dataUrl;
+          box.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+      });
+    };
+    bind('fRasmFile', 'fPreviewBox', 'add');
+    bind('eRasmFile', 'ePreviewBox', 'edit');
   }
 
   // ----- NAVIGATION -----
@@ -569,10 +635,12 @@
 
   async function loadUstalar() {
     const tbody = document.getElementById('ustalarTbody');
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Loading...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center">Loading...</td></tr>';
     const { data } = await supabaseAdmin.from('ustalar').select('*').order('created_at', { ascending: false });
-    tbody.innerHTML = data.map(u => `
+    const rows = data || [];
+    tbody.innerHTML = rows.map(u => `
       <tr>
+        <td>${thumbCellHtml(u)}</td>
         <td><strong>${u.ism}</strong></td>
         <td>${u.kasb}</td>
         <td>${u.telefon}</td>
@@ -604,18 +672,29 @@
 
   async function saveUsta(e) {
     e.preventDefault();
+    const name = document.getElementById('fIsm').value;
     const payload = {
-      ism: document.getElementById('fIsm').value,
+      ism: name,
       kasb: document.getElementById('fKasb').value,
       telefon: document.getElementById('fTelfon').value,
       shahar: document.getElementById('fShahar').value,
-      rasm_url: "https://ui-avatars.com/api/?name=" + encodeURIComponent(document.getElementById('fIsm').value) + "&background=random",
+      rasm_url:
+        pendingAddBase64 ||
+        'https://ui-avatars.com/api/?name=' + encodeURIComponent(name) + '&background=random',
+      telegram: normalizeTelegram(document.getElementById('fTelegram').value),
       bio: document.getElementById('fBio').value,
-      tasdiqlangan: document.getElementById('fTasdiqlangan').checked
+      tasdiqlangan: document.getElementById('fTasdiqlangan').checked,
     };
-    await supabaseAdmin.from('ustalar').insert([payload]);
+    const { error } = await supabaseAdmin.from('ustalar').insert([payload]);
+    if (error) {
+      console.error(error);
+      showToast(error.message || 'Xatolik', 'error');
+      return;
+    }
     showToast(i18n[CURRENT_LANG].msgSaveSuccess);
-    e.target.reset(); 
+    e.target.reset();
+    pendingAddBase64 = null;
+    document.getElementById('fRasmFile').value = '';
     document.getElementById('fPreviewBox').style.display = 'none';
     loadStats();
   }
@@ -628,9 +707,14 @@
       document.getElementById('eIsm').value = data.ism;
       document.getElementById('eKasb').value = data.kasb;
       document.getElementById('eTelfon').value = data.telefon;
-      document.getElementById('eShahar').value = data.shahar || "";
-      document.getElementById('eBio').value = data.bio || "";
-      
+      document.getElementById('eTelegram').value = data.telegram || '';
+      document.getElementById('eShahar').value = data.shahar || '';
+      document.getElementById('eBio').value = data.bio || '';
+
+      pendingEditBase64 = null;
+      editStoredRasmUrl = data.rasm_url || '';
+      document.getElementById('eRasmFile').value = '';
+
       const preview = document.getElementById('ePreviewBox');
       const img = preview.querySelector('img');
       if (data.rasm_url) {
@@ -639,7 +723,7 @@
       } else {
         preview.style.display = 'none';
       }
-      
+
       document.getElementById('editModal').classList.add('active');
     }
   }
@@ -653,12 +737,21 @@
       ism: document.getElementById('eIsm').value,
       kasb: document.getElementById('eKasb').value,
       telefon: document.getElementById('eTelfon').value,
+      telegram: normalizeTelegram(document.getElementById('eTelegram').value),
       shahar: document.getElementById('eShahar').value,
-      bio: document.getElementById('eBio').value
+      bio: document.getElementById('eBio').value,
+      rasm_url: pendingEditBase64 != null ? pendingEditBase64 : editStoredRasmUrl,
     };
-    await supabaseAdmin.from('ustalar').update(payload).eq('id', id);
+    const { error } = await supabaseAdmin.from('ustalar').update(payload).eq('id', id);
+    if (error) {
+      console.error(error);
+      showToast(error.message || 'Xatolik', 'error');
+      return;
+    }
+    pendingEditBase64 = null;
     showToast(i18n[CURRENT_LANG].msgSaveSuccess);
-    closeEditModal(); loadUstalar();
+    closeEditModal();
+    loadUstalar();
   }
 
   // --- MUROJAATLAR ---
@@ -714,6 +807,8 @@
       if (menu) menu.classList.remove('active');
     }
   });
+
+  wireImageUploads();
 </script>
 </body>
 </html>
