@@ -33,6 +33,9 @@
     .login-btn { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; }
     .login-btn:hover { background: var(--primary-dark); }
     .login-err { color: var(--red); font-size: .88rem; margin-bottom: 10px; min-height: 20px; }
+    .login-home-wrap { margin-top: 20px; font-size: 0.9rem; }
+    .login-home { color: var(--primary); text-decoration: none; font-weight: 600; transition: opacity .2s; }
+    .login-home:hover { opacity: 0.85; text-decoration: underline; }
 
     /* LAYOUT */
     #adminApp { display: none; min-height: 100vh; }
@@ -151,6 +154,9 @@
     <p class="login-err" id="loginErr"></p>
     <input type="password" id="loginPass" class="login-input" placeholder="Parolni kiriting" onkeydown="if(event.key==='Enter') doLogin()" />
     <button class="login-btn" onclick="doLogin()" data-i18n="loginBtn">Kirish</button>
+    <p class="login-home-wrap">
+      <a href="./index.html" class="login-home" data-i18n="backHome">← Bosh sahifaga qaytish</a>
+    </p>
   </div>
 </div>
 
@@ -423,7 +429,7 @@
 
   const i18n = {
     uz: {
-      loginSub: "Admin paneliga kirish", loginBtn: "Kirish",
+      loginSub: "Admin paneliga kirish", loginBtn: "Kirish", backHome: "← Bosh sahifaga qaytish",
       navDashboard: "Dashboard", navUstalar: "Ustalar", navQoshish: "Usta qo'shish", navMurojaatlar: "Murojaatlar", navSozlamalar: "Sozlamalar",
       language: "Til", logout: "Chiqish", dashTitle: "Dashboard", statTotal: "Jami ustalar", statApproved: "Tasdiqlangan", statPending: "Kutilmoqda", statRequests: "Murojaatlar",
       ustalarTitle: "Ustalar", ustalarList: "Barcha ustalar", thName: "Ism", thJob: "Kasb", thPhone: "Telefon", thCity: "Shahar", thStatus: "Holat", thAction: "Amal", thDate: "Sana",
@@ -435,7 +441,7 @@
       confirmDel: "ni o'chirishni tasdiqlaysizmi?"
     },
     ru: {
-      loginSub: "Вход в админ-панель", loginBtn: "Войти",
+      loginSub: "Вход в админ-панель", loginBtn: "Войти", backHome: "← На главную",
       navDashboard: "Дашборд", navUstalar: "Мастера", navQoshish: "Добавить мастера", navMurojaatlar: "Заявки", navSozlamalar: "Настройки",
       language: "Язык", logout: "Выйти", dashTitle: "Дашборд", statTotal: "Всего мастеров", statApproved: "Одобрено", statPending: "Ожидают", statRequests: "Заявки",
       ustalarTitle: "Мастера", ustalarList: "Список всех мастеров", thName: "Имя", thJob: "Профессия", thPhone: "Телефон", thCity: "Город", thStatus: "Статус", thAction: "Действие", thDate: "Дата",
@@ -447,7 +453,7 @@
       confirmDel: "Вы подтверждаете удаление?"
     },
     en: {
-      loginSub: "Admin Panel Login", loginBtn: "Login",
+      loginSub: "Admin Panel Login", loginBtn: "Login", backHome: "← Back to home",
       navDashboard: "Dashboard", navUstalar: "Workers", navQoshish: "Add Worker", navMurojaatlar: "Requests", navSozlamalar: "Settings",
       language: "Language", logout: "Logout", dashTitle: "Dashboard", statTotal: "Total workers", statApproved: "Approved", statPending: "Pending", statRequests: "Requests",
       ustalarTitle: "Workers", ustalarList: "All workers", thName: "Name", thJob: "Job", thPhone: "Phone", thCity: "City", thStatus: "Status", thAction: "Action", thDate: "Date",
