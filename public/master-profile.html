@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Otabek Gafurov — Usta Topamiz</title>
+  <meta name="description" content="Toshkentda plyitkalash va elektrik ishlarida 5 yillik tajriba. Usta Topamiz orqali bron qiling." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand: #2563EB;
+      --brand-dark: #1D4ED8;
+      --brand-soft: #EFF6FF;
+      --cta: #F59E0B;
+      --cta-hover: #D97706;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --text: #0F172A;
+      --muted: #64748B;
+      --border: #E2E8F0;
+      --radius: 16px;
+      --shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+      --shadow-sm: 0 2px 12px rgba(15, 23, 42, 0.06);
+      --font: "Montserrat", system-ui, sans-serif;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--brand); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .shell {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 24px 20px 80px;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .shell { grid-template-columns: 1fr; }
+    }
+
+    /* Top bar */
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--brand);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--brand);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+
+    .topbar-back {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    /* Profile header card */
+    .profile-head {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      padding: 28px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 560px) {
+      .profile-head {
+        grid-template-columns: 1fr;
+        text-align: center;
+        justify-items: center;
+      }
+      .profile-meta { align-items: center; }
+      .rating-row { justify-content: center; }
+    }
+
+    .avatar-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--surface);
+      box-shadow: 0 8px 28px rgba(37, 99, 235, 0.2);
+    }
+
+    .verified {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--brand);
+      color: #fff;
+      border: 3px solid var(--surface);
+      display: grid;
+      place-items: center;
+      font-size: 0.75rem;
+    }
+
+    .profile-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .profile-name {
+      font-size: 1.65rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .profile-tagline {
+      color: var(--muted);
+      font-size: 0.98rem;
+      max-width: 520px;
+    }
+
+    .rating-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 16px;
+    }
+
+    .stars {
+      display: flex;
+      gap: 2px;
+      color: #F59E0B;
+      font-size: 1.15rem;
+      letter-spacing: 1px;
+    }
+
+    .reviews-link {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--brand);
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: inherit;
+      padding: 0;
+    }
+
+    .reviews-link:hover { text-decoration: underline; }
+
+    /* Tabs */
+    .tabs-wrap {
+      margin-top: 28px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      background: #FAFBFC;
+    }
+
+    .tab {
+      flex: 1;
+      min-width: 120px;
+      padding: 16px 18px;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .tab:hover { color: var(--brand); background: rgba(37, 99, 235, 0.04); }
+
+    .tab.is-active {
+      color: var(--brand);
+      border-bottom-color: var(--brand);
+      background: var(--surface);
+    }
+
+    .tab-panel {
+      display: none;
+      padding: 28px;
+    }
+
+    .tab-panel.is-active { display: block; }
+
+    /* Service cards */
+    .service-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .service-card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 20px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .service-card:hover {
+      box-shadow: var(--shadow-sm);
+      border-color: rgba(37, 99, 235, 0.25);
+    }
+
+    @media (max-width: 640px) {
+      .service-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .service-card .btn-quote { width: 100%; }
+    }
+
+    .svc-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--brand-soft);
+      color: var(--brand);
+      display: grid;
+      place-items: center;
+    }
+
+    .svc-icon svg { width: 26px; height: 26px; }
+
+    .svc-body h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .svc-body p {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .svc-price {
+      font-weight: 700;
+      color: var(--text);
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+
+    .btn-quote {
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: none;
+      background: var(--surface);
+      color: var(--brand);
+      font-weight: 700;
+      font-size: 0.88rem;
+      font-family: inherit;
+      cursor: pointer;
+      border: 2px solid var(--brand);
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-quote:hover {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    /* Portfolio placeholder */
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .portfolio-item {
+      aspect-ratio: 4/3;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #E0E7FF, #F8FAFC);
+      border: 1px dashed var(--border);
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* Reviews */
+    .review-item {
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      margin-bottom: 12px;
+    }
+
+    .review-item:last-child { margin-bottom: 0; }
+
+    .review-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .review-author { font-weight: 600; font-size: 0.95rem; }
+
+    .review-meta { font-size: 0.82rem; color: var(--muted); }
+
+    .review-text { font-size: 0.92rem; color: var(--text); }
+
+    /* Contact panel */
+    .contact-block {
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .contact-block p { margin-bottom: 12px; color: var(--muted); }
+
+    .contact-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: sticky;
+      top: 88px;
+    }
+
+    .sidebar-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 24px;
+      text-align: center;
+    }
+
+    .sidebar-card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .btn-book {
+      display: block;
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(180deg, #FBBF24 0%, var(--cta) 100%);
+      color: #1e293b;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn-book:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(245, 158, 11, 0.45);
+    }
+
+    .sidebar-note {
+      margin-top: 14px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .muted { color: var(--muted); font-size: 0.92rem; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="/index.html" class="brand" aria-label="Bosh sahifa">
+        <span class="brand-mark">U</span>
+        Usta Topamiz
+      </a>
+      <a href="/index.html" class="topbar-back">← Barcha ustalar</a>
+    </div>
+  </header>
+
+  <div class="shell">
+    <div class="main-col">
+      <section class="profile-head" aria-labelledby="profile-name">
+        <div class="avatar-wrap">
+          <img
+            class="avatar"
+            src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80"
+            alt="Otabek Gafurov — usta surati"
+            width="120"
+            height="120"
+          />
+          <span class="verified" title="Tasdiqlangan usta">✓</span>
+        </div>
+        <div class="profile-meta">
+          <h1 class="profile-name" id="profile-name">Otabek Gafurov</h1>
+          <p class="profile-tagline">
+            5 yillik tajriba — plyitkalash va elektrik ishlarida mutaxassis. Uy ta’miri va renovatsiya loyihalari.
+          </p>
+          <div class="rating-row">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <button type="button" class="reviews-link" data-tab="reviews">120+ sharh</button>
+            <span class="muted">Toshkent</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="tabs-wrap">
+        <div class="tabs" role="tablist">
+          <button type="button" class="tab is-active" role="tab" aria-selected="true" data-tab="services">Xizmatlar va narxlar</button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-tab="portfolio">Portfolio</button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-tab="reviews">Sharhlar</button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-tab="contact">Aloqa</button>
+        </div>
+
+        <div id="panel-services" class="tab-panel is-active" role="tabpanel">
+          <div class="service-grid">
+            <article class="service-card">
+              <div class="svc-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M3 9h18M9 21V9" />
+                </svg>
+              </div>
+              <div class="svc-body">
+                <h3>Pol plyitkalash</h3>
+                <p>Padval, oshxona va hammom uchun sifatli qoplama va grout.</p>
+                <div class="svc-price">50 000 so'm / m² dan</div>
+              </div>
+              <button type="button" class="btn-quote">Taklif so'rash</button>
+            </article>
+            <article class="service-card">
+              <div class="svc-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                  <path d="M14 2l4 4M4 10l12-8 4 4-12 8-4-4zM4 10v10h10" />
+                </svg>
+              </div>
+              <div class="svc-body">
+                <h3>Elektr montaj</h3>
+                <p>Rozetka, avtomatlar, LED chiroqlar va panellar o‘rnatish.</p>
+                <div class="svc-price">150 000 so'm dan</div>
+              </div>
+              <button type="button" class="btn-quote">Taklif so'rash</button>
+            </article>
+            <article class="service-card">
+              <div class="svc-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                  <path d="M4 19h16M6 19V9l6-4 6 4v10M9 19v-6h6v6" />
+                </svg>
+              </div>
+              <div class="svc-body">
+                <h3>Divar ta’miri</h3>
+                <p>Mukammal tekislash, bo‘yoq va dekorativ qoplama.</p>
+                <div class="svc-price">80 000 so'm / m² dan</div>
+              </div>
+              <button type="button" class="btn-quote">Taklif so'rash</button>
+            </article>
+          </div>
+        </div>
+
+        <div id="panel-portfolio" class="tab-panel" role="tabpanel" hidden>
+          <p class="muted" style="margin-bottom:16px;">Tanlangan ishlar — real obyektlardan.</p>
+          <div class="portfolio-grid">
+            <div class="portfolio-item">Oshxona</div>
+            <div class="portfolio-item">Hammom</div>
+            <div class="portfolio-item">Elektrik</div>
+            <div class="portfolio-item">Plyitka</div>
+          </div>
+        </div>
+
+        <div id="panel-reviews" class="tab-panel" role="tabpanel" hidden>
+          <div class="review-item">
+            <div class="review-top">
+              <span class="review-author">Dilshod R.</span>
+              <span class="review-meta">★★★★★ · 2 hafta oldin</span>
+            </div>
+            <p class="review-text">Plyitka ishini vaqtida va juda toza bajarildi. Tavsiya qilaman.</p>
+          </div>
+          <div class="review-item">
+            <div class="review-top">
+              <span class="review-author">Malika T.</span>
+              <span class="review-meta">★★★★★ · 1 oy oldin</span>
+            </div>
+            <p class="review-text">Elektr panel yangilandi, hammasi tushuntirib berildi.</p>
+          </div>
+        </div>
+
+        <div id="panel-contact" class="tab-panel" role="tabpanel" hidden>
+          <div class="contact-block">
+            <p>Qo‘ng‘iroq yoki Telegram orqali bevosita bog‘laning.</p>
+            <div class="contact-row">📞 +998 90 123 45 67</div>
+            <div class="contact-row">✈️ @otabek_master</div>
+            <p class="muted" style="margin-top:8px;">Javob vaqti: odatda 1 soat ichida.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="sidebar" aria-label="Bron qilish">
+      <div class="sidebar-card">
+        <p>Otabek bilan ish boshlash uchun bron qiling yoki taklif so‘rang.</p>
+        <button type="button" class="btn-book">Otabek Gafurovni bron qilish</button>
+        <p class="sidebar-note">Usta Topamiz orqali xavfsiz aloqa va kafolatlangan sifat.</p>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    (function () {
+      const tabs = document.querySelectorAll(".tab");
+      const panels = {
+        services: document.getElementById("panel-services"),
+        portfolio: document.getElementById("panel-portfolio"),
+        reviews: document.getElementById("panel-reviews"),
+        contact: document.getElementById("panel-contact"),
+      };
+
+      function activate(name) {
+        tabs.forEach((t) => {
+          const on = t.getAttribute("data-tab") === name;
+          t.classList.toggle("is-active", on);
+          t.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        Object.entries(panels).forEach(([key, el]) => {
+          if (!el) return;
+          const on = key === name;
+          el.classList.toggle("is-active", on);
+          el.hidden = !on;
+        });
+      }
+
+      tabs.forEach((btn) => {
+        btn.addEventListener("click", () => activate(btn.getAttribute("data-tab")));
+      });
+
+      document.querySelectorAll(".reviews-link").forEach((b) => {
+        b.addEventListener("click", () => activate(b.getAttribute("data-tab")));
+      });
+
+      document.querySelectorAll(".btn-quote, .btn-book").forEach((b) => {
+        b.addEventListener("click", () => {
+          activate("contact");
+          document.getElementById("panel-contact")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

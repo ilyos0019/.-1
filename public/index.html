@@ -3,793 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Usta Top — O'zbekiston ustalar platformasi</title>
+  <title>Usta Topamiz — uy uchun xizmatlar bozori</title>
   <meta name="description" content="O'zbekistondagi eng yaxshi ustalarni toping. Santexnik, elektrik, duradgor va boshqa mutaxassislar." />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./config.js"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <link rel="stylesheet" href="/css/landing.css" />
 
-    :root {
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --primary-light: #eff6ff;
-      --bg: #f9fafb;
-      --card-bg: #ffffff;
-      --text: #111827;
-      --text-muted: #6b7280;
-      --border: #e5e7eb;
-      --nav-bg: #ffffff;
-      --yellow: #f59e0b;
-      --green: #10b981;
-      --radius: 16px;
-      --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.06);
-      --shadow-lg: 0 8px 32px rgba(37, 99, 235, 0.15);
-    }
-
-    [data-theme="dark"] {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --text: #f1f5f9;
-      --text-muted: #94a3b8;
-      --border: #334155;
-      --nav-bg: #1e293b;
-    }
-
-    body {
-      font-family: "Segoe UI", system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      transition: background-color 0.25s, color 0.25s;
-    }
-
-    a { color: var(--primary); }
-
-    header {
-      background: var(--nav-bg);
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      transition: background-color 0.25s, border-color 0.25s;
-    }
-
-    .nav-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .logo {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--primary);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .logo-icon {
-      background: var(--primary);
-      color: #fff;
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      font-size: 1.1rem;
-    }
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .control-btn {
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      padding: 8px 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      color: var(--text);
-      font-size: 0.9rem;
-      transition: border-color 0.2s, background 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: inherit;
-    }
-
-    .control-btn:hover {
-      border-color: var(--primary);
-    }
-
-    .hero {
-      background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%);
-      color: #fff;
-      padding: 80px 20px;
-      text-align: center;
-    }
-
-    .hero h1 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      font-weight: 800;
-      margin-bottom: 16px;
-      line-height: 1.15;
-    }
-
-    .hero h1 .hero-accent {
-      color: #fcd34d;
-    }
-
-    .hero > p {
-      font-size: 1.15rem;
-      opacity: 0.9;
-      max-width: 560px;
-      margin: 0 auto 36px;
-    }
-
-    .hero-stats {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      flex-wrap: wrap;
-    }
-
-    .stat {
-      text-align: center;
-    }
-
-    .stat-num {
-      font-size: 2rem;
-      font-weight: 800;
-    }
-
-    .stat-lbl {
-      font-size: 0.85rem;
-      opacity: 0.8;
-    }
-
-    .filters-wrap {
-      max-width: 1200px;
-      margin: -28px auto 0;
-      padding: 0 20px;
-      position: relative;
-      z-index: 10;
-    }
-
-    .filters {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-lg);
-      padding: 24px 28px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      align-items: flex-end;
-      border: 1px solid var(--border);
-    }
-
-    .filter-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      flex: 1;
-      min-width: 180px;
-    }
-
-    .filter-group label {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .filter-group select {
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      padding: 11px 14px;
-      font-size: 0.95rem;
-      color: var(--text);
-      background: var(--bg);
-      outline: none;
-      transition: border-color 0.2s;
-      font-family: inherit;
-    }
-
-    .filter-group select:focus {
-      border-color: var(--primary);
-    }
-
-    .filter-clear {
-      background: var(--border);
-      border: none;
-      padding: 11px 20px;
-      border-radius: 10px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      color: var(--text);
-      font-weight: 600;
-      transition: background 0.2s, color 0.2s;
-      align-self: flex-end;
-      white-space: nowrap;
-      font-family: inherit;
-    }
-
-    .filter-clear:hover {
-      background: var(--primary-light);
-      color: var(--primary);
-    }
-
-    .lang-dropdown {
-      position: relative;
-    }
-
-    .lang-menu {
-      position: absolute;
-      top: calc(100% + 8px);
-      right: 0;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      box-shadow: var(--shadow-lg);
-      display: none;
-      flex-direction: column;
-      min-width: 150px;
-      overflow: hidden;
-      z-index: 1000;
-      backdrop-filter: blur(8px);
-    }
-
-    .lang-menu.is-open {
-      display: flex;
-    }
-
-    .lang-option {
-      padding: 12px 16px;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-      font-size: 0.92rem;
-      color: var(--text);
-      border: none;
-      background: none;
-      text-align: left;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-family: inherit;
-    }
-
-    .lang-option:hover {
-      background: var(--primary-light);
-      color: var(--primary);
-    }
-
-    .content {
-      max-width: 1200px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .section-title {
-      font-size: 1.4rem;
-      font-weight: 700;
-    }
-
-    .count-badge {
-      background: var(--primary-light);
-      color: var(--primary);
-      font-weight: 700;
-      padding: 4px 14px;
-      border-radius: 50px;
-      font-size: 0.9rem;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 24px;
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      overflow: hidden;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .card-img {
-      width: 100%;
-      height: 200px;
-      background: linear-gradient(135deg, var(--primary-light), #e0e7ff);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 4rem;
-      color: var(--primary);
-    }
-
-    .card-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .card-body {
-      padding: 20px;
-    }
-
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 8px;
-      gap: 8px;
-    }
-
-    .card-name {
-      font-size: 1.2rem;
-      font-weight: 700;
-    }
-
-    .card-kasb {
-      display: inline-block;
-      background: var(--primary-light);
-      color: var(--primary);
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 50px;
-      white-space: nowrap;
-    }
-
-    .card-location {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      margin: 8px 0 12px;
-    }
-
-    .card-rating {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      margin: 0 0 6px;
-      font-weight: 600;
-    }
-
-    .card-btn {
-      width: 100%;
-      margin-top: 14px;
-      padding: 11px;
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-      font-family: inherit;
-    }
-
-    .card-btn:hover {
-      background: var(--primary-dark);
-    }
-
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 15, 25, 0.65);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      visibility: hidden;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.28s ease, visibility 0.28s ease;
-    }
-
-    .overlay.is-active {
-      visibility: visible;
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .usta-contact-panel {
-      background: #1a1a2e;
-      border-radius: 20px;
-      width: 100%;
-      max-width: 420px;
-      max-height: min(92vh, 900px);
-      overflow-y: auto;
-      position: relative;
-      color: #e8e8ef;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
-      transform: scale(0.94);
-      opacity: 0;
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.28s ease;
-    }
-
-    .overlay.is-active .usta-contact-panel {
-      transform: scale(1);
-      opacity: 1;
-    }
-
-    .usta-contact-close {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 40px;
-      height: 40px;
-      border: none;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
-      font-size: 1.25rem;
-      cursor: pointer;
-      z-index: 2;
-      font-family: inherit;
-      line-height: 1;
-      transition: background 0.2s;
-    }
-
-    .usta-contact-close:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    .cm-header {
-      text-align: center;
-      padding: 28px 24px 20px;
-    }
-
-    .cm-avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin: 0 auto 14px;
-      display: block;
-      border: 3px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-    }
-
-    .cm-avatar.initials {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.65rem;
-      font-weight: 800;
-      color: #fff;
-    }
-
-    .cm-name {
-      font-size: 1.35rem;
-      font-weight: 800;
-      margin-bottom: 10px;
-      line-height: 1.25;
-      color: #fff;
-    }
-
-    .cm-kasb {
-      display: inline-block;
-      padding: 5px 14px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      background: rgba(37, 99, 235, 0.35);
-      color: #93c5fd;
-      margin-bottom: 10px;
-    }
-
-    .cm-city {
-      font-size: 0.9rem;
-      color: #a8a8c0;
-      margin-top: 4px;
-    }
-
-    .cm-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      padding: 0 20px 20px;
-    }
-
-    .cm-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 14px 12px;
-      border-radius: 14px;
-      border: none;
-      font-size: 0.92rem;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      color: #fff;
-      text-decoration: none;
-      transition: transform 0.15s, filter 0.15s;
-    }
-
-    .cm-btn:hover {
-      filter: brightness(1.08);
-      transform: translateY(-1px);
-    }
-
-    .cm-btn-phone {
-      background: #22c55e;
-    }
-
-    .cm-btn-tg {
-      background: #2aabee;
-    }
-
-    .cm-no-contact {
-      text-align: center;
-      color: #8888a0;
-      font-size: 0.88rem;
-      padding: 8px 20px 16px;
-    }
-
-    .cm-divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 8px 20px;
-      color: #7c7c94;
-      font-size: 0.78rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-
-    .cm-divider::before,
-    .cm-divider::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: rgba(255, 255, 255, 0.12);
-    }
-
-    .cm-review {
-      padding: 0 20px 24px;
-    }
-
-    .cm-stars-row {
-      display: flex;
-      gap: 6px;
-      justify-content: center;
-      margin-bottom: 8px;
-    }
-
-    .cm-star {
-      background: none;
-      border: none;
-      font-size: 1.75rem;
-      line-height: 1;
-      cursor: pointer;
-      padding: 4px;
-      filter: grayscale(1);
-      opacity: 0.35;
-      transition: transform 0.15s, filter 0.15s, opacity 0.15s;
-    }
-
-    .cm-star.on,
-    .cm-star.hover {
-      filter: grayscale(0);
-      opacity: 1;
-    }
-
-    .cm-rating-label {
-      text-align: center;
-      font-size: 0.85rem;
-      color: #c4c4dc;
-      min-height: 22px;
-      margin-bottom: 14px;
-    }
-
-    .cm-textarea {
-      width: 100%;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 0.95rem;
-      font-family: inherit;
-      background: rgba(0, 0, 0, 0.35);
-      color: #f0f0f8;
-      resize: vertical;
-      min-height: 72px;
-      margin-bottom: 12px;
-    }
-
-    .cm-textarea::placeholder {
-      color: #6b6b80;
-    }
-
-    .cm-textarea:focus {
-      outline: none;
-      border-color: rgba(37, 99, 235, 0.6);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-    }
-
-    .cm-submit {
-      width: 100%;
-      padding: 13px;
-      border: none;
-      border-radius: 12px;
-      background: #2563eb;
-      color: #fff;
-      font-weight: 700;
-      font-size: 0.95rem;
-      cursor: pointer;
-      font-family: inherit;
-      transition: background 0.2s;
-    }
-
-    .cm-submit:hover {
-      background: #1d4ed8;
-    }
-
-    .cm-reviews-list {
-      margin-top: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .cm-review-item {
-      font-size: 0.88rem;
-      color: #c8c8dc;
-      line-height: 1.45;
-      padding: 10px 12px;
-      background: rgba(0, 0, 0, 0.25);
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    .cm-review-stars {
-      color: #fbbf24;
-      letter-spacing: 1px;
-      margin-bottom: 6px;
-      font-size: 0.85rem;
-    }
-
-    .cm-empty-reviews {
-      text-align: center;
-      color: #6b6b80;
-      font-size: 0.88rem;
-      padding: 8px 0;
-    }
-
-    .card-img .card-initials {
-      width: 100%;
-      height: 100%;
-      min-height: 200px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3rem;
-      font-weight: 800;
-      color: #fff;
-    }
-
-    @media (max-width: 480px) {
-      .cm-actions {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      padding: 14px 22px;
-      border-radius: 12px;
-      font-weight: 600;
-      z-index: 9999;
-      display: none;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .toast.is-visible {
-      display: block;
-    }
-
-    .toast.success {
-      background: var(--green);
-      color: #fff;
-    }
-
-    .toast.warn {
-      background: #64748b;
-      color: #fff;
-    }
-
-    footer {
-      background: var(--card-bg);
-      color: var(--text-muted);
-      border-top: 1px solid var(--border);
-      padding: 48px 20px;
-      margin-top: 80px;
-    }
-
-    .footer-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 40px;
-      text-align: left;
-    }
-
-    .footer-col h4 {
-      color: var(--text);
-      margin-bottom: 20px;
-      font-size: 1.1rem;
-    }
-
-    .footer-col p {
-      font-size: 0.95rem;
-      line-height: 1.6;
-      margin-bottom: 10px;
-    }
-
-    .footer-col a {
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .footer-bottom {
-      margin-top: 40px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
-      text-align: center;
-      font-size: 0.85rem;
-    }
-
-    @media (max-width: 600px) {
-      .hero {
-        padding: 60px 20px;
-      }
-      .filters {
-        padding: 20px;
-      }
-    }
-  </style>
 </head>
 <body>
-  <header>
+  <header class="site-header">
     <div class="nav-inner">
-      <a href="./" class="logo" id="logoHome"><span class="logo-icon">U</span> Usta Top</a>
-      <div class="nav-right">
+      <a href="./" class="logo" id="logoHome"><span class="logo-icon">U</span> <span data-i18n="brandName">Usta Topamiz</span></a>
+      <nav class="nav-links" aria-label="Asosiy menyu">
+        <a href="#services-popular" data-i18n="navServices">Xizmatlar</a>
+        <a href="#how-it-works" data-i18n="navHow">Qanday ishlaydi</a>
+        <a href="#for-masters" data-i18n="navMasters">Ustalar uchun</a>
+        <a href="#about" data-i18n="navAbout">Biz haqimizda</a>
+      </nav>
+      <div class="nav-actions">
+        <a href="login.html" class="btn-login" data-i18n="navLogin">Kirish / Ro'yxatdan o'tish</a>
         <button type="button" class="control-btn" id="themeToggle" aria-label="Mavzu">🌙</button>
         <div class="lang-dropdown">
           <button type="button" class="control-btn" id="langBtn" aria-label="Tilni o'zgartirish">
@@ -806,63 +38,196 @@
   </header>
 
   <section class="hero" aria-label="Asosiy">
-    <h1 id="heroHeading"></h1>
-    <p data-i18n="heroSub">O'zbekiston bo'ylab malakali ustalar xizmatidan foydalaning. Tez, oson va ishonchli.</p>
-    <div class="hero-stats">
-      <div class="stat">
-        <div class="stat-num" id="heroUstalar">—</div>
-        <div class="stat-lbl" data-i18n="statWorkers">Faol ustalar</div>
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <h1 id="heroHeading">Professional Ustalar – Bir Klikda!</h1>
+        <p class="hero-lead" data-i18n="heroSub">
+          Ishonchli ustalarni qidirish va bron qilish — sodda, tez va shaffof.
+        </p>
+        <form class="hero-search-form" id="heroSearchForm" action="#" autocomplete="off">
+          <div class="search-field">
+            <span class="search-ico" aria-hidden="true">🔍</span>
+            <input
+              type="search"
+              id="heroSearch"
+              name="q"
+              data-i18n-placeholder="searchPlaceholder"
+              placeholder="Masalan: Elektrik, Santexnik, Mebelchi..."
+              enterkeyhint="search"
+            />
+          </div>
+          <button type="submit" class="btn-cta" data-i18n="ctaFind">Ustani topish</button>
+        </form>
+        <div class="hero-stats">
+          <div class="stat">
+            <div class="stat-num" id="heroUstalar">—</div>
+            <div class="stat-lbl" data-i18n="statWorkers">Faol ustalar</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" id="heroShaharlar">—</div>
+            <div class="stat-lbl" data-i18n="statCities">Shaharlar</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" id="heroKasblar">—</div>
+            <div class="stat-lbl" data-i18n="statJobs">Kasb turlari</div>
+          </div>
+        </div>
       </div>
-      <div class="stat">
-        <div class="stat-num" id="heroShaharlar">—</div>
-        <div class="stat-lbl" data-i18n="statCities">Shaharlar</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num" id="heroKasblar">—</div>
-        <div class="stat-lbl" data-i18n="statJobs">Kasb turlari</div>
+      <div class="hero-visual">
+        <figure>
+          <img
+            src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=85"
+            alt="Professional uy ustasi — asbob-uskunalar bilan"
+            width="640"
+            height="480"
+            loading="eager"
+            decoding="async"
+          />
+        </figure>
       </div>
     </div>
   </section>
 
-  <div class="filters-wrap">
-    <div class="filters">
-      <div class="filter-group">
-        <label for="filtKasb" data-i18n="filterJob">Kasb bo'yicha</label>
-        <select id="filtKasb" aria-label="Kasb bo'yicha filtr">
-          <option value="" data-i18n="allJobs">Barcha kasblar</option>
-        </select>
+  <section id="services-popular" class="section-wrap alt">
+    <div class="section-inner">
+      <p class="section-kicker" data-i18n="catKicker">Mashhur</p>
+      <h2 class="section-title" data-i18n="catTitle">Eng ommabop xizmatlar</h2>
+      <p class="section-desc" data-i18n="catDesc">
+        Tozalash, ta'mirlash va renovatsiya — tez-tez buyurtma qilinadigan yo'nalishlar.
+      </p>
+      <div class="cat-grid">
+        <button type="button" class="cat-card" data-category-search="Tozalash">
+          <div class="cat-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 44h32v4H16v-4zm4-24l8-12 8 12v16H20V20z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+              <path d="M12 52h40" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+            </svg>
+          </div>
+          <h3 data-i18n="catClean">Tozalash</h3>
+          <p data-i18n="catCleanDesc">Uy va ofis uchun professional tozalash xizmatlari.</p>
+        </button>
+        <button type="button" class="cat-card" data-category-search="Ta'mirlash">
+          <div class="cat-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M44 12l8 8-26 26-10 4 4-10 26-26z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+              <path d="M18 46l-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+            </svg>
+          </div>
+          <h3 data-i18n="catRepair">Ta'mirlash</h3>
+          <p data-i18n="catRepairDesc">Santexnika, elektrik va uy jihozlari ta'miri.</p>
+        </button>
+        <button type="button" class="cat-card" data-category-search="Renovatsiya">
+          <div class="cat-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 40h40v12H12V40z" stroke="currentColor" stroke-width="2.2" />
+              <path d="M20 40V28l12-16 12 16v12" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+              <path d="M32 18v10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+            </svg>
+          </div>
+          <h3 data-i18n="catReno">Renovatsiya</h3>
+          <p data-i18n="catRenoDesc">Remont va yangilanish loyihalari uchun mutaxassislar.</p>
+        </button>
       </div>
-      <div class="filter-group">
-        <label for="filtShahar" data-i18n="filterCity">Shahar bo'yicha</label>
-        <select id="filtShahar" aria-label="Shahar bo'yicha filtr">
-          <option value="" data-i18n="allCities">Barcha shaharlar</option>
-          <option>Toshkent shahri</option>
-          <option>Toshkent viloyati</option>
-          <option>Andijon</option>
-          <option>Boxoro</option>
-          <option>Farg'ona</option>
-          <option>Jizzax</option>
-          <option>Xorazm</option>
-          <option>Namangan</option>
-          <option>Navoiy</option>
-          <option>Qashqadaryo</option>
-          <option>Samarqand</option>
-          <option>Sirdaryo</option>
-          <option>Surxondaryo</option>
-          <option>Qoraqalpog'iston</option>
-        </select>
-      </div>
-      <button type="button" class="filter-clear" id="filterClear" data-i18n="clear">✕ Tozalash</button>
     </div>
-  </div>
+  </section>
 
-  <main class="content">
-    <div class="section-header">
-      <h2 class="section-title" data-i18n="listTitle">Ustalar ro'yxati</h2>
-      <span class="count-badge" id="countBadge" data-i18n="loading">Yuklanmoqda...</span>
+  <section id="how-it-works" class="section-wrap">
+    <div class="section-inner">
+      <p class="section-kicker" data-i18n="howKicker">Jarayon</p>
+      <h2 class="section-title" data-i18n="howTitle">Qanday ishlaydi</h2>
+      <p class="section-desc" data-i18n="howDesc">Uch oddiy qadam — va usta allaqachon yo'lga chiqdi.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3 data-i18n="step1Title">Xizmatni tanlang</h3>
+          <p data-i18n="step1Text">Qidiruv orqali kasb yoki kalit so'zlarni kiriting.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3 data-i18n="step2Title">Ustani solishtiring</h3>
+          <p data-i18n="step2Text">Reyting va joylashuv bo'yicha eng mos variantni tanlang.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3 data-i18n="step3Title">Bog'laning va bron qiling</h3>
+          <p data-i18n="step3Text">Telefon yoki Telegram orqali tezkor aloqa.</p>
+        </div>
+      </div>
     </div>
-    <div class="grid" id="ustaGrid"></div>
-  </main>
+  </section>
+
+  <section id="for-masters" class="section-wrap alt">
+    <div class="section-inner">
+      <div class="for-band">
+        <div>
+          <h2 data-i18n="forTitle">Ustalar uchun platforma</h2>
+          <p data-i18n="forText">
+            Profilingizni yarating, mijozlarni onlayn qabul qiling va ish hajmining o'sishini kuzating.
+          </p>
+        </div>
+        <a href="login.html" class="btn-outline-light" data-i18n="forCta">Ro'yxatdan o'tish</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="section-wrap">
+    <div class="section-inner">
+      <h2 class="section-title" data-i18n="aboutTitle">Usta Topamiz haqida</h2>
+      <p class="about-simple" data-i18n="aboutText">
+        Biz O'zbekistonda uy xizmatlari bozorini zamonaviy va shaffof qilishga yordam beramiz — mijozlar uchun ishonch,
+        ustalar uchun barqaror buyurtmalar.
+      </p>
+      <p style="margin-top: 20px">
+        <a href="master-profile.html" data-i18n="sampleProfile">Namuna: usta profili</a>
+      </p>
+    </div>
+  </section>
+
+  <section id="browse" class="section-wrap alt">
+    <div class="section-inner">
+      <div class="browse-head">
+        <div>
+          <p class="section-kicker" data-i18n="browseKicker">Natijalar</p>
+          <h2 class="section-title" data-i18n="listTitle">Ustalar ro'yxati</h2>
+        </div>
+        <span class="count-badge" id="countBadge" data-i18n="loading">Yuklanmoqda...</span>
+      </div>
+    </div>
+    <div class="filters-wrap">
+      <div class="filters">
+        <div class="filter-group">
+          <label for="filtKasb" data-i18n="filterJob">Kasb bo'yicha</label>
+          <select id="filtKasb" aria-label="Kasb bo'yicha filtr">
+            <option value="" data-i18n="allJobs">Barcha kasblar</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filtShahar" data-i18n="filterCity">Shahar bo'yicha</label>
+          <select id="filtShahar" aria-label="Shahar bo'yicha filtr">
+            <option value="" data-i18n="allCities">Barcha shaharlar</option>
+            <option>Toshkent shahri</option>
+            <option>Toshkent viloyati</option>
+            <option>Andijon</option>
+            <option>Boxoro</option>
+            <option>Farg'ona</option>
+            <option>Jizzax</option>
+            <option>Xorazm</option>
+            <option>Namangan</option>
+            <option>Navoiy</option>
+            <option>Qashqadaryo</option>
+            <option>Samarqand</option>
+            <option>Sirdaryo</option>
+            <option>Surxondaryo</option>
+            <option>Qoraqalpog'iston</option>
+          </select>
+        </div>
+        <button type="button" class="filter-clear" id="filterClear" data-i18n="clear">✕ Tozalash</button>
+      </div>
+    </div>
+    <main class="content">
+      <div class="grid" id="ustaGrid"></div>
+    </main>
+  </section>
 
   <div class="overlay" id="modalOverlay" aria-hidden="true">
     <div
@@ -905,7 +270,7 @@
   <footer>
     <div class="footer-inner">
       <div class="footer-col">
-        <h4>Usta Top</h4>
+        <h4 data-i18n="brandName">Usta Topamiz</h4>
         <p data-i18n="footerAbout">O'zbekistondagi eng yaxshi ustalarni topish va ularga murojaat qilish uchun qulay platforma.</p>
       </div>
       <div class="footer-col">
@@ -915,7 +280,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2026 Usta Top — <span data-i18n="allRights">Barcha huquqlar himoyalangan.</span></p>
+      <p>&copy; 2026 <span data-i18n="brandName">Usta Topamiz</span> — <span data-i18n="allRights">Barcha huquqlar himoyalangan.</span></p>
     </div>
   </footer>
 
@@ -928,10 +293,45 @@
 
       const i18n = {
         uz: {
-          heroHtml:
-            "O'zingizga mos <span class=\"hero-accent\">ishonchli ustani</span> toping",
+          brandName: "Usta Topamiz",
+          heroTitle: "Professional Ustalar – Bir Klikda!",
           heroSub:
-            "O'zbekiston bo'ylab malakali ustalar xizmatidan foydalaning. Tez, oson va ishonchli.",
+            "Ishonchli ustalarni qidirish va bron qilish — sodda, tez va shaffof.",
+          navServices: "Xizmatlar",
+          navHow: "Qanday ishlaydi",
+          navMasters: "Ustalar uchun",
+          navAbout: "Biz haqimizda",
+          navLogin: "Kirish / Ro'yxatdan o'tish",
+          searchPlaceholder: "Masalan: Elektrik, Santexnik, Mebelchi...",
+          ctaFind: "Ustani topish",
+          catKicker: "Mashhur",
+          catTitle: "Eng ommabop xizmatlar",
+          catDesc:
+            "Tozalash, ta'mirlash va renovatsiya — tez-tez buyurtma qilinadigan yo'nalishlar.",
+          catClean: "Tozalash",
+          catCleanDesc: "Uy va ofis uchun professional tozalash xizmatlari.",
+          catRepair: "Ta'mirlash",
+          catRepairDesc: "Santexnika, elektrik va uy jihozlari ta'miri.",
+          catReno: "Renovatsiya",
+          catRenoDesc: "Remont va yangilanish loyihalari uchun mutaxassislar.",
+          howKicker: "Jarayon",
+          howTitle: "Qanday ishlaydi",
+          howDesc: "Uch oddiy qadam — va usta allaqachon yo'lga chiqdi.",
+          step1Title: "Xizmatni tanlang",
+          step1Text: "Qidiruv orqali kasb yoki kalit so'zlarni kiriting.",
+          step2Title: "Ustani solishtiring",
+          step2Text: "Reyting va joylashuv bo'yicha eng mos variantni tanlang.",
+          step3Title: "Bog'laning va bron qiling",
+          step3Text: "Telefon yoki Telegram orqali tezkor aloqa.",
+          forTitle: "Ustalar uchun platforma",
+          forText:
+            "Profilingizni yarating, mijozlarni onlayn qabul qiling va ish hajmining o'sishini kuzating.",
+          forCta: "Ro'yxatdan o'tish",
+          aboutTitle: "Usta Topamiz haqida",
+          aboutText:
+            "Biz O'zbekistonda uy xizmatlari bozorini zamonaviy va shaffof qilishga yordam beramiz — mijozlar uchun ishonch, ustalar uchun barqaror buyurtmalar.",
+          sampleProfile: "Namuna: usta profili",
+          browseKicker: "Natijalar",
           statWorkers: "Faol ustalar",
           statCities: "Shaharlar",
           statJobs: "Kasb turlari",
@@ -966,10 +366,43 @@
           selectRating: "Avval yulduzlarni tanlang",
         },
         ru: {
-          heroHtml:
-            "Найдите <span class=\"hero-accent\">надежного мастера</span>, который вам подходит",
-          heroSub:
-            "Пользуйтесь услугами квалифицированных мастеров по всему Узбекистану. Быстро, просто и надежно.",
+          brandName: "Usta Topamiz",
+          heroTitle: "Профессиональные мастера — в один клик!",
+          heroSub: "Поиск и бронирование проверенных специалистов — просто, быстро и прозрачно.",
+          navServices: "Услуги",
+          navHow: "Как это работает",
+          navMasters: "Мастерам",
+          navAbout: "О нас",
+          navLogin: "Войти / Регистрация",
+          searchPlaceholder: "Напр.: электрик, сантехник, мебельщик...",
+          ctaFind: "Найти мастера",
+          catKicker: "Популярное",
+          catTitle: "Самые востребованные услуги",
+          catDesc: "Уборка, ремонт и реновация — чаще всего заказывают эти направления.",
+          catClean: "Уборка",
+          catCleanDesc: "Профессиональная уборка квартир и офисов.",
+          catRepair: "Ремонт",
+          catRepairDesc: "Сантехника, электрика и бытовая техника.",
+          catReno: "Реновация",
+          catRenoDesc: "Специалисты для капитального обновления дома.",
+          howKicker: "Процесс",
+          howTitle: "Как это работает",
+          howDesc: "Три простых шага — и мастер уже в пути.",
+          step1Title: "Выберите услугу",
+          step1Text: "Введите профессию или ключевые слова в поиске.",
+          step2Title: "Сравните мастеров",
+          step2Text: "Выберите по рейтингу и локации.",
+          step3Title: "Свяжитесь и забронируйте",
+          step3Text: "Быстрый контакт по телефону или Telegram.",
+          forTitle: "Платформа для мастеров",
+          forText:
+            "Создайте профиль, принимайте заказы онлайн и растите объём работ.",
+          forCta: "Зарегистрироваться",
+          aboutTitle: "О Usta Topamiz",
+          aboutText:
+            "Мы помогаем сделать рынок домашних услуг в Узбекистане современным и прозрачным — доверие для клиентов, стабильные заказы для мастеров.",
+          sampleProfile: "Пример: профиль мастера",
+          browseKicker: "Результаты",
           statWorkers: "Активных мастеров",
           statCities: "Городов",
           statJobs: "Видов профессий",
@@ -1004,10 +437,43 @@
           selectRating: "Сначала выберите звёзды",
         },
         en: {
-          heroHtml:
-            "Find a <span class=\"hero-accent\">reliable professional</span> that fits you",
-          heroSub:
-            "Use services of qualified workers across Uzbekistan. Fast, easy, and reliable.",
+          brandName: "Usta Topamiz",
+          heroTitle: "Professional Masters — One Click Away!",
+          heroSub: "Find and book trusted home pros — simple, fast, and transparent.",
+          navServices: "Services",
+          navHow: "How It Works",
+          navMasters: "For Masters",
+          navAbout: "About Us",
+          navLogin: "Login / Register",
+          searchPlaceholder: "e.g. Electrician, Plumber, Carpenter...",
+          ctaFind: "Find a craftsman",
+          catKicker: "Popular",
+          catTitle: "Most popular services",
+          catDesc: "Cleaning, repair, and renovation — the categories homeowners book most.",
+          catClean: "Cleaning",
+          catCleanDesc: "Professional cleaning for homes and offices.",
+          catRepair: "Repair",
+          catRepairDesc: "Plumbing, electrical, and appliance fixes.",
+          catReno: "Renovation",
+          catRenoDesc: "Experts for larger remodel and upgrade projects.",
+          howKicker: "Process",
+          howTitle: "How it works",
+          howDesc: "Three simple steps — and a pro is on the way.",
+          step1Title: "Choose a service",
+          step1Text: "Search by trade or keywords in the bar above.",
+          step2Title: "Compare masters",
+          step2Text: "Pick the best fit by rating and location.",
+          step3Title: "Connect & book",
+          step3Text: "Reach out fast by phone or Telegram.",
+          forTitle: "A platform built for masters",
+          forText:
+            "Create your profile, receive leads online, and grow your pipeline.",
+          forCta: "Sign up",
+          aboutTitle: "About Usta Topamiz",
+          aboutText:
+            "We’re making Uzbekistan’s home-services marketplace modern and transparent — trust for clients, steady jobs for professionals.",
+          sampleProfile: "Sample master profile",
+          browseKicker: "Results",
           statWorkers: "Active workers",
           statCities: "Cities",
           statJobs: "Professions",
@@ -1067,7 +533,7 @@
 
       function applyHeroHeading() {
         const el = $("heroHeading");
-        if (el) el.innerHTML = t("heroHtml");
+        if (el) el.textContent = t("heroTitle");
       }
 
       function applyTheme() {
@@ -1080,9 +546,13 @@
         applyHeroHeading();
         document.querySelectorAll("[data-i18n]").forEach((el) => {
           const key = el.getAttribute("data-i18n");
-          if (!key || key === "heroHtml") return;
+          if (!key || key === "heroTitle") return;
           const val = t(key);
           if (val != null) el.textContent = val;
+        });
+        document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+          const key = el.getAttribute("data-i18n-placeholder");
+          if (key) el.placeholder = t(key);
         });
         const label = $("currentLangLabel");
         if (label) label.textContent = currentLang.toUpperCase();
@@ -1095,7 +565,7 @@
         currentLang = lang;
         localStorage.setItem(STORAGE_LANG, lang);
         applyLang();
-        renderUstalar(allUstalar);
+        applyFilters();
         $("langMenu")?.classList.remove("is-open");
       }
 
@@ -1239,21 +709,35 @@
           .join("");
       }
 
-      function applyFilters() {
+      function getFilteredList() {
         const k = $("filtKasb")?.value || "";
         const s = $("filtShahar")?.value || "";
+        const q = ($("heroSearch")?.value || "").trim().toLowerCase();
         let res = allUstalar;
         if (k) res = res.filter((u) => u.kasb === k);
         if (s) res = res.filter((u) => u.shahar === s);
-        renderUstalar(res);
+        if (q) {
+          res = res.filter((u) => {
+            const kasb = (u.kasb || "").toLowerCase();
+            const ism = (u.ism || "").toLowerCase();
+            return kasb.includes(q) || ism.includes(q);
+          });
+        }
+        return res;
+      }
+
+      function applyFilters() {
+        renderUstalar(getFilteredList());
       }
 
       function clearFilters() {
         const ks = $("filtKasb");
         const sh = $("filtShahar");
+        const hs = $("heroSearch");
         if (ks) ks.value = "";
         if (sh) sh.value = "";
-        renderUstalar(allUstalar);
+        if (hs) hs.value = "";
+        applyFilters();
       }
 
       function buildCmStars() {
@@ -1464,13 +948,13 @@
           if (error) throw error;
           allUstalar = data || [];
           updateHeroStats();
-          renderUstalar(allUstalar);
           populateProfessions();
+          applyFilters();
         } catch (e) {
           console.error(e);
           allUstalar = [];
           updateHeroStats();
-          renderUstalar(allUstalar);
+          applyFilters();
         }
       }
 
@@ -1513,6 +997,24 @@
         $("filtKasb")?.addEventListener("change", applyFilters);
         $("filtShahar")?.addEventListener("change", applyFilters);
         $("filterClear")?.addEventListener("click", clearFilters);
+
+        $("heroSearchForm")?.addEventListener("submit", (e) => {
+          e.preventDefault();
+          applyFilters();
+          $("browse")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+
+        $("heroSearch")?.addEventListener("input", () => applyFilters());
+
+        document.querySelectorAll(".cat-card[data-category-search]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const q = btn.getAttribute("data-category-search") || "";
+            const inp = $("heroSearch");
+            if (inp) inp.value = q;
+            applyFilters();
+            $("browse")?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
 
         $("ustaGrid")?.addEventListener("click", (e) => {
           const btn = e.target.closest("[data-usta-id]");
