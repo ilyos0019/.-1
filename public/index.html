@@ -2,78 +2,218 @@
 <html lang="uz">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Usta Topamiz — uy uchun xizmatlar bozori</title>
   <meta name="description" content="O'zbekistondagi eng yaxshi ustalarni toping. Santexnik, elektrik, duradgor va boshqa mutaxassislar." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { DEFAULT: "#065F46", dark: "#064e3b", light: "#A7F3D0", fog: "#ecfdf5" },
+          },
+          fontFamily: { sans: ["Inter", "system-ui", "-apple-system", "BlinkMacSystemFont", "sans-serif"] },
+          boxShadow: {
+            glass: "0 8px 32px rgba(6, 95, 70, 0.08)",
+            "glass-lg": "0 24px 64px rgba(6, 95, 70, 0.14)",
+          },
+          animation: { "fade-up": "fade-up 0.6s ease-out forwards" },
+          keyframes: {
+            "fade-up": {
+              from: { opacity: "0", transform: "translateY(14px)" },
+              to: { opacity: "1", transform: "translateY(0)" },
+            },
+          },
+        },
+      },
+    };
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./config.js"></script>
-  <link rel="stylesheet" href="/css/landing.css" />
+  <link rel="stylesheet" href="/css/glass-theme.css" />
+  <!-- Motion: CSS + Tailwind transitions. Framer Motion is React-only; no bundle added. -->
 
 </head>
-<body>
-  <header class="site-header">
-    <div class="nav-inner">
-      <a href="./" class="logo" id="logoHome"><span class="logo-icon">U</span> <span data-i18n="brandName">Usta Topamiz</span></a>
-      <nav class="nav-links" aria-label="Asosiy menyu">
-        <a href="#services-popular" data-i18n="navServices">Xizmatlar</a>
-        <a href="#how-it-works" data-i18n="navHow">Qanday ishlaydi</a>
-        <a href="#for-masters" data-i18n="navMasters">Ustalar uchun</a>
-        <a href="#about" data-i18n="navAbout">Biz haqimizda</a>
+<body class="min-h-screen bg-white font-sans text-neutral-900 antialiased selection:bg-brand-light/50">
+  <!-- Floating blur orbs -->
+  <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div class="hero-blob absolute -left-24 top-24 h-72 w-72 rounded-full bg-brand-light/50 blur-3xl"></div>
+    <div class="hero-blob hero-blob-delay absolute right-0 top-40 h-96 w-96 rounded-full bg-emerald-200/40 blur-3xl"></div>
+    <div class="absolute bottom-20 left-1/3 h-64 w-64 rounded-full bg-teal-100/50 blur-3xl"></div>
+  </div>
+
+  <header
+    id="siteHeader"
+    class="fixed left-0 right-0 top-0 z-50 border-b border-white/40 bg-white/55 backdrop-blur-2xl backdrop-saturate-150 transition-[padding,background] duration-300 supports-[backdrop-filter]:bg-white/45"
+  >
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3.5 sm:px-6 lg:px-8">
+      <a href="./" id="logoHome" class="group flex shrink-0 items-center gap-2.5 rounded-2xl py-1 pr-2 transition active:scale-[0.98]">
+        <span
+          class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-brand to-emerald-600 text-base font-bold text-white shadow-glass"
+          >U</span
+        >
+        <span class="text-[17px] font-semibold tracking-tight text-brand" data-i18n="brandName">Usta Topamiz</span>
+      </a>
+
+      <nav class="hidden items-center gap-1 md:flex" aria-label="Main">
+        <a
+          href="#services-popular"
+          class="rounded-full px-4 py-2 text-[15px] font-medium text-neutral-700 transition hover:bg-white/70 hover:text-brand"
+          data-i18n="navServices"
+          >Xizmatlar</a
+        >
+        <a
+          href="#how-it-works"
+          class="rounded-full px-4 py-2 text-[15px] font-medium text-neutral-700 transition hover:bg-white/70 hover:text-brand"
+          data-i18n="navHow"
+          >Qanday ishlaydi</a
+        >
+        <a
+          href="#for-masters"
+          class="rounded-full px-4 py-2 text-[15px] font-medium text-neutral-700 transition hover:bg-white/70 hover:text-brand"
+          data-i18n="navMasters"
+          >Ustalar uchun</a
+        >
+        <a
+          href="#about"
+          class="rounded-full px-4 py-2 text-[15px] font-medium text-neutral-700 transition hover:bg-white/70 hover:text-brand"
+          data-i18n="navAbout"
+          >Biz haqimizda</a
+        >
       </nav>
-      <div class="nav-actions">
-        <button type="button" class="control-btn" id="themeToggle" aria-label="Mavzu">🌙</button>
-        <div class="lang-dropdown">
-          <button type="button" class="control-btn" id="langBtn" aria-label="Tilni o'zgartirish">
-            🌐 <span id="currentLangLabel">UZ</span>
+
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          id="menuToggle"
+          class="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/70 bg-white/50 text-neutral-800 shadow-sm backdrop-blur-md transition hover:bg-white/80 md:hidden"
+          aria-expanded="false"
+          aria-controls="mobileDrawer"
+          aria-label="Menyu"
+        >
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+        </button>
+
+        <div class="lang-dropdown relative">
+          <button
+            type="button"
+            id="langBtn"
+            class="inline-flex h-11 items-center gap-2 rounded-2xl border border-white/70 bg-white/50 px-3.5 text-[13px] font-semibold text-neutral-800 shadow-sm backdrop-blur-md transition hover:bg-white/80"
+            aria-expanded="false"
+            aria-haspopup="menu"
+          >
+            <span aria-hidden="true">🌐</span> <span id="currentLangLabel">UZ</span>
           </button>
-          <div class="lang-menu" id="langMenu" role="menu">
-            <button type="button" class="lang-option" data-lang="uz" role="menuitem">🇺🇿 O'zbek</button>
-            <button type="button" class="lang-option" data-lang="ru" role="menuitem">🇷🇺 Русский</button>
-            <button type="button" class="lang-option" data-lang="en" role="menuitem">🇺🇸 English</button>
+          <div
+            id="langMenu"
+            class="absolute right-0 top-full z-[60] mt-2 hidden min-w-[168px] flex-col overflow-hidden rounded-2xl border border-white/60 bg-white/75 p-1 shadow-glass-lg backdrop-blur-2xl"
+            role="menu"
+          >
+            <button type="button" class="lang-option rounded-xl px-4 py-2.5 text-left text-sm font-medium text-neutral-800 hover:bg-brand-fog" data-lang="uz" role="menuitem">🇺🇿 O'zbek</button>
+            <button type="button" class="lang-option rounded-xl px-4 py-2.5 text-left text-sm font-medium text-neutral-800 hover:bg-brand-fog" data-lang="ru" role="menuitem">🇷🇺 Русский</button>
+            <button type="button" class="lang-option rounded-xl px-4 py-2.5 text-left text-sm font-medium text-neutral-800 hover:bg-brand-fog" data-lang="en" role="menuitem">🇺🇸 English</button>
           </div>
         </div>
       </div>
     </div>
   </header>
 
-  <section class="hero" aria-label="Asosiy">
-    <div class="hero-inner">
-      <div class="hero-copy">
-        <h1 id="heroHeading">Professional Ustalar – Bir Klikda!</h1>
-        <p class="hero-lead" data-i18n="heroSub">
+  <!-- Mobile drawer -->
+  <div id="mobileMenuRoot" class="pointer-events-none fixed inset-0 z-[70] md:hidden" aria-hidden="true">
+    <div
+      id="mobileBackdrop"
+      class="absolute inset-0 bg-neutral-900/25 opacity-0 backdrop-blur-sm transition-opacity duration-300 ease-out"
+    ></div>
+    <aside
+      id="mobileDrawer"
+      class="absolute right-0 top-0 flex h-full w-[min(100%-2.5rem,20rem)] translate-x-full flex-col border-l border-white/50 bg-white/75 shadow-glass-lg backdrop-blur-2xl transition-transform duration-300 ease-out"
+    >
+      <div class="flex items-center justify-between border-b border-white/40 px-5 py-4">
+        <span class="text-sm font-semibold text-brand" data-i18n="brandName">Usta Topamiz</span>
+        <button type="button" id="mobileClose" class="rounded-xl p-2 text-neutral-600 hover:bg-white/60" aria-label="Yopish">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <nav class="flex flex-col gap-1 p-4">
+        <a href="#services-popular" class="mobile-nav-link rounded-2xl px-4 py-3.5 text-[15px] font-medium text-neutral-800 transition hover:bg-brand-fog" data-i18n="navServices">Xizmatlar</a>
+        <a href="#how-it-works" class="mobile-nav-link rounded-2xl px-4 py-3.5 text-[15px] font-medium text-neutral-800 transition hover:bg-brand-fog" data-i18n="navHow">Qanday ishlaydi</a>
+        <a href="#for-masters" class="mobile-nav-link rounded-2xl px-4 py-3.5 text-[15px] font-medium text-neutral-800 transition hover:bg-brand-fog" data-i18n="navMasters">Ustalar uchun</a>
+        <a href="#about" class="mobile-nav-link rounded-2xl px-4 py-3.5 text-[15px] font-medium text-neutral-800 transition hover:bg-brand-fog" data-i18n="navAbout">Biz haqimizda</a>
+        <a href="#browse" class="mt-2 rounded-2xl bg-gradient-to-r from-brand to-emerald-600 px-4 py-3.5 text-center text-[15px] font-semibold text-white shadow-glass" data-i18n="ctaFind">Ustani topish</a>
+      </nav>
+    </aside>
+  </div>
+
+  <section class="relative isolate overflow-hidden pb-16 pt-28 sm:pb-20 sm:pt-32 lg:pb-28 lg:pt-36" aria-label="Asosiy">
+    <div class="hero-gradient-mesh pointer-events-none absolute inset-0 -z-10 opacity-90"></div>
+
+    <div class="relative mx-auto grid max-w-7xl items-center gap-12 px-4 sm:gap-16 sm:px-6 lg:grid-cols-2 lg:gap-12 lg:px-8">
+      <div class="animate-fade-up max-w-xl">
+        <p class="mb-4 inline-flex rounded-full border border-brand-light/60 bg-white/50 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-brand backdrop-blur-md">
+          2026 · O‘zbekiston
+        </p>
+        <h1 id="heroHeading" class="text-balance text-4xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
+          Professional Ustalar – Bir Klikda!
+        </h1>
+        <p class="mt-5 text-pretty text-lg leading-relaxed text-neutral-600 sm:text-xl" data-i18n="heroSub">
           Ishonchli ustalarni qidirish va bron qilish — sodda, tez va shaffof.
         </p>
-        <form class="hero-search-form" id="heroSearchForm" action="#" autocomplete="off">
-          <div class="search-field">
-            <span class="search-ico" aria-hidden="true">🔍</span>
-            <input
-              type="search"
-              id="heroSearch"
-              name="q"
-              data-i18n-placeholder="searchPlaceholder"
-              placeholder="Masalan: Elektrik, Santexnik, Mebelchi..."
-              enterkeyhint="search"
-            />
+
+        <form id="heroSearchForm" class="mt-10 space-y-4" action="#" autocomplete="off">
+          <div
+            class="flex flex-col gap-3 rounded-3xl border border-white/70 bg-white/45 p-2 shadow-glass backdrop-blur-2xl sm:flex-row sm:items-center"
+          >
+            <div class="flex flex-1 items-center gap-3 px-3 py-1">
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-fog text-brand" aria-hidden="true">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="M20 20l-3-3"/></svg>
+              </span>
+              <input
+                type="search"
+                id="heroSearch"
+                name="q"
+                data-i18n-placeholder="searchPlaceholder"
+                placeholder="Masalan: Elektrik, Santexnik, Mebelchi..."
+                enterkeyhint="search"
+                class="min-w-0 flex-1 border-0 bg-transparent py-3 text-[17px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-0"
+              />
+            </div>
+            <button
+              type="submit"
+              data-i18n="ctaFind"
+              class="inline-flex shrink-0 items-center justify-center rounded-2xl bg-gradient-to-r from-brand to-emerald-600 px-8 py-3.5 text-[15px] font-semibold text-white shadow-glass-lg transition hover:brightness-105 active:scale-[0.98]"
+            >
+              Ustani topish
+            </button>
           </div>
-          <button type="submit" class="btn-cta" data-i18n="ctaFind">Ustani topish</button>
         </form>
-        <div class="hero-stats">
-          <div class="stat">
-            <div class="stat-num" id="heroUstalar">—</div>
-            <div class="stat-lbl" data-i18n="statWorkers">Faol ustalar</div>
+
+        <dl class="mt-12 grid grid-cols-3 gap-6 border-t border-white/50 pt-10 sm:gap-10">
+          <div>
+            <dt class="text-xs font-semibold uppercase tracking-wider text-neutral-500" data-i18n="statWorkers">Faol ustalar</dt>
+            <dd id="heroUstalar" class="mt-1 text-2xl font-bold tabular-nums text-brand sm:text-3xl">—</dd>
           </div>
-          <div class="stat">
-            <div class="stat-num" id="heroShaharlar">—</div>
-            <div class="stat-lbl" data-i18n="statCities">Shaharlar</div>
+          <div>
+            <dt class="text-xs font-semibold uppercase tracking-wider text-neutral-500" data-i18n="statCities">Shaharlar</dt>
+            <dd id="heroShaharlar" class="mt-1 text-2xl font-bold tabular-nums text-brand sm:text-3xl">—</dd>
           </div>
-          <div class="stat">
-            <div class="stat-num" id="heroKasblar">—</div>
-            <div class="stat-lbl" data-i18n="statJobs">Kasb turlari</div>
+          <div>
+            <dt class="text-xs font-semibold uppercase tracking-wider text-neutral-500" data-i18n="statJobs">Kasb turlari</dt>
+            <dd id="heroKasblar" class="mt-1 text-2xl font-bold tabular-nums text-brand sm:text-3xl">—</dd>
           </div>
-        </div>
+        </dl>
       </div>
-      <div class="hero-visual">
-        <figure>
+
+      <div class="relative lg:justify-self-end">
+        <div class="absolute -right-6 -top-6 h-40 w-40 rounded-full bg-brand-light/40 blur-2xl"></div>
+        <figure
+          class="relative overflow-hidden rounded-[2rem] border border-white/60 bg-white/30 shadow-glass-lg backdrop-blur-sm ring-1 ring-white/50"
+        >
           <img
             src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1200&q=85"
             alt="Ishlab turgan usta — obyektda elektrik o'rnatish"
@@ -81,99 +221,111 @@
             height="480"
             loading="eager"
             decoding="async"
+            class="aspect-[4/3] w-full object-cover transition duration-700 hover:scale-[1.02]"
           />
         </figure>
       </div>
     </div>
   </section>
 
-  <section id="services-popular" class="section-wrap alt">
-    <div class="section-inner">
-      <p class="section-kicker" data-i18n="catKicker">Mashhur</p>
-      <h2 class="section-title" data-i18n="catTitle">Eng ommabop xizmatlar</h2>
-      <p class="section-desc" data-i18n="catDesc">
+  <section id="services-popular" class="relative border-t border-white/40 bg-brand-fog/40 py-16 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <p class="text-xs font-bold uppercase tracking-[0.15em] text-brand" data-i18n="catKicker">Mashhur</p>
+      <h2 class="mt-2 max-w-2xl text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl" data-i18n="catTitle">Eng ommabop xizmatlar</h2>
+      <p class="mt-4 max-w-2xl text-lg text-neutral-600" data-i18n="catDesc">
         Tozalash, ta'mirlash va renovatsiya — tez-tez buyurtma qilinadigan yo'nalishlar.
       </p>
-      <div class="cat-grid">
-        <button type="button" class="cat-card" data-category-search="Tozalash">
-          <div class="cat-icon" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <button
+          type="button"
+          class="cat-card group flex flex-col rounded-[1.5rem] border border-white/60 bg-white/45 p-8 text-left shadow-glass backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-brand-light/80 hover:shadow-glass-lg"
+          data-category-search="Tozalash"
+        >
+          <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-fog text-brand transition group-hover:bg-brand/10" aria-hidden="true">
+            <svg class="h-8 w-8" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M16 44h32v4H16v-4zm4-24l8-12 8 12v16H20V20z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
               <path d="M12 52h40" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
             </svg>
           </div>
-          <h3 data-i18n="catClean">Tozalash</h3>
-          <p data-i18n="catCleanDesc">Uy va ofis uchun professional tozalash xizmatlari.</p>
+          <h3 class="text-xl font-semibold text-neutral-900" data-i18n="catClean">Tozalash</h3>
+          <p class="mt-2 text-[15px] leading-relaxed text-neutral-600" data-i18n="catCleanDesc">Uy va ofis uchun professional tozalash xizmatlari.</p>
         </button>
-        <button type="button" class="cat-card" data-category-search="Ta'mirlash">
-          <div class="cat-icon" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <button
+          type="button"
+          class="cat-card group flex flex-col rounded-[1.5rem] border border-white/60 bg-white/45 p-8 text-left shadow-glass backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-brand-light/80 hover:shadow-glass-lg"
+          data-category-search="Ta'mirlash"
+        >
+          <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-fog text-brand transition group-hover:bg-brand/10" aria-hidden="true">
+            <svg class="h-8 w-8" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M44 12l8 8-26 26-10 4 4-10 26-26z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
               <path d="M18 46l-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
             </svg>
           </div>
-          <h3 data-i18n="catRepair">Ta'mirlash</h3>
-          <p data-i18n="catRepairDesc">Santexnika, elektrik va uy jihozlari ta'miri.</p>
+          <h3 class="text-xl font-semibold text-neutral-900" data-i18n="catRepair">Ta'mirlash</h3>
+          <p class="mt-2 text-[15px] leading-relaxed text-neutral-600" data-i18n="catRepairDesc">Santexnika, elektrik va uy jihozlari ta'miri.</p>
         </button>
-        <button type="button" class="cat-card" data-category-search="Renovatsiya">
-          <div class="cat-icon" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <button
+          type="button"
+          class="cat-card group flex flex-col rounded-[1.5rem] border border-white/60 bg-white/45 p-8 text-left shadow-glass backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-brand-light/80 hover:shadow-glass-lg sm:col-span-2 lg:col-span-1"
+          data-category-search="Renovatsiya"
+        >
+          <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-fog text-brand transition group-hover:bg-brand/10" aria-hidden="true">
+            <svg class="h-8 w-8" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 40h40v12H12V40z" stroke="currentColor" stroke-width="2.2" />
               <path d="M20 40V28l12-16 12 16v12" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
               <path d="M32 18v10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
             </svg>
           </div>
-          <h3 data-i18n="catReno">Renovatsiya</h3>
-          <p data-i18n="catRenoDesc">Remont va yangilanish loyihalari uchun mutaxassislar.</p>
+          <h3 class="text-xl font-semibold text-neutral-900" data-i18n="catReno">Renovatsiya</h3>
+          <p class="mt-2 text-[15px] leading-relaxed text-neutral-600" data-i18n="catRenoDesc">Remont va yangilanish loyihalari uchun mutaxassislar.</p>
         </button>
       </div>
     </div>
   </section>
 
-  <section id="how-it-works" class="section-wrap">
-    <div class="section-inner">
-      <p class="section-kicker" data-i18n="howKicker">Jarayon</p>
-      <h2 class="section-title" data-i18n="howTitle">Qanday ishlaydi</h2>
-      <p class="section-desc" data-i18n="howDesc">Uch oddiy qadam — va usta allaqachon yo'lga chiqdi.</p>
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
-          <h3 data-i18n="step1Title">Xizmatni tanlang</h3>
-          <p data-i18n="step1Text">Qidiruv orqali kasb yoki kalit so'zlarni kiriting.</p>
+  <section id="how-it-works" class="py-16 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <p class="text-xs font-bold uppercase tracking-[0.15em] text-brand" data-i18n="howKicker">Jarayon</p>
+      <h2 class="mt-2 text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl" data-i18n="howTitle">Qanday ishlaydi</h2>
+      <p class="mt-4 max-w-2xl text-lg text-neutral-600" data-i18n="howDesc">Uch oddiy qadam — va usta allaqachon yo'lga chiqdi.</p>
+      <div class="mt-12 grid gap-6 md:grid-cols-3">
+        <div class="rounded-[1.5rem] border border-white/60 bg-white/40 p-8 shadow-glass backdrop-blur-xl transition hover:shadow-glass-lg">
+          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-emerald-600 text-sm font-bold text-white shadow-md">1</div>
+          <h3 class="mt-5 text-lg font-semibold text-neutral-900" data-i18n="step1Title">Xizmatni tanlang</h3>
+          <p class="mt-2 text-[15px] leading-relaxed text-neutral-600" data-i18n="step1Text">Qidiruv orqali kasb yoki kalit so'zlarni kiriting.</p>
         </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <h3 data-i18n="step2Title">Ustani solishtiring</h3>
-          <p data-i18n="step2Text">Reyting va joylashuv bo'yicha eng mos variantni tanlang.</p>
+        <div class="rounded-[1.5rem] border border-white/60 bg-white/40 p-8 shadow-glass backdrop-blur-xl transition hover:shadow-glass-lg">
+          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-emerald-600 text-sm font-bold text-white shadow-md">2</div>
+          <h3 class="mt-5 text-lg font-semibold text-neutral-900" data-i18n="step2Title">Ustani solishtiring</h3>
+          <p class="mt-2 text-[15px] leading-relaxed text-neutral-600" data-i18n="step2Text">Reyting va joylashuv bo'yicha eng mos variantni tanlang.</p>
         </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <h3 data-i18n="step3Title">Bog'laning va bron qiling</h3>
-          <p data-i18n="step3Text">Telefon yoki Telegram orqali tezkor aloqa.</p>
+        <div class="rounded-[1.5rem] border border-white/60 bg-white/40 p-8 shadow-glass backdrop-blur-xl transition hover:shadow-glass-lg">
+          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-emerald-600 text-sm font-bold text-white shadow-md">3</div>
+          <h3 class="mt-5 text-lg font-semibold text-neutral-900" data-i18n="step3Title">Bog'laning va bron qiling</h3>
+          <p class="mt-2 text-[15px] leading-relaxed text-neutral-600" data-i18n="step3Text">Telefon yoki Telegram orqali tezkor aloqa.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="for-masters" class="section-wrap alt">
-    <div class="section-inner">
-      <div class="masters-platform">
-        <div class="masters-platform-visual">
-          <figure>
-            <img
-              src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?auto=format&fit=crop&w=1200&q=85"
-              alt="Ishlab turgan usta — asbob bilan obyektda ishlayapti"
-              width="640"
-              height="480"
-              loading="lazy"
-              decoding="async"
-            />
-          </figure>
+  <section id="for-masters" class="border-y border-white/40 bg-white/30 py-16 backdrop-blur-sm sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="overflow-hidden rounded-[1.75rem] border border-white/60 bg-white/45 shadow-glass-lg backdrop-blur-xl md:grid md:grid-cols-2 md:gap-0">
+        <div class="relative min-h-[240px] md:min-h-[360px]">
+          <img
+            src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?auto=format&fit=crop&w=1200&q=85"
+            alt="Ishlab turgan usta — asbob bilan obyektda ishlayapti"
+            width="640"
+            height="480"
+            loading="lazy"
+            decoding="async"
+            class="h-full w-full object-cover"
+          />
         </div>
-        <div class="masters-platform-copy">
-          <p class="section-kicker" data-i18n="forKicker">Ustalar uchun</p>
-          <h2 class="masters-platform-title" data-i18n="forTitle">Ustalar uchun platforma</h2>
-          <p class="masters-platform-lead" data-i18n="forText">
+        <div class="flex flex-col justify-center p-8 sm:p-12 lg:p-14">
+          <p class="text-xs font-bold uppercase tracking-[0.15em] text-brand" data-i18n="forKicker">Ustalar uchun</p>
+          <h2 class="mt-3 text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl" data-i18n="forTitle">Ustalar uchun platforma</h2>
+          <p class="mt-4 text-[17px] leading-relaxed text-neutral-600" data-i18n="forText">
             Profilingizni yarating, mijozlarni onlayn qabul qiling va ish hajmining o'sishini kuzating.
           </p>
         </div>
@@ -181,116 +333,182 @@
     </div>
   </section>
 
-  <section id="about" class="section-wrap">
-    <div class="section-inner">
-      <h2 class="section-title" data-i18n="aboutTitle">Usta Topamiz haqida</h2>
-      <p class="about-simple" data-i18n="aboutText">
+  <section id="about" class="py-16 sm:py-20">
+    <div class="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl" data-i18n="aboutTitle">Usta Topamiz haqida</h2>
+      <p class="mt-6 text-lg leading-relaxed text-neutral-600" data-i18n="aboutText">
         Biz O'zbekistonda uy xizmatlari bozorini zamonaviy va shaffof qilishga yordam beramiz — mijozlar uchun ishonch,
         ustalar uchun barqaror buyurtmalar.
       </p>
-      <p style="margin-top: 20px">
-        <a href="master-profile.html" data-i18n="sampleProfile">Namuna: usta profili</a>
+      <p class="mt-8">
+        <a href="master-profile.html" class="inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand-fog/80 px-6 py-3 text-[15px] font-semibold text-brand transition hover:bg-brand-fog" data-i18n="sampleProfile">Namuna: usta profili</a>
       </p>
     </div>
   </section>
 
-  <section id="browse" class="section-wrap alt">
-    <div class="section-inner">
-      <div class="browse-head">
+  <section id="browse" class="border-t border-white/40 bg-brand-fog/30 py-16 backdrop-blur-[2px] sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p class="section-kicker" data-i18n="browseKicker">Natijalar</p>
-          <h2 class="section-title" data-i18n="listTitle">Ustalar ro'yxati</h2>
+          <p class="text-xs font-bold uppercase tracking-[0.15em] text-brand" data-i18n="browseKicker">Natijalar</p>
+          <h2 class="mt-2 text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl" data-i18n="listTitle">Ustalar ro'yxati</h2>
         </div>
-        <span class="count-badge" id="countBadge" data-i18n="loading">Yuklanmoqda...</span>
+        <span
+          id="countBadge"
+          class="inline-flex w-fit items-center rounded-full border border-brand-light/60 bg-white/60 px-4 py-2 text-sm font-semibold text-brand shadow-sm backdrop-blur-md"
+          data-i18n="loading"
+          >Yuklanmoqda...</span
+        >
       </div>
-    </div>
-    <div class="filters-wrap">
-      <div class="filters">
-        <div class="filter-group">
-          <label for="filtKasb" data-i18n="filterJob">Kasb bo'yicha</label>
-          <select id="filtKasb" aria-label="Kasb bo'yicha filtr">
-            <option value="" data-i18n="allJobs">Barcha kasblar</option>
-          </select>
+
+      <div class="mt-10 rounded-[1.5rem] border border-white/60 bg-white/45 p-4 shadow-glass backdrop-blur-xl sm:p-6">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:gap-6">
+          <div class="min-w-0 flex-1">
+            <label for="filtKasb" class="mb-2 block text-[11px] font-bold uppercase tracking-wider text-neutral-500" data-i18n="filterJob">Kasb bo'yicha</label>
+            <select
+              id="filtKasb"
+              aria-label="Kasb bo'yicha filtr"
+              class="w-full rounded-2xl border border-white/70 bg-white/70 px-4 py-3.5 text-[15px] font-medium text-neutral-900 shadow-inner backdrop-blur-sm focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+            >
+              <option value="" data-i18n="allJobs">Barcha kasblar</option>
+            </select>
+          </div>
+          <div class="min-w-0 flex-1">
+            <label for="filtShahar" class="mb-2 block text-[11px] font-bold uppercase tracking-wider text-neutral-500" data-i18n="filterCity">Shahar bo'yicha</label>
+            <select
+              id="filtShahar"
+              aria-label="Shahar bo'yicha filtr"
+              class="w-full rounded-2xl border border-white/70 bg-white/70 px-4 py-3.5 text-[15px] font-medium text-neutral-900 shadow-inner backdrop-blur-sm focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+            >
+              <option value="" data-i18n="allCities">Barcha shaharlar</option>
+              <option>Toshkent shahri</option>
+              <option>Toshkent viloyati</option>
+              <option>Andijon</option>
+              <option>Boxoro</option>
+              <option>Farg'ona</option>
+              <option>Jizzax</option>
+              <option>Xorazm</option>
+              <option>Namangan</option>
+              <option>Navoiy</option>
+              <option>Qashqadaryo</option>
+              <option>Samarqand</option>
+              <option>Sirdaryo</option>
+              <option>Surxondaryo</option>
+              <option>Qoraqalpog'iston</option>
+            </select>
+          </div>
+          <button
+            type="button"
+            id="filterClear"
+            class="shrink-0 rounded-2xl border border-neutral-200 bg-white/80 px-6 py-3.5 text-[15px] font-semibold text-neutral-700 transition hover:bg-white lg:mb-0"
+            data-i18n="clear"
+          >
+            ✕ Tozalash
+          </button>
         </div>
-        <div class="filter-group">
-          <label for="filtShahar" data-i18n="filterCity">Shahar bo'yicha</label>
-          <select id="filtShahar" aria-label="Shahar bo'yicha filtr">
-            <option value="" data-i18n="allCities">Barcha shaharlar</option>
-            <option>Toshkent shahri</option>
-            <option>Toshkent viloyati</option>
-            <option>Andijon</option>
-            <option>Boxoro</option>
-            <option>Farg'ona</option>
-            <option>Jizzax</option>
-            <option>Xorazm</option>
-            <option>Namangan</option>
-            <option>Navoiy</option>
-            <option>Qashqadaryo</option>
-            <option>Samarqand</option>
-            <option>Sirdaryo</option>
-            <option>Surxondaryo</option>
-            <option>Qoraqalpog'iston</option>
-          </select>
-        </div>
-        <button type="button" class="filter-clear" id="filterClear" data-i18n="clear">✕ Tozalash</button>
       </div>
+
+      <div id="ustaGrid" class="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-3"></div>
     </div>
-    <main class="content">
-      <div class="grid" id="ustaGrid"></div>
-    </main>
   </section>
 
-  <div class="overlay" id="modalOverlay" aria-hidden="true">
+  <div id="modalOverlay" class="fixed inset-0 z-[100] flex items-center justify-center bg-neutral-900/40 p-4 backdrop-blur-md" aria-hidden="true">
     <div
-      class="usta-contact-panel"
       id="ustaContactPanel"
+      class="relative max-h-[min(92vh,880px)] w-full max-w-md overflow-y-auto rounded-[1.75rem] border border-white/10 bg-gradient-to-b from-brand-dark to-neutral-900 p-6 text-neutral-100 shadow-glass-lg"
       role="dialog"
       aria-modal="true"
       aria-labelledby="cmName"
     >
-      <button type="button" class="usta-contact-close" id="modalClose" aria-label="Yopish">✕</button>
+      <button
+        type="button"
+        id="modalClose"
+        class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-lg text-white transition hover:bg-white/20"
+        aria-label="Yopish"
+      >
+        ✕
+      </button>
       <input type="hidden" id="cmUstaId" value="" />
-      <div class="cm-header">
-        <div id="cmAvatarWrap"></div>
-        <div class="cm-name" id="cmName"></div>
-        <div><span class="cm-kasb" id="cmKasb"></span></div>
-        <div class="cm-city" id="cmCity"></div>
+      <div class="cm-header pt-2 text-center">
+        <div id="cmAvatarWrap" class="mx-auto mb-4 flex justify-center"></div>
+        <div id="cmName" class="text-xl font-bold text-white"></div>
+        <div class="mt-2"><span id="cmKasb" class="inline-flex rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-emerald-200"></span></div>
+        <div id="cmCity" class="mt-2 text-sm text-neutral-400"></div>
       </div>
-      <div class="cm-actions" id="cmActions" style="display: none"></div>
-      <p class="cm-no-contact" id="cmNoContact" style="display: none" data-i18n="noContact">Aloqa ma'lumotlari mavjud emas</p>
-      <div class="cm-divider" data-i18n="reviewDivider">Sharh qoldiring</div>
-      <div class="cm-review">
-        <div class="cm-stars-row" id="cmStars" aria-label="Reyting"></div>
-        <div class="cm-rating-label" id="cmRatingLabel"></div>
+      <div id="cmActions" class="mt-6 hidden grid grid-cols-2 gap-3"></div>
+      <p id="cmNoContact" class="mt-4 hidden text-center text-sm text-neutral-500" data-i18n="noContact">Aloqa ma'lumotlari mavjud emas</p>
+      <div class="cm-divider my-6 flex items-center gap-3 text-[11px] font-bold uppercase tracking-wider text-neutral-500" data-i18n="reviewDivider">
+        Sharh qoldiring
+      </div>
+      <div class="cm-review space-y-4">
+        <div id="cmStars" class="cm-stars-row flex justify-center gap-1" aria-label="Reyting"></div>
+        <div id="cmRatingLabel" class="min-h-[22px] text-center text-sm text-neutral-400"></div>
         <textarea
-          class="cm-textarea"
           id="cmTextarea"
           rows="3"
           maxlength="2000"
           autocomplete="off"
+          class="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:border-brand-light/50 focus:outline-none focus:ring-2 focus:ring-brand/30"
         ></textarea>
-        <button type="button" class="cm-submit" id="cmSubmit" data-i18n="reviewSubmit">Sharh yuborish</button>
-        <div class="cm-reviews-list" id="cmReviewsList" hidden></div>
-        <p class="cm-empty-reviews" id="cmEmptyReviews" data-i18n="noReviewsYet">Hali sharh yo'q</p>
+        <button
+          type="button"
+          id="cmSubmit"
+          class="w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-brand py-3.5 text-[15px] font-semibold text-white shadow-lg transition hover:brightness-110"
+          data-i18n="reviewSubmit"
+        >
+          Sharh yuborish
+        </button>
+        <div id="cmReviewsList" class="space-y-3" hidden></div>
+        <p id="cmEmptyReviews" class="text-center text-sm text-neutral-500" data-i18n="noReviewsYet">Hali sharh yo'q</p>
       </div>
     </div>
   </div>
 
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div
+    id="toast"
+    class="fixed bottom-6 left-1/2 z-[200] hidden max-w-[min(92vw,380px)] -translate-x-1/2 rounded-2xl px-6 py-4 text-[15px] font-semibold text-white shadow-glass-lg transition-opacity duration-300"
+    role="status"
+    aria-live="polite"
+  ></div>
 
-  <footer>
-    <div class="footer-inner">
-      <div class="footer-col">
-        <h4 data-i18n="brandName">Usta Topamiz</h4>
-        <p data-i18n="footerAbout">O'zbekistondagi eng yaxshi ustalarni topish va ularga murojaat qilish uchun qulay platforma.</p>
+  <footer class="border-t border-white/40 bg-white/40 py-14 backdrop-blur-xl">
+    <div class="mx-auto flex max-w-7xl flex-col gap-12 px-4 sm:px-6 lg:flex-row lg:justify-between lg:px-8">
+      <div class="max-w-md">
+        <p class="text-lg font-bold text-brand" data-i18n="brandName">Usta Topamiz</p>
+        <p class="mt-4 text-[15px] leading-relaxed text-neutral-600" data-i18n="footerAbout">
+          O'zbekistondagi eng yaxshi ustalarni topish va ularga murojaat qilish uchun qulay platforma.
+        </p>
+        <div class="mt-8 flex items-center gap-3">
+          <a
+            href="https://t.me/Bahromovv04"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/60 bg-white/50 text-brand shadow-sm backdrop-blur-md transition hover:bg-white/80"
+            aria-label="Telegram"
+          >
+            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+          </a>
+          <a
+            href="tel:+998974593222"
+            class="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/60 bg-white/50 text-brand shadow-sm backdrop-blur-md transition hover:bg-white/80"
+            aria-label="Telefon"
+          >
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+          </a>
+        </div>
       </div>
-      <div class="footer-col">
-        <h4 data-i18n="contactMe">Men bilan bog'lanish</h4>
-        <p>Telegram: <a href="https://t.me/Bahromovv04" target="_blank" rel="noopener noreferrer">@Bahromovv04</a></p>
-        <p>Tel: <a href="tel:+998974593222">+998 97 459 32 22</a></p>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-wider text-neutral-500" data-i18n="contactMe">Men bilan bog'lanish</p>
+        <p class="mt-4 text-[15px] text-neutral-700">
+          Telegram:
+          <a href="https://t.me/Bahromovv04" class="font-semibold text-brand hover:underline" target="_blank" rel="noopener noreferrer">@Bahromovv04</a>
+        </p>
+        <p class="mt-2 text-[15px] text-neutral-700">
+          Tel: <a href="tel:+998974593222" class="font-semibold text-brand hover:underline">+998 97 459 32 22</a>
+        </p>
       </div>
     </div>
-    <div class="footer-bottom">
+    <div class="mx-auto mt-12 max-w-7xl border-t border-white/30 px-4 pt-8 text-center text-sm text-neutral-500 sm:px-6 lg:px-8">
       <p>&copy; 2026 <span data-i18n="brandName">Usta Topamiz</span> — <span data-i18n="allRights">Barcha huquqlar himoyalangan.</span></p>
     </div>
   </footer>
@@ -300,7 +518,6 @@
       "use strict";
 
       const STORAGE_LANG = "appLang";
-      const STORAGE_THEME = "appTheme";
 
       const i18n = {
         uz: {
@@ -374,6 +591,9 @@
           rating4: "4 — Yaxshi",
           rating5: "5 — Ajoyib!",
           selectRating: "Avval yulduzlarni tanlang",
+          verifiedBadge: "Tasdiqlangan",
+          onlineNow: "Onlayn",
+          btnReviews: "Sharhlar",
         },
         ru: {
           brandName: "Usta Topamiz",
@@ -444,6 +664,9 @@
           rating4: "4 — Хорошо",
           rating5: "5 — Отлично!",
           selectRating: "Сначала выберите звёзды",
+          verifiedBadge: "Проверен",
+          onlineNow: "Онлайн",
+          btnReviews: "Отзывы",
         },
         en: {
           brandName: "Usta Topamiz",
@@ -514,12 +737,14 @@
           rating4: "4 — Good",
           rating5: "5 — Excellent!",
           selectRating: "Please pick a star rating first",
+          verifiedBadge: "Verified",
+          onlineNow: "Online",
+          btnReviews: "Reviews",
         },
       };
 
       let allUstalar = [];
       let currentLang = localStorage.getItem(STORAGE_LANG) || "uz";
-      let theme = localStorage.getItem(STORAGE_THEME) || "light";
       let cmSelectedRating = 0;
       let cmHoverRating = 0;
 
@@ -542,12 +767,6 @@
       function applyHeroHeading() {
         const el = $("heroHeading");
         if (el) el.textContent = t("heroTitle");
-      }
-
-      function applyTheme() {
-        document.documentElement.setAttribute("data-theme", theme);
-        const btn = $("themeToggle");
-        if (btn) btn.textContent = theme === "light" ? "🌙" : "☀️";
       }
 
       function applyLang() {
@@ -574,17 +793,15 @@
         localStorage.setItem(STORAGE_LANG, lang);
         applyLang();
         applyFilters();
-        $("langMenu")?.classList.remove("is-open");
+        $("langMenu")?.classList.add("hidden");
+        $("langMenu")?.classList.remove("flex");
       }
 
       function toggleLangMenu() {
-        $("langMenu")?.classList.toggle("is-open");
-      }
-
-      function toggleTheme() {
-        theme = theme === "light" ? "dark" : "light";
-        localStorage.setItem(STORAGE_THEME, theme);
-        applyTheme();
+        const m = $("langMenu");
+        if (!m) return;
+        m.classList.toggle("hidden");
+        m.classList.toggle("flex");
       }
 
       function updateHeroStats() {
@@ -634,10 +851,17 @@
       function cardPhotoInner(u) {
         const url = u.rasm_url;
         if (url && (String(url).startsWith("data:") || String(url).startsWith("http"))) {
-          return `<img src="${esc(url)}" alt="" loading="lazy" decoding="async" />`;
+          return `<img class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" src="${esc(url)}" alt="" loading="lazy" decoding="async" />`;
         }
         const hue = hashHue(u.ism);
-        return `<div class="card-initials" style="background:linear-gradient(135deg,hsl(${hue},55%,48%),hsl(${(hue + 40) % 360},45%,38%))">${esc(getInitials(u.ism))}</div>`;
+        return `<div class="flex h-full min-h-[176px] w-full items-center justify-center bg-gradient-to-br text-2xl font-bold text-white" style="background:linear-gradient(135deg,hsl(${hue},48%,42%),hsl(${(hue + 40) % 360},42%,36%))">${esc(getInitials(u.ism))}</div>`;
+      }
+
+      function isOnline(u) {
+        let h = 0;
+        const s = String(u.id ?? u.ism ?? "");
+        for (let i = 0; i < s.length; i++) h += s.charCodeAt(i);
+        return h % 3 !== 0;
       }
 
       function getReviews(ustaId) {
@@ -687,6 +911,25 @@
         return s.replace(/[^a-zA-Z0-9_]/g, "");
       }
 
+      function renderSkeleton() {
+        const grid = $("ustaGrid");
+        if (!grid) return;
+        grid.innerHTML = Array.from({ length: 6 })
+          .map(
+            () => `
+          <div class="animate-pulse rounded-3xl border border-white/50 bg-white/40 p-5 shadow-glass backdrop-blur-xl">
+            <div class="aspect-[4/3] w-full rounded-2xl bg-brand-fog/90"></div>
+            <div class="mt-5 h-5 w-[72%] rounded-lg bg-neutral-200/90"></div>
+            <div class="mt-3 h-4 w-[44%] rounded-lg bg-neutral-100"></div>
+            <div class="mt-6 flex gap-2">
+              <div class="h-11 flex-1 rounded-2xl bg-neutral-100"></div>
+              <div class="h-11 flex-1 rounded-2xl bg-neutral-100"></div>
+            </div>
+          </div>`
+          )
+          .join("");
+      }
+
       function renderUstalar(list) {
         const grid = $("ustaGrid");
         const badge = $("countBadge");
@@ -696,21 +939,43 @@
           .map((u) => {
             const city = u.shahar || t("cityUnknown");
             const st = getReviewStats(u.id);
-            const ratingLine =
+            const tel = (u.telefon || "").trim();
+            const tg = tgUsername(u.telegram);
+            const th = telHref(tel);
+            const online = isOnline(u);
+            const ratingBlock =
               st.count > 0
-                ? `<div class="card-rating">⭐ ${st.avg.toFixed(1)} (${st.count} ${t("reviewCount")})</div>`
-                : "";
+                ? `<div class="flex items-center gap-1.5"><span class="text-amber-500" aria-hidden="true">★</span><span class="text-[15px] font-semibold text-neutral-900">${st.avg.toFixed(1)}</span><span class="text-xs text-neutral-500">(${st.count} ${t("reviewCount")})</span></div>`
+                : `<span class="text-xs font-medium text-neutral-400">★ · —</span>`;
+            const telBtn =
+              th &&
+              `<a href="${esc(th)}" class="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-brand-fog text-brand shadow-inner transition hover:bg-brand/10" aria-label="Telefon"><svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg><span class="truncate text-xs font-semibold sm:text-sm">${esc(formatPhoneDisplay(tel))}</span></a>`;
+            const tgBtn =
+              tg &&
+              `<a href="https://t.me/${esc(tg)}" target="_blank" rel="noopener noreferrer" class="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-sky-500/15 text-sky-700 transition hover:bg-sky-500/25" aria-label="Telegram"><svg class="h-5 w-5 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg><span class="text-xs font-semibold sm:text-sm">${esc(t("telegramBtn"))}</span></a>`;
+            const actionsRow =
+              (telBtn || tgBtn
+                ? `<div class="mt-5 flex flex-wrap gap-2">${telBtn || ""}${tgBtn || ""}</div>`
+                : "") +
+              `<button type="button" data-usta-modal="${esc(u.id)}" class="mt-3 w-full rounded-2xl border border-white/70 bg-white/60 py-3.5 text-[14px] font-semibold text-brand shadow-sm backdrop-blur-sm transition hover:bg-white">${esc(t("btnReviews"))}</button>`;
             return `
-          <article class="card">
-            <div class="card-img">${cardPhotoInner(u)}</div>
-            <div class="card-body">
-              <div class="card-top">
-                <span class="card-name">${esc(u.ism)}</span>
-                <span class="card-kasb">${esc(u.kasb)}</span>
+          <article class="group flex flex-col rounded-3xl border border-white/60 bg-white/45 p-5 shadow-glass backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-brand-light/70 hover:shadow-glass-lg">
+            <div class="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-brand-fog ring-1 ring-white/50">${cardPhotoInner(u)}
+              <span class="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-brand shadow-sm backdrop-blur-sm">✓ ${esc(t("verifiedBadge"))}</span>
+              ${
+                online
+                  ? `<span class="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-emerald-700 shadow-sm backdrop-blur-sm"><span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span></span>${esc(t("onlineNow"))}</span>`
+                  : ""
+              }
+            </div>
+            <div class="mt-5 flex flex-1 flex-col">
+              <div class="flex items-start justify-between gap-2">
+                <h3 class="text-[17px] font-bold leading-tight text-neutral-900">${esc(u.ism)}</h3>
+                <span class="shrink-0 rounded-full bg-brand-fog px-2.5 py-1 text-[11px] font-semibold text-brand">${esc(u.kasb)}</span>
               </div>
-              ${ratingLine}
-              <div class="card-location">📍 ${esc(city)}</div>
-              <button type="button" class="card-btn" data-usta-id="${esc(u.id)}">${esc(t("btnCall"))}</button>
+              <div class="mt-3">${ratingBlock}</div>
+              <p class="mt-3 flex items-center gap-1.5 text-[14px] text-neutral-600"><span aria-hidden="true">📍</span>${esc(city)}</p>
+              ${actionsRow}
             </div>
           </article>`;
           })
@@ -754,7 +1019,7 @@
         row.innerHTML = [1, 2, 3, 4, 5]
           .map(
             (n) =>
-              `<button type="button" class="cm-star" data-star="${n}" aria-label="${n}">★</button>`
+              `<button type="button" class="cm-star text-3xl text-neutral-600 transition hover:scale-110" data-star="${n}" aria-label="${n}">★</button>`
           )
           .join("");
         if (!row.dataset.bound) {
@@ -804,10 +1069,10 @@
         if (!arr.length) {
           list.hidden = true;
           list.innerHTML = "";
-          empty.style.display = "block";
+          empty.classList.remove("hidden");
           return;
         }
-        empty.style.display = "none";
+        empty.classList.add("hidden");
         list.hidden = false;
         list.innerHTML = arr
           .slice()
@@ -816,7 +1081,7 @@
             const n = Math.min(5, Math.max(1, Number(r.stars) || 1));
             const stars = "★".repeat(n) + "☆".repeat(5 - n);
             const tx = esc(r.text || "");
-            return `<div class="cm-review-item"><div class="cm-review-stars">${stars}</div>${tx}</div>`;
+            return `<div class="rounded-xl border border-white/10 bg-black/25 px-3 py-2.5 text-sm text-neutral-200"><div class="cm-review-stars mb-1 text-amber-400">${stars}</div>${tx}</div>`;
           })
           .join("");
       }
@@ -836,14 +1101,16 @@
           const url = u.rasm_url;
           if (url && String(url).trim()) {
             const img = document.createElement("img");
-            img.className = "cm-avatar";
+            img.className =
+              "cm-avatar h-20 w-20 rounded-full object-cover ring-4 ring-white/15 shadow-lg";
             img.alt = "";
             img.src = url;
             img.onerror = () => {
               wrap.innerHTML = "";
               const hue = hashHue(u.ism);
               const d = document.createElement("div");
-              d.className = "cm-avatar initials";
+              d.className =
+                "cm-avatar initials flex h-20 w-20 items-center justify-center rounded-full text-xl font-bold text-white ring-4 ring-white/15";
               d.style.background = `linear-gradient(135deg,hsl(${hue},55%,48%),hsl(${(hue + 40) % 360},45%,38%))`;
               d.textContent = getInitials(u.ism);
               wrap.appendChild(d);
@@ -852,7 +1119,8 @@
           } else {
             const hue = hashHue(u.ism);
             const d = document.createElement("div");
-            d.className = "cm-avatar initials";
+            d.className =
+              "cm-avatar initials flex h-20 w-20 items-center justify-center rounded-full text-xl font-bold text-white ring-4 ring-white/15";
             d.style.background = `linear-gradient(135deg,hsl(${hue},55%,48%),hsl(${(hue + 40) % 360},45%,38%))`;
             d.textContent = getInitials(u.ism);
             wrap.appendChild(d);
@@ -871,22 +1139,22 @@
             has = true;
             actions.insertAdjacentHTML(
               "beforeend",
-              `<a class="cm-btn cm-btn-phone" href="${esc(th)}"><span>📞</span> ${esc(formatPhoneDisplay(tel))}</a>`
+              `<a class="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500/90 px-4 py-3.5 text-sm font-bold text-white shadow-lg transition hover:brightness-110" href="${esc(th)}"><span>📞</span> ${esc(formatPhoneDisplay(tel))}</a>`
             );
           }
           if (tg) {
             has = true;
             actions.insertAdjacentHTML(
               "beforeend",
-              `<a class="cm-btn cm-btn-tg" href="https://t.me/${esc(tg)}" target="_blank" rel="noopener noreferrer"><span>✈️</span> ${esc(t("telegramBtn"))}</a>`
+              `<a class="inline-flex items-center justify-center gap-2 rounded-2xl bg-sky-500 px-4 py-3.5 text-sm font-bold text-white shadow-lg transition hover:brightness-110" href="https://t.me/${esc(tg)}" target="_blank" rel="noopener noreferrer"><span>✈️</span> ${esc(t("telegramBtn"))}</a>`
             );
           }
           if (has) {
-            actions.style.display = "grid";
-            noC.style.display = "none";
+            actions.classList.remove("hidden");
+            noC.classList.add("hidden");
           } else {
-            actions.style.display = "none";
-            noC.style.display = "block";
+            actions.classList.add("hidden");
+            noC.classList.remove("hidden");
           }
         }
 
@@ -900,12 +1168,12 @@
 
         renderCmReviewsList(ustaId);
 
-        $("modalOverlay").classList.add("is-active");
+        $("modalOverlay").classList.add("modal-open");
         $("modalOverlay").setAttribute("aria-hidden", "false");
       }
 
       function closeModal() {
-        $("modalOverlay").classList.remove("is-active");
+        $("modalOverlay").classList.remove("modal-open");
         $("modalOverlay").setAttribute("aria-hidden", "true");
       }
 
@@ -916,9 +1184,12 @@
           const toast = $("toast");
           if (toast) {
             toast.textContent = t("selectRating");
-            toast.className = "toast is-visible warn";
+            toast.style.backgroundColor = "#64748b";
+            toast.classList.remove("hidden");
+            toast.classList.add("toast-show");
             setTimeout(() => {
-              toast.className = "toast";
+              toast.classList.add("hidden");
+              toast.classList.remove("toast-show");
               toast.textContent = "";
             }, 2500);
           }
@@ -931,9 +1202,12 @@
         const toast = $("toast");
         if (toast) {
           toast.textContent = t("reviewThanks");
-          toast.className = "toast is-visible success";
+          toast.style.backgroundColor = "#059669";
+          toast.classList.remove("hidden");
+          toast.classList.add("toast-show");
           setTimeout(() => {
-            toast.className = "toast";
+            toast.classList.add("hidden");
+            toast.classList.remove("toast-show");
             toast.textContent = "";
           }, 2500);
         }
@@ -945,6 +1219,7 @@
       }
 
       async function loadUstalar() {
+        renderSkeleton();
         try {
           const client = window.supabaseClient;
           if (!client) throw new Error("Supabase client yo'q");
@@ -985,11 +1260,44 @@
         );
       }
 
+      function setupMobileMenu() {
+        const root = $("mobileMenuRoot");
+        const backdrop = $("mobileBackdrop");
+        const drawer = $("mobileDrawer");
+        const toggle = $("menuToggle");
+        const closeBtn = $("mobileClose");
+        function openM() {
+          root?.classList.add("pointer-events-auto");
+          root?.setAttribute("aria-hidden", "false");
+          backdrop?.classList.remove("opacity-0");
+          backdrop?.classList.add("opacity-100");
+          drawer?.classList.remove("translate-x-full");
+          toggle?.setAttribute("aria-expanded", "true");
+          document.body.classList.add("overflow-hidden");
+        }
+        function closeM() {
+          drawer?.classList.add("translate-x-full");
+          backdrop?.classList.remove("opacity-100");
+          backdrop?.classList.add("opacity-0");
+          root?.classList.remove("pointer-events-auto");
+          root?.setAttribute("aria-hidden", "true");
+          toggle?.setAttribute("aria-expanded", "false");
+          document.body.classList.remove("overflow-hidden");
+        }
+        toggle?.addEventListener("click", () => {
+          if (drawer?.classList.contains("translate-x-full")) openM();
+          else closeM();
+        });
+        closeBtn?.addEventListener("click", closeM);
+        backdrop?.addEventListener("click", closeM);
+        document.querySelectorAll(".mobile-nav-link").forEach((a) => a.addEventListener("click", closeM));
+      }
+
       function init() {
-        applyTheme();
         applyLang();
 
-        $("themeToggle")?.addEventListener("click", toggleTheme);
+        setupMobileMenu();
+
         $("langBtn")?.addEventListener("click", (e) => {
           e.stopPropagation();
           toggleLangMenu();
@@ -999,7 +1307,10 @@
         });
 
         document.addEventListener("click", (e) => {
-          if (!e.target.closest(".lang-dropdown")) $("langMenu")?.classList.remove("is-open");
+          if (!e.target.closest(".lang-dropdown")) {
+            $("langMenu")?.classList.add("hidden");
+            $("langMenu")?.classList.remove("flex");
+          }
         });
 
         $("filtKasb")?.addEventListener("change", applyFilters);
@@ -1025,9 +1336,10 @@
         });
 
         $("ustaGrid")?.addEventListener("click", (e) => {
-          const btn = e.target.closest("[data-usta-id]");
+          if (e.target.closest("a[href^='tel:'], a[href*='t.me']")) return;
+          const btn = e.target.closest("[data-usta-modal]");
           if (!btn) return;
-          openModal(btn.getAttribute("data-usta-id"));
+          openModal(btn.getAttribute("data-usta-modal"));
         });
 
         const overlay = $("modalOverlay");
