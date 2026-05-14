@@ -125,47 +125,28 @@
   <section class="relative isolate overflow-hidden pb-16 pt-28 sm:pb-20 sm:pt-32 lg:pb-28 lg:pt-36" aria-label="Asosiy">
     <div class="hero-gradient-mesh pointer-events-none absolute inset-0 -z-10 opacity-90"></div>
 
-    <div class="relative mx-auto grid max-w-7xl items-center gap-12 px-4 sm:gap-16 sm:px-6 lg:grid-cols-2 lg:gap-12 lg:px-8">
-      <div class="animate-fade-up max-w-xl">
+    <div class="relative mx-auto flex max-w-4xl flex-col items-center justify-center px-4 text-center sm:px-6 lg:px-8">
+      <div class="animate-fade-up flex flex-col items-center">
         <p class="mb-4 inline-flex rounded-full border border-brand-light/60 bg-white/50 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-brand backdrop-blur-md">
           2026 · O‘zbekiston
         </p>
         <h1 id="heroHeading" class="text-balance text-4xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
           Professional Ustalar – Bir Klikda!
         </h1>
-        <p class="mt-5 text-pretty text-lg leading-relaxed text-neutral-600 sm:text-xl" data-i18n="heroSub">
+        <p class="mx-auto mt-5 max-w-2xl text-pretty text-lg leading-relaxed text-neutral-600 sm:text-xl" data-i18n="heroSub">
           Ishonchli ustalarni qidirish va bron qilish — sodda, tez va shaffof.
         </p>
 
-        <form id="heroSearchForm" class="mt-10 space-y-4" action="#" autocomplete="off">
-          <div
-            class="flex flex-col gap-3 rounded-3xl border border-white/70 bg-white/45 p-2 shadow-glass backdrop-blur-2xl sm:flex-row sm:items-center"
+        <div class="mt-10">
+          <a
+            href="#browse"
+            class="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-brand to-emerald-600 px-10 py-4 text-[17px] font-semibold text-white shadow-glass-lg transition hover:brightness-105 active:scale-[0.98]"
           >
-            <div class="flex flex-1 items-center gap-3 px-3 py-1">
-              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-fog text-brand" aria-hidden="true">
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="M20 20l-3-3"/></svg>
-              </span>
-              <input
-                type="search"
-                id="heroSearch"
-                name="q"
-                data-i18n-placeholder="searchPlaceholder"
-                placeholder="Masalan: Elektrik, Santexnik, Mebelchi..."
-                enterkeyhint="search"
-                class="min-w-0 flex-1 border-0 bg-transparent py-3 text-[17px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-0"
-              />
-            </div>
-            <button
-              type="submit"
-              data-i18n="ctaFind"
-              class="inline-flex shrink-0 items-center justify-center rounded-2xl bg-gradient-to-r from-brand to-emerald-600 px-8 py-3.5 text-[15px] font-semibold text-white shadow-glass-lg transition hover:brightness-105 active:scale-[0.98]"
-            >
-              Ustani topish
-            </button>
-          </div>
-        </form>
+            Boshlash
+          </a>
+        </div>
 
-        <dl class="mt-12 grid grid-cols-3 gap-6 border-t border-white/50 pt-10 sm:gap-10">
+        <dl class="mt-16 grid w-full max-w-2xl grid-cols-3 gap-6 border-t border-white/50 pt-10 sm:gap-10">
           <div>
             <dt class="text-xs font-semibold uppercase tracking-wider text-neutral-500" data-i18n="statWorkers">Faol ustalar</dt>
             <dd id="heroUstalar" class="mt-1 text-2xl font-bold tabular-nums text-brand sm:text-3xl">—</dd>
@@ -179,23 +160,6 @@
             <dd id="heroKasblar" class="mt-1 text-2xl font-bold tabular-nums text-brand sm:text-3xl">—</dd>
           </div>
         </dl>
-      </div>
-
-      <div class="relative lg:justify-self-end">
-        <div class="absolute -right-6 -top-6 h-40 w-40 rounded-full bg-brand-light/40 blur-2xl"></div>
-        <figure
-          class="relative overflow-hidden rounded-[2rem] border border-white/60 bg-white/30 shadow-glass-lg backdrop-blur-sm ring-1 ring-white/50"
-        >
-          <img
-            src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1200&q=85"
-            alt="Ishlab turgan usta — obyektda elektrik o'rnatish"
-            width="640"
-            height="480"
-            loading="eager"
-            decoding="async"
-            class="aspect-[4/3] w-full object-cover transition duration-700 hover:scale-[1.02]"
-          />
-        </figure>
       </div>
     </div>
   </section>
