@@ -95,6 +95,14 @@
     .badge { display: inline-block; padding: 3px 10px; border-radius: 50px; font-size: .78rem; font-weight: 700; }
     .badge-green { background: #d1fae5; color: #065f46; }
     .badge-yellow { background: #fef3c7; color: #92400e; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .badge-blue { background: #dbeafe; color: #1e40af; }
+
+    .obuna-bar { height: 4px; border-radius: 4px; background: #e5e7eb; margin-top: 4px; overflow: hidden; width: 100px; }
+    .obuna-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+    .obuna-bar-fill.ok { background: #10b981; }
+    .obuna-bar-fill.warn { background: #f59e0b; }
+    .obuna-bar-fill.expired { background: #ef4444; }
     
     .action-btns { display: flex; gap: 6px; }
     .btn-icon { border: none; padding: 8px; border-radius: 6px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
@@ -207,6 +215,7 @@
         <div class="stat-card"><div class="s-num" id="stTasdiqlangan">—</div><div class="s-lbl" data-i18n="statApproved">Tasdiqlangan</div></div>
         <div class="stat-card"><div class="s-num" id="stKutilmoqda">—</div><div class="s-lbl" data-i18n="statPending">Kutilmoqda</div></div>
         <div class="stat-card"><div class="s-num" id="stMurojaatlar">—</div><div class="s-lbl" data-i18n="statRequests">Murojaatlar</div></div>
+        <div class="stat-card" style="border-left:4px solid #ef4444"><div class="s-num" id="stObunaOver" style="color:#ef4444">—</div><div class="s-lbl">Obunasi tugagan</div></div>
       </div>
     </div>
 
@@ -227,6 +236,7 @@
                 <th data-i18n="thPhone">Telefon</th>
                 <th data-i18n="thCity">Shahar</th>
                 <th data-i18n="thDate">Sana</th>
+                <th>Obuna</th>
                 <th data-i18n="thStatus">Holat</th>
                 <th data-i18n="thAction">Amal</th>
               </tr>
@@ -430,6 +440,26 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- OBUNA EXPIRY CONFIRM MODAL -->
+<div class="modal-overlay" id="obunaModal">
+  <div class="modal-content" style="max-width:420px;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:12px">⏰</div>
+    <h2 style="margin-bottom:8px;color:#ef4444">Obuna muddati tugadi!</h2>
+    <p id="obunaModalText" style="color:var(--text-muted);margin-bottom:24px;font-size:.95rem"></p>
+    <div style="display:flex;gap:12px;justify-content:center">
+      <button
+        onclick="obunaAction('delete')"
+        style="flex:1;padding:12px;background:#ef4444;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:.95rem"
+      >🗑 O'chirish</button>
+      <button
+        onclick="obunaAction('extend')"
+        style="flex:1;padding:12px;background:#10b981;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:.95rem"
+      >🔄 1 yil uzaytirish</button>
+    </div>
+    <button onclick="obunaSkip()" style="margin-top:14px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.88rem">Keyinroq</button>
+  </div>
+</div>
+
 <script>
   // ----- DATA & i18n -----
   let CURRENT_LANG = localStorage.getItem('appLang') || 'uz';
@@ -609,14 +639,17 @@
 
   // ----- LOGIC -----
   async function loadStats() {
-    const { data: ustalar } = await supabaseAdmin.from('ustalar').select('tasdiqlangan');
+    const { data: ustalar } = await supabaseAdmin.from('ustalar').select('tasdiqlangan, obuna_tugash');
     const { count: mCount } = await supabaseAdmin.from('murojaatlar').select('id', { count: 'exact', head: true });
     const jami = ustalar?.length || 0;
+    const now = new Date();
     const tasdiqlangan = ustalar?.filter(u => u.tasdiqlangan).length || 0;
+    const obunaOver = ustalar?.filter(u => u.obuna_tugash && new Date(u.obuna_tugash) < now).length || 0;
     document.getElementById('stJami').textContent = jami;
     document.getElementById('stTasdiqlangan').textContent = tasdiqlangan;
     document.getElementById('stKutilmoqda').textContent = jami - tasdiqlangan;
     document.getElementById('stMurojaatlar').textContent = mCount || 0;
+    document.getElementById('stObunaOver').textContent = obunaOver;
   }
 
   function formatFullDate(isoStr) {
@@ -633,19 +666,40 @@
     return `${day}/${month}/${year} || ${hours}:${minutes} ${ampm}`;
   }
 
+  function obunaBadge(dateStr) {
+    if (!dateStr) return '<span class="badge badge-yellow">Nomalum</span>';
+    const end = new Date(dateStr);
+    const now = new Date();
+    const diffDays = Math.round((end - now) / (1000 * 60 * 60 * 24));
+    const endLabel = end.toLocaleDateString('uz-UZ', { day:'2-digit', month:'2-digit', year:'numeric' });
+    const pct = Math.max(0, Math.min(100, Math.round((diffDays / 365) * 100)));
+    const barClass = diffDays < 0 ? 'expired' : diffDays < 30 ? 'warn' : 'ok';
+    if (diffDays < 0) {
+      return `<span class="badge badge-red">Tugagan</span><div style="font-size:10px;color:#ef4444;margin-top:2px">${endLabel}</div>`;
+    }
+    return `<div style="font-size:11px;font-weight:600;color:var(--text-muted)">${diffDays} kun qoldi</div>
+            <div class="obuna-bar"><div class="obuna-bar-fill ${barClass}" style="width:${pct}%"></div></div>
+            <div style="font-size:10px;color:var(--text-muted)">${endLabel}</div>`;
+  }
+
   async function loadUstalar() {
     const tbody = document.getElementById('ustalarTbody');
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center">Loading...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center">Loading...</td></tr>';
     const { data } = await supabaseAdmin.from('ustalar').select('*').order('created_at', { ascending: false });
     const rows = data || [];
-    tbody.innerHTML = rows.map(u => `
-      <tr>
+    const now = new Date();
+    tbody.innerHTML = rows.map(u => {
+      const isExpired = u.obuna_tugash && new Date(u.obuna_tugash) < now;
+      const rowStyle = isExpired ? 'background:rgba(239,68,68,0.05)' : '';
+      return `
+      <tr style="${rowStyle}">
         <td>${thumbCellHtml(u)}</td>
-        <td><strong>${u.ism}</strong></td>
+        <td><strong>${u.ism}</strong>${isExpired ? ' <span style="color:#ef4444;font-size:10px">⚠️ Obuna tugagan</span>' : ''}</td>
         <td>${u.kasb}</td>
         <td>${u.telefon}</td>
         <td>${u.shahar || '—'}</td>
         <td><small>${formatFullDate(u.created_at)}</small></td>
+        <td>${obunaBadge(u.obuna_tugash)}</td>
         <td><span class="badge ${u.tasdiqlangan ? 'badge-green' : 'badge-yellow'}">${u.tasdiqlangan ? i18n[CURRENT_LANG].statusApproved : i18n[CURRENT_LANG].statusPending}</span></td>
         <td>
           <div class="action-btns">
@@ -654,8 +708,8 @@
             <button class="btn-icon del-btn" onclick="deleteUsta('${u.id}', '${u.ism}')">🗑</button>
           </div>
         </td>
-      </tr>
-    `).join('');
+      </tr>`;
+    }).join('');
   }
 
   async function approveUsta(id) {
@@ -673,6 +727,8 @@
   async function saveUsta(e) {
     e.preventDefault();
     const name = document.getElementById('fIsm').value;
+    const now = new Date();
+    const obunaTugash = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
     const payload = {
       ism: name,
       kasb: document.getElementById('fKasb').value,
@@ -684,6 +740,7 @@
       telegram: normalizeTelegram(document.getElementById('fTelegram').value),
       bio: document.getElementById('fBio').value,
       tasdiqlangan: document.getElementById('fTasdiqlangan').checked,
+      obuna_tugash: obunaTugash,
     };
     const { error } = await supabaseAdmin.from('ustalar').insert([payload]);
     if (error) {
@@ -788,11 +845,62 @@
     setTimeout(() => t.className = 'toast', 3000);
   }
 
+  // --- OBUNA EXPIRY CHECK ---
+  let expiredQueue = [];   // [{id, ism}, ...]
+  let expiredIndex = 0;
+
+  async function checkExpiredUstalar() {
+    const now = new Date().toISOString();
+    const { data } = await supabaseAdmin
+      .from('ustalar')
+      .select('id, ism, obuna_tugash')
+      .lt('obuna_tugash', now)
+      .eq('tasdiqlangan', true);
+    expiredQueue = data || [];
+    expiredIndex = 0;
+    showNextExpired();
+  }
+
+  function showNextExpired() {
+    if (expiredIndex >= expiredQueue.length) return;
+    const u = expiredQueue[expiredIndex];
+    const endDate = new Date(u.obuna_tugash).toLocaleDateString('uz-UZ');
+    document.getElementById('obunaModalText').innerHTML =
+      `<strong>${u.ism}</strong> — obuna muddati <strong>${endDate}</strong> da tugagan.<br>Nima qilishni xohlaysiz?`;
+    document.getElementById('obunaModal').classList.add('active');
+  }
+
+  async function obunaAction(action) {
+    const u = expiredQueue[expiredIndex];
+    if (!u) return;
+    document.getElementById('obunaModal').classList.remove('active');
+    if (action === 'delete') {
+      await supabaseAdmin.from('ustalar').delete().eq('id', u.id);
+      showToast(`🗑 ${u.ism} o'chirildi`);
+    } else if (action === 'extend') {
+      const newEnd = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
+      await supabaseAdmin.from('ustalar').update({ obuna_tugash: newEnd }).eq('id', u.id);
+      showToast(`✅ ${u.ism} obunasi 1 yilga uzaytirildi`);
+    }
+    expiredIndex++;
+    setTimeout(showNextExpired, 500);
+    loadUstalar();
+    loadStats();
+  }
+
+  function obunaSkip() {
+    document.getElementById('obunaModal').classList.remove('active');
+    expiredIndex++;
+    setTimeout(showNextExpired, 300);
+  }
+
   function init() {
     applyLang();
     applyTheme();
+    wireImageUploads();
     loadStats();
     loadUstalar();
+    checkExpiredUstalar();
   }
 
   if (sessionStorage.getItem('adminAuth') === '1') {

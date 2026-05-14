@@ -1248,7 +1248,10 @@
             .eq("tasdiqlangan", true)
             .order("created_at", { ascending: false });
           if (error) throw error;
-          allUstalar = data || [];
+          
+          const now = new Date();
+          allUstalar = (data || []).filter(u => !u.obuna_tugash || new Date(u.obuna_tugash) >= now);
+          
           updateHeroStats();
           populateProfessions();
           applyFilters();
