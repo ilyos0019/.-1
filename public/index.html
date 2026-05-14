@@ -773,29 +773,54 @@
             const tgBtn =
               tg &&
               `<a href="https://t.me/${esc(tg)}" target="_blank" rel="noopener noreferrer" class="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-sky-500/15 text-sky-700 transition hover:bg-sky-500/25" aria-label="Telegram"><svg class="h-5 w-5 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg><span class="text-xs font-semibold sm:text-sm">${esc(t("telegramBtn"))}</span></a>`;
-            const actionsRow =
-              (telBtn || tgBtn
-                ? `<div class="mt-5 flex flex-wrap gap-2">${telBtn || ""}${tgBtn || ""}</div>`
-                : "") +
-              `<button type="button" data-usta-modal="${esc(u.id)}" class="mt-3 w-full rounded-2xl border border-white/70 bg-white/60 py-3.5 text-[14px] font-semibold text-brand shadow-sm backdrop-blur-sm transition hover:bg-white">${esc(t("btnReviews"))}</button>`;
-            return `
-          <article class="group flex flex-col rounded-3xl border border-white/60 bg-white/45 p-5 shadow-glass backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-brand-light/70 hover:shadow-glass-lg">
-            <div class="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-brand-fog ring-1 ring-white/50">${cardPhotoInner(u)}
-              <span class="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-brand shadow-sm backdrop-blur-sm">✓ ${esc(t("verifiedBadge"))}</span>
-              ${
-                online
-                  ? `<span class="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-emerald-700 shadow-sm backdrop-blur-sm"><span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span></span>${esc(t("onlineNow"))}</span>`
-                  : ""
+            /* ── Yangi karta layout (chizmaga mos) ── */
+            const avatarInner = (() => {
+              const url = u.rasm_url;
+              if (url && (String(url).startsWith("data:") || String(url).startsWith("http"))) {
+                return `<img class="h-full w-full object-cover" src="${esc(url)}" alt="" loading="lazy" decoding="async" />`;
               }
+              const hue = hashHue(u.ism);
+              return `<div class="flex h-full w-full items-center justify-center text-2xl font-bold text-white" style="background:linear-gradient(135deg,hsl(${hue},48%,42%),hsl(${(hue+40)%360},42%,36%))">${esc(getInitials(u.ism))}</div>`;
+            })();
+
+            const contactBtn = (telBtn || tgBtn)
+              ? `<div class="flex gap-2">${telBtn || ""}${tgBtn || ""}</div>`
+              : "";
+
+            return `
+          <article class="group flex flex-col rounded-3xl border border-white/60 bg-white/70 shadow-glass backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:shadow-glass-lg overflow-hidden">
+            <!-- Kasb — yuqorida chap -->
+            <div class="flex items-center justify-between px-5 pt-5 pb-3">
+              <span class="rounded-xl bg-brand-fog px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-brand">${esc(u.kasb)}</span>
+              ${online ? `<span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-700"><span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span></span>${esc(t("onlineNow"))}</span>` : `<span class="inline-flex items-center gap-1 rounded-full bg-white/70 px-2.5 py-1 text-[10px] font-semibold text-brand shadow-sm">✓ ${esc(t("verifiedBadge"))}</span>`}
             </div>
-            <div class="mt-5 flex flex-1 flex-col">
-              <div class="flex items-start justify-between gap-2">
-                <h3 class="text-[17px] font-bold leading-tight text-neutral-900">${esc(u.ism)}</h3>
-                <span class="shrink-0 rounded-full bg-brand-fog px-2.5 py-1 text-[11px] font-semibold text-brand">${esc(u.kasb)}</span>
+
+            <!-- O'rta qator: dumaloq rasm (chap) + ism & manzil (o'ng) -->
+            <div class="flex items-center gap-4 px-5 pb-4">
+              <div class="h-[90px] w-[90px] shrink-0 overflow-hidden rounded-full ring-4 ring-white shadow-md">
+                ${avatarInner}
               </div>
-              <div class="mt-3">${ratingBlock}</div>
-              <p class="mt-3 flex items-center gap-1.5 text-[14px] text-neutral-600"><span aria-hidden="true">📍</span>${esc(city)}</p>
-              ${actionsRow}
+              <div class="flex flex-1 flex-col gap-0.5 min-w-0">
+                <p class="text-[9px] font-bold uppercase tracking-wider text-neutral-400">Ism</p>
+                <h3 class="text-[17px] font-bold leading-tight text-neutral-900 truncate">${esc(u.ism)}</h3>
+                <p class="text-[9px] font-bold uppercase tracking-wider text-neutral-400 mt-2">Manzil</p>
+                <p class="flex items-center gap-1 text-[13px] text-neutral-600 truncate"><span aria-hidden="true">📍</span>${esc(city)}</p>
+              </div>
+            </div>
+
+            <!-- Sharh va yulduzlar bo'limi -->
+            <div class="mx-5 rounded-2xl border border-neutral-100 bg-neutral-50/80 px-4 py-3">
+              <p class="text-[9px] font-bold uppercase tracking-wider text-neutral-400 mb-2">Sharh va yulduzlar</p>
+              ${ratingBlock}
+              ${u.bio ? `<p class="mt-2 text-[12px] leading-relaxed text-neutral-500 line-clamp-2">${esc(u.bio)}</p>` : ""}
+            </div>
+
+            <!-- Murojat tugmasi — to'liq kenglik -->
+            <div class="px-5 py-4 flex flex-col gap-2">
+              ${contactBtn}
+              <button type="button" data-usta-modal="${esc(u.id)}" class="w-full rounded-2xl bg-gradient-to-r from-brand to-emerald-600 py-3.5 text-[15px] font-bold text-white shadow-glass-lg transition hover:brightness-105 active:scale-[0.98]">
+                Murojat uchun
+              </button>
             </div>
           </article>`;
           })
