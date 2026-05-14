@@ -30,12 +30,93 @@
           },
         },
       },
+      darkMode: 'class',
     };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./config.js"></script>
   <link rel="stylesheet" href="/css/glass-theme.css" />
-  <!-- Motion: CSS + Tailwind transitions. Framer Motion is React-only; no bundle added. -->
+
+  <style>
+    /* ── Dark mode global styles ── */
+    *, *::before, *::after { transition: background-color 0.25s ease, border-color 0.25s ease, color 0.2s ease; }
+
+    html.dark body { background-color: #0d1117; color: #e6edf3; }
+
+    /* Header */
+    html.dark #siteHeader { background: rgba(13,17,23,0.75) !important; border-color: rgba(255,255,255,0.08) !important; }
+
+    /* Hero background blobs */
+    html.dark .hero-blob { opacity: 0.15; }
+    html.dark .hero-gradient-mesh { opacity: 0.05; }
+
+    /* Text colors */
+    html.dark .text-neutral-900 { color: #e6edf3 !important; }
+    html.dark .text-neutral-800 { color: #cdd9e5 !important; }
+    html.dark .text-neutral-700 { color: #adbac7 !important; }
+    html.dark .text-neutral-600 { color: #8b949e !important; }
+    html.dark .text-neutral-500 { color: #6e7681 !important; }
+    html.dark .text-neutral-400 { color: #545d68 !important; }
+
+    /* White/glass surfaces */
+    html.dark .bg-white { background-color: #161b22 !important; }
+    html.dark .bg-white\/70 { background-color: rgba(22,27,34,0.85) !important; }
+    html.dark .bg-white\/60 { background-color: rgba(22,27,34,0.75) !important; }
+    html.dark .bg-white\/50 { background-color: rgba(22,27,34,0.65) !important; }
+    html.dark .bg-white\/45 { background-color: rgba(22,27,34,0.60) !important; }
+    html.dark .bg-white\/40 { background-color: rgba(22,27,34,0.55) !important; }
+
+    /* Borders */
+    html.dark .border-white\/40 { border-color: rgba(255,255,255,0.06) !important; }
+    html.dark .border-white\/50 { border-color: rgba(255,255,255,0.07) !important; }
+    html.dark .border-white\/60 { border-color: rgba(255,255,255,0.08) !important; }
+    html.dark .border-white\/70 { border-color: rgba(255,255,255,0.1) !important; }
+    html.dark .border-neutral-200 { border-color: #30363d !important; }
+    html.dark .border-neutral-100 { border-color: #21262d !important; }
+
+    /* Neutral BG */
+    html.dark .bg-neutral-50 { background-color: #1c2128 !important; }
+    html.dark .bg-neutral-50\/80 { background-color: rgba(28,33,40,0.8) !important; }
+    html.dark .bg-white\/80 { background-color: rgba(22,27,34,0.9) !important; }
+
+    /* Header buttons */
+    html.dark #menuToggle,
+    html.dark #langBtn { background: rgba(22,27,34,0.7) !important; border-color: rgba(255,255,255,0.1) !important; color: #e6edf3 !important; }
+
+    /* Lang menu */
+    html.dark #langMenu { background: rgba(22,27,34,0.95) !important; border-color: rgba(255,255,255,0.1) !important; }
+    html.dark .lang-option { color: #cdd9e5 !important; }
+    html.dark .lang-option:hover { background-color: rgba(6,95,70,0.25) !important; }
+
+    /* Browse / filter section */
+    html.dark #browse { background-color: rgba(13,17,23,0.6) !important; border-color: rgba(255,255,255,0.06) !important; }
+    html.dark select { background-color: #1c2128 !important; border-color: #30363d !important; color: #e6edf3 !important; }
+    html.dark select option { background-color: #1c2128; color: #e6edf3; }
+    html.dark #filterClear { background-color: #1c2128 !important; border-color: #30363d !important; color: #cdd9e5 !important; }
+    html.dark #filterClear:hover { background-color: #21262d !important; }
+
+    /* Cards */
+    html.dark article { background: rgba(22,27,34,0.85) !important; border-color: rgba(255,255,255,0.08) !important; }
+
+    /* Brand fog in dark */
+    html.dark .bg-brand-fog { background-color: rgba(6,95,70,0.18) !important; }
+    html.dark .bg-emerald-50 { background-color: rgba(6,78,59,0.2) !important; }
+
+    /* Textarea / input in modal */
+    html.dark #ustaContactPanel { background: linear-gradient(to bottom, #0d1f1a, #0d1117) !important; }
+
+    /* Footer */
+    html.dark footer { background: rgba(13,17,23,0.8) !important; border-color: rgba(255,255,255,0.06) !important; }
+
+    /* Mobile drawer */
+    html.dark #mobileDrawer { background: rgba(13,17,23,0.95) !important; border-color: rgba(255,255,255,0.08) !important; }
+
+    /* Dark toggle button animation */
+    #darkToggle .icon-sun { display: none; }
+    #darkToggle .icon-moon { display: block; }
+    html.dark #darkToggle .icon-sun { display: block; }
+    html.dark #darkToggle .icon-moon { display: none; }
+  </style>
 
 </head>
 <body class="min-h-screen bg-white font-sans text-neutral-900 antialiased selection:bg-brand-light/50">
@@ -62,6 +143,24 @@
 
 
       <div class="flex items-center gap-2">
+        <!-- Dark Mode Toggle -->
+        <button
+          type="button"
+          id="darkToggle"
+          class="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/70 bg-white/50 text-neutral-800 shadow-sm backdrop-blur-md transition hover:bg-white/80"
+          aria-label="Tun/Kun rejimi"
+          title="Tun/Kun rejimi"
+        >
+          <!-- Moon icon (shown in light mode) -->
+          <svg class="icon-moon h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+          </svg>
+          <!-- Sun icon (shown in dark mode) -->
+          <svg class="icon-sun h-5 w-5 text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5" />
+            <path stroke-linecap="round" d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+          </svg>
+        </button>
         <button
           type="button"
           id="menuToggle"
@@ -1194,6 +1293,18 @@
         $("modalClose")?.addEventListener("click", closeModal);
         $("ustaContactPanel")?.addEventListener("click", (e) => e.stopPropagation());
         $("cmSubmit")?.addEventListener("click", submitCmReview);
+
+        // ── Dark mode ──
+        function applyDark(isDark) {
+          document.documentElement.classList.toggle("dark", isDark);
+          localStorage.setItem("darkMode", isDark ? "1" : "0");
+        }
+        const savedDark = localStorage.getItem("darkMode");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        applyDark(savedDark !== null ? savedDark === "1" : prefersDark);
+        $("darkToggle")?.addEventListener("click", () => {
+          applyDark(!document.documentElement.classList.contains("dark"));
+        });
 
         bindAdminShortcut();
         loadUstalar();
