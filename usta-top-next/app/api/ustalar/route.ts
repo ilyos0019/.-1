@@ -7,7 +7,11 @@ export async function GET(request: Request) {
     const kasb = searchParams.get('kasb');
     const shahar = searchParams.get('shahar');
 
-    let query = supabaseAdmin.from('ustalar').select('*').order('created_at', { ascending: false });
+    let query = supabaseAdmin
+      .from('ustalar')
+      .select('*')
+      .order('is_pro', { ascending: false })
+      .order('created_at', { ascending: false });
 
     if (kasb && kasb !== 'Barchasi') {
       query = query.eq('kasb', kasb);

@@ -10,6 +10,7 @@ interface Usta {
   kasb: string;
   shahar: string;
   reyting: number;
+  is_pro: boolean;
 }
 
 export default function Home() {
@@ -98,7 +99,14 @@ export default function Home() {
             <div key={usta.id} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{usta.ism}</h3>
+                  <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors flex items-center gap-2">
+                    {usta.ism}
+                    {usta.is_pro && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200 uppercase tracking-tighter">
+                        PRO
+                      </span>
+                    )}
+                  </h3>
                   <p className="text-blue-600 font-medium mt-1">{usta.kasb}</p>
                 </div>
                 <div className="flex items-center bg-yellow-50 px-2.5 py-1 rounded-lg">
