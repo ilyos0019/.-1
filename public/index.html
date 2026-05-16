@@ -23,6 +23,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#065F46" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(reg => console.log('Service Worker registered', reg))
+          .catch(err => console.log('Service Worker registration failed', err));
+      });
+    }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -201,6 +213,17 @@
         >
           <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
           <span class="hidden sm:inline">Usta bo'l</span>
+        </button>
+
+        <!-- Install App Button (hidden by default) -->
+        <button
+          type="button"
+          id="pwaInstallBtn"
+          class="hidden h-11 items-center justify-center gap-2 rounded-2xl border border-white/70 bg-white/50 px-3 sm:px-4 text-[13px] font-bold text-brand shadow-sm backdrop-blur-md transition hover:bg-white/80 active:scale-[0.98]"
+          aria-label="Ilovani o'rnatish"
+        >
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+          <span class="hidden lg:inline">O'rnatish</span>
         </button>
 
         <div class="lang-dropdown relative">
@@ -1458,6 +1481,33 @@
 
         bindAdminShortcut();
         loadUstalar();
+
+        // ── PWA Install Logic ──
+        let deferredPrompt;
+        const installBtn = $("pwaInstallBtn");
+        window.addEventListener('beforeinstallprompt', (e) => {
+          e.preventDefault();
+          deferredPrompt = e;
+          if (installBtn) {
+            installBtn.classList.remove("hidden");
+            installBtn.classList.add("flex");
+          }
+        });
+        installBtn?.addEventListener('click', async () => {
+          if (!deferredPrompt) return;
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          console.log(`User response to the install prompt: ${outcome}`);
+          deferredPrompt = null;
+          installBtn.classList.add("hidden");
+          installBtn.classList.remove("flex");
+        });
+        window.addEventListener('appinstalled', () => {
+          deferredPrompt = null;
+          installBtn?.classList.add("hidden");
+          installBtn?.classList.remove("flex");
+          console.log('PWA was installed');
+        });
       }
 
       if (document.readyState === "loading") {
