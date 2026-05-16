@@ -1242,24 +1242,41 @@
         try {
           const client = window.supabaseClient;
           if (!client) throw new Error("Supabase client yo'q");
+          
+          // Try to select everything. If a specific column is missing, PostgREST might error.
           const { data, error } = await client
             .from("ustalar")
             .select("*")
             .eq("tasdiqlangan", true)
             .order("created_at", { ascending: false });
-          if (error) throw error;
+            
+          if (error) {
+            console.warn("Supabase fetching error (possibly missing columns):", error);
+            // If the error is about a missing column, it might be due to schema not being updated.
+            // But we can't easily retry without knowing which column is missing.
+            throw error;
+          }
           
           const now = new Date();
-          allUstalar = (data || []).filter(u => !u.obuna_tugash || new Date(u.obuna_tugash) >= now);
+          // Filter by subscription only if the column exists in the response
+          allUstalar = (data || []).filter(u => {
+             // If obuna_tugash is missing from the DB, it will be undefined in u.
+             // We treat undefined as "no restriction" or "unlimited" for now to keep the app working.
+             if (!u.obuna_tugash) return true;
+             return new Date(u.obuna_tugash) >= now;
+          });
           
           updateHeroStats();
           populateProfessions();
           applyFilters();
         } catch (e) {
-          console.error(e);
+          console.error("Ustalarni yuklashda xatolik:", e);
           allUstalar = [];
           updateHeroStats();
           applyFilters();
+          // Maybe show a small warning to the user
+          const badge = $("countBadge");
+          if (badge) badge.textContent = "Xatolik yuz berdi";
         }
       }
 

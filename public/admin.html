@@ -639,17 +639,30 @@
 
   // ----- LOGIC -----
   async function loadStats() {
-    const { data: ustalar } = await supabaseAdmin.from('ustalar').select('tasdiqlangan, obuna_tugash');
-    const { count: mCount } = await supabaseAdmin.from('murojaatlar').select('id', { count: 'exact', head: true });
-    const jami = ustalar?.length || 0;
-    const now = new Date();
-    const tasdiqlangan = ustalar?.filter(u => u.tasdiqlangan).length || 0;
-    const obunaOver = ustalar?.filter(u => u.obuna_tugash && new Date(u.obuna_tugash) < now).length || 0;
-    document.getElementById('stJami').textContent = jami;
-    document.getElementById('stTasdiqlangan').textContent = tasdiqlangan;
-    document.getElementById('stKutilmoqda').textContent = jami - tasdiqlangan;
-    document.getElementById('stMurojaatlar').textContent = mCount || 0;
-    document.getElementById('stObunaOver').textContent = obunaOver;
+    try {
+      const { data: ustalar, error } = await supabaseAdmin.from('ustalar').select('*');
+      if (error) throw error;
+
+      const { count: mCount } = await supabaseAdmin.from('murojaatlar').select('id', { count: 'exact', head: true });
+      const jami = ustalar?.length || 0;
+      const now = new Date();
+      const tasdiqlangan = ustalar?.filter(u => u.tasdiqlangan).length || 0;
+      const obunaOver = ustalar?.filter(u => u.obuna_tugash && new Date(u.obuna_tugash) < now).length || 0;
+      
+      document.getElementById('stJami').textContent = jami;
+      document.getElementById('stTasdiqlangan').textContent = tasdiqlangan;
+      document.getElementById('stKutilmoqda').textContent = jami - tasdiqlangan;
+      document.getElementById('stMurojaatlar').textContent = mCount || 0;
+      document.getElementById('stObunaOver').textContent = obunaOver;
+    } catch (e) {
+      console.error("Dashboard yuklashda xatolik:", e);
+      // Fallback display
+      ['stJami', 'stTasdiqlangan', 'stKutilmoqda', 'stMurojaatlar', 'stObunaOver'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '0';
+      });
+      showToast("Ma'lumotlarni yuklashda xatolik yuz berdi. Iltimos bazani tekshiring.", "error");
+    }
   }
 
   function formatFullDate(isoStr) {
