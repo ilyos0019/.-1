@@ -979,7 +979,7 @@
             const tgBtn =
               tg &&
               `<a href="https://t.me/${esc(tg)}" target="_blank" rel="noopener noreferrer" class="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-sky-500/15 text-sky-700 transition hover:bg-sky-500/25" aria-label="Telegram"><svg class="h-5 w-5 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg><span class="text-xs font-semibold sm:text-sm">${esc(t("telegramBtn"))}</span></a>`;
-            /* ── Yangi karta layout (chizmaga mos) ── */
+            
             const avatarInner = (() => {
               const url = u.rasm_url;
               if (url && (String(url).startsWith("data:") || String(url).startsWith("http"))) {
@@ -998,7 +998,10 @@
             <!-- Kasb — yuqorida chap -->
             <div class="flex items-center justify-between px-5 pt-5 pb-3">
               <span class="rounded-xl bg-brand-fog px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-brand">${esc(u.kasb)}</span>
-              ${online ? `<span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-700"><span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span></span>${esc(t("onlineNow"))}</span>` : `<span class="inline-flex items-center gap-1 rounded-full bg-white/70 px-2.5 py-1 text-[10px] font-semibold text-brand shadow-sm">✓ ${esc(t("verifiedBadge"))}</span>`}
+              <div class="flex items-center gap-2">
+                 ${u.is_pro ? `<span class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-bold text-amber-700 shadow-sm border border-amber-200">💎 PRO</span>` : ""}
+                 ${online ? `<span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-700"><span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span></span>${esc(t("onlineNow"))}</span>` : `<span class="inline-flex items-center gap-1 rounded-full bg-white/70 px-2.5 py-1 text-[10px] font-semibold text-brand shadow-sm">✓ ${esc(t("verifiedBadge"))}</span>`}
+              </div>
             </div>
 
             <!-- O'rta qator: dumaloq rasm (chap) + ism & manzil (o'ng) -->
@@ -1274,17 +1277,15 @@
           const client = window.supabaseClient;
           if (!client) throw new Error("Supabase client yo'q");
           
-          // Try to select everything. If a specific column is missing, PostgREST might error.
           const { data, error } = await client
             .from("ustalar")
             .select("*")
             .eq("tasdiqlangan", true)
+            .order("is_pro", { ascending: false })
             .order("created_at", { ascending: false });
             
           if (error) {
             console.warn("Supabase fetching error (possibly missing columns):", error);
-            // If the error is about a missing column, it might be due to schema not being updated.
-            // But we can't easily retry without knowing which column is missing.
             throw error;
           }
           

@@ -315,9 +315,12 @@
               <label for="fBio" data-i18n="fBio">Bio (o'zi haqida)</label>
               <textarea id="fBio" rows="3"></textarea>
             </div>
-            <div class="form-group">
-              <label style="flex-direction:row; gap:10px; cursor:pointer;">
+            <div class="form-group" style="flex-direction:row; gap:20px;">
+              <label style="flex-direction:row; gap:8px; cursor:pointer; display:flex; align-items:center;">
                 <input type="checkbox" id="fTasdiqlangan"> <span data-i18n="fApproveNow">Darhol tasdiqlash</span>
+              </label>
+              <label style="flex-direction:row; gap:8px; cursor:pointer; display:flex; align-items:center;">
+                <input type="checkbox" id="fIsPro"> <span style="color:var(--yellow); font-weight:bold;">💎 PRO</span>
               </label>
             </div>
           </div>
@@ -431,6 +434,11 @@
         <div class="form-group full">
           <label for="eBio" data-i18n="fBio">Bio</label>
           <textarea id="eBio" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label style="flex-direction:row; gap:8px; cursor:pointer; display:flex; align-items:center;">
+            <input type="checkbox" id="eIsPro"> <span style="color:var(--yellow); font-weight:bold;">💎 PRO</span>
+          </label>
         </div>
       </div>
       <button type="submit" class="save-btn" style="margin-top:24px; width:100%;" data-i18n="btnSave">Saqlash</button>
@@ -707,7 +715,11 @@
       return `
       <tr style="${rowStyle}">
         <td>${thumbCellHtml(u)}</td>
-        <td><strong>${u.ism}</strong>${isExpired ? ' <span style="color:#ef4444;font-size:10px">⚠️ Obuna tugagan</span>' : ''}</td>
+        <td>
+          <strong>${u.ism}</strong>
+          ${u.is_pro ? '<span style="color:var(--yellow); font-size:10px; font-weight:bold; margin-left:5px">💎 PRO</span>' : ''}
+          ${isExpired ? ' <span style="color:#ef4444;font-size:10px">⚠️ Obuna tugagan</span>' : ''}
+        </td>
         <td>${u.kasb}</td>
         <td>${u.telefon}</td>
         <td>${u.shahar || '—'}</td>
@@ -759,6 +771,7 @@
         telegram: normalizeTelegram(document.getElementById('fTelegram').value),
         bio: document.getElementById('fBio').value,
         tasdiqlangan: document.getElementById('fTasdiqlangan').checked,
+        is_pro: document.getElementById('fIsPro').checked,
         obuna_tugash: obunaTugash
       };
       
@@ -803,6 +816,7 @@
       document.getElementById('eTelegram').value = data.telegram || '';
       document.getElementById('eShahar').value = data.shahar || '';
       document.getElementById('eBio').value = data.bio || '';
+      document.getElementById('eIsPro').checked = !!data.is_pro;
 
       pendingEditBase64 = null;
       editStoredRasmUrl = data.rasm_url || '';
@@ -833,6 +847,7 @@
       telegram: normalizeTelegram(document.getElementById('eTelegram').value),
       shahar: document.getElementById('eShahar').value,
       bio: document.getElementById('eBio').value,
+      is_pro: document.getElementById('eIsPro').checked,
       rasm_url: pendingEditBase64 != null ? pendingEditBase64 : editStoredRasmUrl,
     };
     const { error } = await supabaseAdmin.from('ustalar').update(payload).eq('id', id);

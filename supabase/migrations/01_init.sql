@@ -11,6 +11,9 @@ CREATE TABLE IF NOT EXISTS public.ustalar (
     shahar TEXT,
     bio TEXT,
     rasm_url TEXT,
+    telegram TEXT,
+    is_pro BOOLEAN DEFAULT false,
+    obuna_tugash TIMESTAMP WITH TIME ZONE,
     reyting FLOAT DEFAULT 0,
     tasdiqlangan BOOLEAN DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc', now()) NOT NULL
