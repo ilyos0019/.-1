@@ -739,34 +739,57 @@
 
   async function saveUsta(e) {
     e.preventDefault();
-    const name = document.getElementById('fIsm').value;
-    const now = new Date();
-    const obunaTugash = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
-    const payload = {
-      ism: name,
-      kasb: document.getElementById('fKasb').value,
-      telefon: document.getElementById('fTelfon').value,
-      shahar: document.getElementById('fShahar').value,
-      rasm_url:
-        pendingAddBase64 ||
-        'https://ui-avatars.com/api/?name=' + encodeURIComponent(name) + '&background=random',
-      telegram: normalizeTelegram(document.getElementById('fTelegram').value),
-      bio: document.getElementById('fBio').value,
-      tasdiqlangan: document.getElementById('fTasdiqlangan').checked,
-      obuna_tugash: obunaTugash,
-    };
-    const { error } = await supabaseAdmin.from('ustalar').insert([payload]);
-    if (error) {
-      console.error(error);
-      showToast(error.message || 'Xatolik', 'error');
-      return;
+    const btn = e.target.querySelector('button[type="submit"]');
+    const originalBtnText = btn.textContent;
+    
+    try {
+      btn.disabled = true;
+      btn.textContent = "...";
+      
+      const name = document.getElementById('fIsm').value;
+      const now = new Date();
+      const obunaTugash = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
+      
+      const payload = {
+        ism: name,
+        kasb: document.getElementById('fKasb').value,
+        telefon: document.getElementById('fTelfon').value,
+        shahar: document.getElementById('fShahar').value,
+        rasm_url: pendingAddBase64 || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name) + '&background=random',
+        telegram: normalizeTelegram(document.getElementById('fTelegram').value),
+        bio: document.getElementById('fBio').value,
+        tasdiqlangan: document.getElementById('fTasdiqlangan').checked,
+        obuna_tugash: obunaTugash
+      };
+      
+      const { error } = await supabaseAdmin.from('ustalar').insert([payload]);
+      
+      if (error) {
+        // Agar xatolik obuna_tugash ustuni yo'qligi haqida bo'lsa, uni olib tashlab qayta urinib ko'ramiz
+        if (error.message && error.message.includes('obuna_tugash')) {
+          console.warn("obuna_tugash ustuni topilmadi, usiz saqlashga urinilmoqda...");
+          delete payload.obuna_tugash;
+          const { error: error2 } = await supabaseAdmin.from('ustalar').insert([payload]);
+          if (error2) throw error2;
+        } else {
+          throw error;
+        }
+      }
+      
+      showToast(i18n[CURRENT_LANG].msgSaveSuccess);
+      e.target.reset();
+      pendingAddBase64 = null;
+      document.getElementById('fRasmFile').value = '';
+      document.getElementById('fPreviewBox').style.display = 'none';
+      loadStats();
+      
+    } catch (err) {
+      console.error("Saqlashda xatolik:", err);
+      showToast(err.message || 'Xatolik yuz berdi', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = originalBtnText;
     }
-    showToast(i18n[CURRENT_LANG].msgSaveSuccess);
-    e.target.reset();
-    pendingAddBase64 = null;
-    document.getElementById('fRasmFile').value = '';
-    document.getElementById('fPreviewBox').style.display = 'none';
-    loadStats();
   }
 
   // --- EDIT ---
