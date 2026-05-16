@@ -863,15 +863,21 @@
   let expiredIndex = 0;
 
   async function checkExpiredUstalar() {
-    const now = new Date().toISOString();
-    const { data } = await supabaseAdmin
-      .from('ustalar')
-      .select('id, ism, obuna_tugash')
-      .lt('obuna_tugash', now)
-      .eq('tasdiqlangan', true);
-    expiredQueue = data || [];
-    expiredIndex = 0;
-    showNextExpired();
+    try {
+      const now = new Date().toISOString();
+      const { data, error } = await supabaseAdmin
+        .from('ustalar')
+        .select('*')
+        .eq('tasdiqlangan', true);
+      
+      if (error) throw error;
+      
+      expiredQueue = (data || []).filter(u => u.obuna_tugash && u.obuna_tugash < now);
+      expiredIndex = 0;
+      showNextExpired();
+    } catch (e) {
+      console.warn("Obuna muddatini tekshirishda xatolik:", e);
+    }
   }
 
   function showNextExpired() {
