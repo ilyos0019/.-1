@@ -7,8 +7,28 @@ import Footer from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Usta Top - O'zbekiston ustalar platformasi",
-  description: "O'zbekiston bo'ylab eng yaxshi ustalarni toping va xizmatlardan foydalaning.",
+  title: "Usta kerakmi? Ishonchli usta topish | Findmaster.uz",
+  description: "Findmaster.uz orqali uyingiz uchun malakali santexnik, tajribali elektrik va boshqa mutaxassislarni tez va oson toping. Sizga zudlik bilan usta kerak bo'lsa, biz yordam beramiz!",
+  keywords: ["usta kerak", "santexnik", "elektrik", "usta topish", "usta xizmatlari", "remont", "toshkent usta"],
+  alternates: {
+    canonical: 'https://findmaster.uz/',
+  },
+  openGraph: {
+    title: 'Usta kerakmi? Ishonchli usta topish | Findmaster.uz',
+    description: 'Santexnik, elektrik va boshqa malakali ustalarni bitta platformadan toping.',
+    url: 'https://findmaster.uz',
+    siteName: 'Findmaster.uz',
+    images: [
+      {
+        url: 'https://findmaster.uz/images/og-banner.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Findmaster.uz - Usta topish platformasi',
+      },
+    ],
+    locale: 'uz_UZ',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({
