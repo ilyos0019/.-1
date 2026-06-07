@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
@@ -10,6 +10,12 @@ export const metadata: Metadata = {
   title: "Usta kerakmi? Ishonchli usta topish | Findmaster.uz",
   description: "Findmaster.uz orqali uyingiz uchun malakali santexnik, tajribali elektrik va boshqa mutaxassislarni tez va oson toping. Sizga zudlik bilan usta kerak bo'lsa, biz yordam beramiz!",
   keywords: ["usta kerak", "santexnik", "elektrik", "usta topish", "usta xizmatlari", "remont", "toshkent usta"],
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Findmaster.uz",
+  },
   alternates: {
     canonical: 'https://findmaster.uz/',
   },
@@ -29,6 +35,13 @@ export const metadata: Metadata = {
     locale: 'uz_UZ',
     type: 'website',
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({

@@ -1,0 +1,21 @@
+{
+  "name": "Findmaster.uz - Usta topish platformasi",
+  "short_name": "Findmaster",
+  "description": "Uyingiz uchun malakali santexnik, tajribali elektrik va boshqa mutaxassislarni tez va oson toping.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
